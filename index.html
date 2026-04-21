@@ -129,6 +129,13 @@
             .d-quiz { background-color: #fff1f2; border: 1px solid #fecaca; }
             .d-quiz-item { margin-bottom: 6px; font-size: 10pt; line-height: 1.3; display: flex; align-items: flex-start;}
             .d-quiz-item i { margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt;}
+
+            /* REGOLE SALVAVITA PER IMPAGINAZIONE: Evita parole mozzate a fine pagina */
+            .pagina-row, .incipit-globale, .incipit-fase, .fase-title, .matrice-row, .d-section {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                -webkit-column-break-inside: avoid !important;
+            }
         }
     </style>
 </head>
@@ -972,6 +979,12 @@ function renderArchiveList(searchQuery = '') {
         </div>
     `;
 
+    // Funzione Helper per ottenere la data nel formato DDMMYYYY (es. 21042026)
+    function getFormattedDateString() {
+        const d = new Date();
+        return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
+    }
+
     function printBatch() {
         const selectedIds = Array.from(document.querySelectorAll('.doc-checkbox:checked')).map(cb => cb.value);
         const wantMappe = document.getElementById('batch-mappe').checked;
@@ -982,7 +995,6 @@ function renderArchiveList(searchQuery = '') {
         if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
 
         let combinedHtml = "";
-        let titlesForPdf = []; // Raccoglie i titoli per il nome del file
 
         selectedIds.forEach((id, index) => {
             const doc = archiveDB.find(d => d.id === id);
@@ -992,11 +1004,6 @@ function renderArchiveList(searchQuery = '') {
             if(!success) return;
 
             const meta = currentDocMeta['batch'];
-            
-            // Aggiunge l'obiettivo alla lista se non c'è già (per nominare il file)
-            if(meta.obiettivo && !titlesForPdf.includes(meta.obiettivo)) {
-                titlesForPdf.push(meta.obiettivo);
-            }
 
             if(wantMappe) {
                 let printHeader = `
@@ -1042,20 +1049,20 @@ function renderArchiveList(searchQuery = '') {
             }
         });
 
-        // Aggiunge il Footer alla fine di tutto (la stampante lo spalmerà su ogni pagina)
         document.getElementById('print-area').innerHTML = combinedHtml + printFooterHtmlBlock;
         
-        // TRUCCO NOME FILE: Genera nome per file batch (Fascicoli multipli)
-        const today = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
-        const baseName = wantDispense ? "Dispense" : "Materiale";
-        const docNames = titlesForPdf.slice(0, 2).join("_").replace(/[^a-zA-Z0-9_]/g, '') + (titlesForPdf.length > 2 ? "_etc" : "");
+        // TRUCCO NOME FILE: Determina il tipo di file stampato per il nome
+        let baseName = "fascicolo"; // Default per stampe miste
+        if (wantMappe && !wantMatrici && !wantDispense) baseName = "mappa";
+        else if (!wantMappe && wantMatrici && !wantDispense) baseName = "matrice";
+        else if (!wantMappe && !wantMatrici && wantDispense) baseName = "dispensa";
         
         const originalTitle = document.title;
-        document.title = `${baseName}_${docNames}_${today}_Conti_Autoscuole_Driving_Leader`;
+        document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
         
         window.print();
         
-        document.title = originalTitle; // Ripristina il titolo
+        document.title = originalTitle; // Ripristina
     }
 
     function printDocument(type, prefix) {
@@ -1063,12 +1070,12 @@ function renderArchiveList(searchQuery = '') {
         const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
         const meta = currentDocMeta[prefix];
         
-        let docTitle = type === 'mappa' ? 'Mappa_di_Regia' : 'Matrici_Quiz';
+        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
 
         let printHeader = `
             <div class="print-header-container">
                 <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
-                <p class="print-header-aula">${meta.aula || docTitle.replace(/_/g, ' ')}</p>
+                <p class="print-header-aula">${meta.aula || docTitle}</p>
                 <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
                     <h2 class="print-header-arg">${meta.argomento || ''}</h2>
@@ -1079,12 +1086,9 @@ function renderArchiveList(searchQuery = '') {
         
         printArea.innerHTML = printHeader + contentHtml + printFooterHtmlBlock;
 
-        // TRUCCO NOME FILE: Per la stampa singola (Mappa/Matrice)
-        const safeOb = (meta.obiettivo || "").replace(/[^a-zA-Z0-9_]/g, '_');
-        const safeArg = (meta.argomento || "").replace(/[^a-zA-Z0-9_]/g, '_');
-        
+        // TRUCCO NOME FILE SINTETICO
         const originalTitle = document.title;
-        document.title = `${docTitle}_${safeOb}_${safeArg}_Conti_Autoscuole`;
+        document.title = `${type}_${getFormattedDateString()}_contiautoscuole`;
         
         window.print();
         
@@ -1111,19 +1115,14 @@ function renderArchiveList(searchQuery = '') {
         
         printArea.innerHTML = printHeader + htmlContent + printFooterHtmlBlock;
 
-        // TRUCCO NOME FILE: Per la dispensa singola da inviare su Whatsapp
-        const today = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
-        const safeOb = (meta.obiettivo || "").replace(/[^a-zA-Z0-9_]/g, '_');
-        const safeArg = (meta.argomento || "").replace(/[^a-zA-Z0-9_]/g, '_');
-        
+        // TRUCCO NOME FILE SINTETICO
         const originalTitle = document.title;
-        document.title = `Dispensa_Allievi_${safeOb}_${safeArg}_${today}_Conti_Autoscuole_Driving_Leader`;
+        document.title = `dispensa_${getFormattedDateString()}_contiautoscuole`;
         
         window.print();
         
         document.title = originalTitle;
     }
-
 
     // --- EDITOR INTEGRATO E FUNZIONI FINALI ---
     function openArchivedDocument(docId) {
