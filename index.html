@@ -985,6 +985,23 @@ function renderArchiveList(searchQuery = '') {
         return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
     }
 
+// --- VARIABILE PIE' DI PAGINA (LOGO + COPYRIGHT) ---
+    const printFooterHtmlBlock = `
+        <div class="print-footer">
+            <div style="display: flex; align-items: center;">
+                <img src="logo-conti.jpg" alt="Logo Conti" onerror="this.style.display='none'">
+                <span class="print-footer-text" style="margin-left: 12px;">COPYRIGHT &copy; ${new Date().getFullYear()} - CONTI AUTOSCUOLE</span>
+            </div>
+            <span style="font-style: italic; font-size: 7.5pt;">Materiale Didattico Riservato - Riproduzione Vietata</span>
+        </div>
+    `;
+
+    // Funzione Helper per ottenere la data nel formato DDMMYYYY (es. 21042026)
+    function getFormattedDateString() {
+        const d = new Date();
+        return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
+    }
+
     function printBatch() {
         const selectedIds = Array.from(document.querySelectorAll('.doc-checkbox:checked')).map(cb => cb.value);
         const wantMappe = document.getElementById('batch-mappe').checked;
@@ -1051,8 +1068,7 @@ function renderArchiveList(searchQuery = '') {
 
         document.getElementById('print-area').innerHTML = combinedHtml + printFooterHtmlBlock;
         
-        // TRUCCO NOME FILE: Determina il tipo di file stampato per il nome
-        let baseName = "fascicolo"; // Default per stampe miste
+        let baseName = "fascicolo"; 
         if (wantMappe && !wantMatrici && !wantDispense) baseName = "mappa";
         else if (!wantMappe && wantMatrici && !wantDispense) baseName = "matrice";
         else if (!wantMappe && !wantMatrici && wantDispense) baseName = "dispensa";
@@ -1060,9 +1076,11 @@ function renderArchiveList(searchQuery = '') {
         const originalTitle = document.title;
         document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
         
-        window.print();
-        
-        document.title = originalTitle; // Ripristina
+        // Ritardo di 300ms per caricare il logo
+        setTimeout(() => {
+            window.print();
+            document.title = originalTitle; 
+        }, 300);
     }
 
     function printDocument(type, prefix) {
@@ -1086,13 +1104,14 @@ function renderArchiveList(searchQuery = '') {
         
         printArea.innerHTML = printHeader + contentHtml + printFooterHtmlBlock;
 
-        // TRUCCO NOME FILE SINTETICO
         const originalTitle = document.title;
         document.title = `${type}_${getFormattedDateString()}_contiautoscuole`;
         
-        window.print();
-        
-        document.title = originalTitle;
+        // Ritardo di 300ms per caricare il logo
+        setTimeout(() => {
+            window.print();
+            document.title = originalTitle;
+        }, 300);
     }
 
     function printDispensa(prefix) {
@@ -1115,13 +1134,14 @@ function renderArchiveList(searchQuery = '') {
         
         printArea.innerHTML = printHeader + htmlContent + printFooterHtmlBlock;
 
-        // TRUCCO NOME FILE SINTETICO
         const originalTitle = document.title;
         document.title = `dispensa_${getFormattedDateString()}_contiautoscuole`;
         
-        window.print();
-        
-        document.title = originalTitle;
+        // Ritardo di 300ms per caricare il logo
+        setTimeout(() => {
+            window.print();
+            document.title = originalTitle;
+        }, 300);
     }
 
     // --- EDITOR INTEGRATO E FUNZIONI FINALI ---
@@ -1260,50 +1280,6 @@ function renderArchiveList(searchQuery = '') {
         reader.readAsText(file);
     }
 
-    function printDocument(type, prefix) {
-        const printArea = document.getElementById('print-area');
-        const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
-        const meta = currentDocMeta[prefix];
-        
-        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
-
-        let printHeader = `
-            <div class="print-header-container">
-                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
-                <p class="print-header-aula">${meta.aula || docTitle}</p>
-                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
-                <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
-                    ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
-                </div>
-            </div>
-        `;
-        
-        printArea.innerHTML = printHeader + contentHtml;
-        window.print();
-    }
-
-    function printDispensa(prefix) {
-        const printArea = document.getElementById('print-area');
-        const htmlContent = currentDispensaHtml[prefix];
-        const meta = currentDocMeta[prefix];
-
-        if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
-        
-        let printHeader = `
-            <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
-                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
-                <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
-                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
-                <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.argomento || ''}</h2>
-                </div>
-            </div>
-        `;
-        
-        printArea.innerHTML = printHeader + htmlContent;
-        window.print();
-    }
 
     function exportCSV(prefix) {
         const csvArray = currentCsvData[prefix];
