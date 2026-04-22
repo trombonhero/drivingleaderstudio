@@ -968,24 +968,7 @@ function renderArchiveList(searchQuery = '') {
         }
     }
 
-// --- VARIABILE PIE' DI PAGINA (LOGO + COPYRIGHT) ---
-    const printFooterHtmlBlock = `
-        <div class="print-footer">
-            <div style="display: flex; align-items: center;">
-                <img src="logo-conti.jpg" alt="Logo Conti" onerror="this.style.display='none'">
-                <span class="print-footer-text" style="margin-left: 12px;">COPYRIGHT &copy; ${new Date().getFullYear()} - CONTI AUTOSCUOLE</span>
-            </div>
-            <span style="font-style: italic; font-size: 7.5pt;">Materiale Didattico Riservato - Riproduzione Vietata</span>
-        </div>
-    `;
-
-    // Funzione Helper per ottenere la data nel formato DDMMYYYY (es. 21042026)
-    function getFormattedDateString() {
-        const d = new Date();
-        return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
-    }
-
-// --- VARIABILE PIE' DI PAGINA (LOGO + COPYRIGHT) ---
+    // --- VARIABILE PIE' DI PAGINA (LOGO + COPYRIGHT) ---
     const printFooterHtmlBlock = `
         <div class="print-footer">
             <div style="display: flex; align-items: center;">
@@ -1076,7 +1059,6 @@ function renderArchiveList(searchQuery = '') {
         const originalTitle = document.title;
         document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
         
-        // Ritardo di 300ms per caricare il logo
         setTimeout(() => {
             window.print();
             document.title = originalTitle; 
@@ -1107,7 +1089,6 @@ function renderArchiveList(searchQuery = '') {
         const originalTitle = document.title;
         document.title = `${type}_${getFormattedDateString()}_contiautoscuole`;
         
-        // Ritardo di 300ms per caricare il logo
         setTimeout(() => {
             window.print();
             document.title = originalTitle;
@@ -1137,7 +1118,6 @@ function renderArchiveList(searchQuery = '') {
         const originalTitle = document.title;
         document.title = `dispensa_${getFormattedDateString()}_contiautoscuole`;
         
-        // Ritardo di 300ms per caricare il logo
         setTimeout(() => {
             window.print();
             document.title = originalTitle;
@@ -1227,14 +1207,6 @@ function renderArchiveList(searchQuery = '') {
         }
     }
 
-    function deleteArchivedDocument(docId) {
-        if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
-            archiveDB = archiveDB.filter(d => d.id !== docId);
-            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
-            renderArchiveList(document.getElementById('search-db').value);
-        }
-    }
-
     function exportArchiveDB() {
         if(archiveDB.length === 0) return alert("Il database è vuoto. Niente da esportare!");
         const dataStr = JSON.stringify(archiveDB, null, 2);
@@ -1280,7 +1252,6 @@ function renderArchiveList(searchQuery = '') {
         reader.readAsText(file);
     }
 
-
     function exportCSV(prefix) {
         const csvArray = currentCsvData[prefix];
         if(!csvArray || csvArray.length <= 1) return alert("Nessun dato matrice disponibile per l'esportazione.");
@@ -1306,7 +1277,8 @@ function renderArchiveList(searchQuery = '') {
         link.click();
         document.body.removeChild(link);
     }
-function toggleChapter(capId, isChecked) {
+
+    function toggleChapter(capId, isChecked) {
         document.querySelectorAll(`.chk-cap-${capId}`).forEach(cb => {
             cb.checked = isChecked;
         });
