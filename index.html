@@ -546,57 +546,90 @@
         return html;
     }
 
-    // --- RENDER MAPPA TECNICA ---
+// --- RENDER MAPPA TECNICA ---
     function renderMappa(text, prefix) {
+        // PRE-PROCESSAMENTO: Il nuovo motore "Incolla-Righe"
         const lines = text.split('\n');
-        let html = '';
-        currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
+        let mergedLines = [];
         
         lines.forEach(line => {
             let l = line.trim();
+            if (!l) return;
+            
+            // Puliamo l'inizio della riga da eventuali emoji, asterischi o spazi
+            let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
+            
+            // Capisce se la riga è un nuovo comando ufficiale
+            let isKeyword = cleanStart.startsWith('AULA:') || 
+                            cleanStart.startsWith('CAPITOLO:') || 
+                            cleanStart.startsWith('OBIETTIVO:') || 
+                            cleanStart.startsWith('PARAGRAFO:') || 
+                            cleanStart.startsWith('ARGOMENTO:') || 
+                            cleanStart.startsWith('TEMPO STIMATO:') || 
+                            cleanStart.startsWith('IL SENSO PRATICO:') || 
+                            cleanStart.startsWith('FASE') || 
+                            cleanStart.startsWith('OBIETTIVO PRATICO:') || 
+                            cleanStart.startsWith('PAGINA');
+
+            if (isKeyword || mergedLines.length === 0) {
+                mergedLines.push(l); // Crea un nuovo blocco
+            } else {
+                // Se non è una parola chiave, è una regola o trappola andata a capo! La uniamo alla precedente.
+                mergedLines[mergedLines.length - 1] += " " + l;
+            }
+        });
+
+        let html = '';
+        currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
+        
+        mergedLines.forEach(line => {
+            let l = line.trim();
             if(!l) return;
 
-            if (l.toUpperCase().startsWith('AULA:')) {
-                currentDocMeta[prefix].aula = l.substring(5).replace(/[\*\_]/g, '').trim();
+            let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
+
+            if (cleanStart.startsWith('AULA:')) {
+                currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
             }
-            else if (l.toUpperCase().startsWith('CAPITOLO:') || l.toUpperCase().startsWith('OBIETTIVO:')) {
-                currentDocMeta[prefix].obiettivo = l.replace(/^(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) {
+                currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
             }
-            else if (l.toUpperCase().startsWith('PARAGRAFO:') || l.toUpperCase().startsWith('ARGOMENTO:')) {
-                currentDocMeta[prefix].argomento = l.replace(/^(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) {
+                currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
             }
-            else if (l.toUpperCase().startsWith('TEMPO STIMATO:')) {
-                currentDocMeta[prefix].tempo = l.substring(14).replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('TEMPO STIMATO:')) {
+                currentDocMeta[prefix].tempo = l.replace(/.*?TEMPO STIMATO:/i, '').replace(/[\*\_]/g, '').trim();
             }
-            else if (l.toUpperCase().includes('IL SENSO PRATICO:')) {
-                let pText = l.replace(/.*IL SENSO PRATICO:/i, '').trim();
+            else if (cleanStart.startsWith('IL SENSO PRATICO:')) {
+                let pText = l.replace(/.*?IL SENSO PRATICO:/i, '').trim();
                 html += `<div class="incipit-globale"><i class="fa-solid fa-lightbulb mr-2"></i><strong>Il Senso Pratico</strong>${pText}</div>`;
             }
-            else if (l.toUpperCase().includes('FASE')) {
+            else if (cleanStart.startsWith('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
             } 
-            else if (l.toUpperCase().includes('OBIETTIVO PRATICO:')) {
-                let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
+            else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
+                let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim();
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
-            else if (l.replace(/^\*\s*/, '').toUpperCase().startsWith('PAGINA')) {
+            else if (cleanStart.startsWith('PAGINA')) {
                 l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
                 
-                let pageMatch = l.match(/PAGINA\s*\d+:/i);
-                let badgeText = pageMatch ? pageMatch[0].replace(':', '') : "PAGINA";
+                // Regex migliorata: accetta PAGINA con o senza i due punti!
+                let pageMatch = l.match(/PAGINA\s*\d+:?/i); 
+                let badgeText = pageMatch ? pageMatch[0].replace(':', '').trim() : "PAGINA";
                 
-                let remaining = pageMatch ? l.substring(l.indexOf(':') + 1).trim() : l.trim();
+                let remaining = pageMatch ? l.substring(l.indexOf(pageMatch[0]) + pageMatch[0].length).trim() : l.trim();
                 
                 let upperRemaining = remaining.toUpperCase();
-                let trapIndex = upperRemaining.indexOf('TRAPPOLA');
+                let trapIndex = upperRemaining.indexOf('TRAPPOLA:');
                 
                 let mainText = remaining;
                 let trapText = "";
 
                 if(trapIndex !== -1) {
                     mainText = remaining.substring(0, trapIndex).trim();
-                    let afterTrap = remaining.substring(trapIndex + 8).replace(/^[:\s]+/, '').trim();
+                    let afterTrap = remaining.substring(trapIndex + 9).replace(/^[:\s]+/, '').trim();
                     trapText = "TRAPPOLA: " + afterTrap;
                 } else if (remaining.includes('➔') || remaining.includes('->')) {
                     let trapSplit = remaining.split(/➔|->/);
@@ -1008,7 +1041,7 @@ function renderArchiveList(searchQuery = '') {
             if(wantMappe) {
                 let printHeader = `
                     <div class="print-header-container">
-                        <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                        <p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p>
                         <p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p>
                         <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
                         <div style="display:flex; justify-content: space-between; align-items: baseline;">
@@ -1023,7 +1056,7 @@ function renderArchiveList(searchQuery = '') {
             if(wantMatrici) {
                 let printHeader = `
                     <div class="print-header-container">
-                        <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                        <p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p>
                         <p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p>
                         <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
                         <div style="display:flex; justify-content: space-between; align-items: baseline;">
@@ -1037,7 +1070,7 @@ function renderArchiveList(searchQuery = '') {
             if(wantDispense && currentDispensaHtml['batch']) {
                 let printHeader = `
                     <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
-                        <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                        <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">CONTI AUTOSCUOLE</p>
                         <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
                         <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
                         <div style="display:flex; justify-content: space-between; align-items: baseline;">
@@ -1074,7 +1107,7 @@ function renderArchiveList(searchQuery = '') {
 
         let printHeader = `
             <div class="print-header-container">
-                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p>
                 <p class="print-header-aula">${meta.aula || docTitle}</p>
                 <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
@@ -1104,7 +1137,7 @@ function renderArchiveList(searchQuery = '') {
         
         let printHeader = `
             <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
-                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">CONTI AUTOSCUOLE</p>
                 <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
                 <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
