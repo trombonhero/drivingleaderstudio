@@ -34,10 +34,11 @@
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
         
         /* Highlight Personalizzati (Schermo) */
-        .pagina-text strong { color: #38bdf8; font-weight: 900; }
-        .dispensa-page strong { color: #3b82f6; font-weight: 900; text-transform: uppercase; }
+        .pagina-text strong { color: #38bdf8; font-weight: 700; }
+        .dispensa-page strong { color: #3b82f6; font-weight: 700; text-transform: uppercase; }
 
         .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
+        .pagina-extra { color: #10b981; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(16, 185, 129, 0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #10b981; font-size: 0.95rem;}
         .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
         .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
         .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
@@ -80,8 +81,8 @@
             .batch-page-fluid:last-child { border-bottom: none; }
             
             /* Highlight Personalizzati (Stampa PDF - Puliti) */
-            .pagina-text strong { color: #000 !important; font-weight: 900 !important; }
-            .dispensa-page strong { color: #000 !important; font-weight: 900 !important; text-transform: uppercase; }
+            .pagina-text strong { color: #000 !important; font-weight: 700 !important; }
+            .dispensa-page strong { color: #000 !important; font-weight: 700 !important; text-transform: uppercase; }
 
             /* Intestazione Documento */
             .print-header-container { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; display: block !important; width: 100%;}
@@ -102,7 +103,8 @@
             .pagina-badge { border: 1px solid black !important; padding: 2px 6px; font-weight: bold; margin-right: 12px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 9pt !important; margin-top: 2px; border-radius: 3px;}
             .pagina-text { color: black !important; flex-grow: 1; }
             .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
-            
+            .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0; }
+
             /* Matrici */
             .matrice-title { color: black !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 3px solid #fbbf24 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid; text-transform: uppercase; }
             .matrice-row { display: flex; align-items: flex-start; margin-bottom: 5pt !important; padding-left: 12px; font-size: 10pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid; font-style: normal !important; }
@@ -548,7 +550,7 @@
 
 // --- RENDER MAPPA TECNICA ---
     function renderMappa(text, prefix) {
-        // PRE-PROCESSAMENTO: Il nuovo motore "Incolla-Righe"
+        // PRE-PROCESSAMENTO: Il motore "Incolla-Righe"
         const lines = text.split('\n');
         let mergedLines = [];
         
@@ -556,10 +558,8 @@
             let l = line.trim();
             if (!l) return;
             
-            // Puliamo l'inizio della riga da eventuali emoji, asterischi o spazi
             let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
             
-            // Capisce se la riga è un nuovo comando ufficiale
             let isKeyword = cleanStart.startsWith('AULA:') || 
                             cleanStart.startsWith('CAPITOLO:') || 
                             cleanStart.startsWith('OBIETTIVO:') || 
@@ -572,9 +572,8 @@
                             cleanStart.startsWith('PAGINA');
 
             if (isKeyword || mergedLines.length === 0) {
-                mergedLines.push(l); // Crea un nuovo blocco
+                mergedLines.push(l); 
             } else {
-                // Se non è una parola chiave, è una regola o trappola andata a capo! La uniamo alla precedente.
                 mergedLines[mergedLines.length - 1] += " " + l;
             }
         });
@@ -602,6 +601,8 @@
             }
             else if (cleanStart.startsWith('IL SENSO PRATICO:')) {
                 let pText = l.replace(/.*?IL SENSO PRATICO:/i, '').trim();
+                // APPLICAZIONE GRASSETTO QUI
+                pText = pText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-globale"><i class="fa-solid fa-lightbulb mr-2"></i><strong>Il Senso Pratico</strong>${pText}</div>`;
             }
             else if (cleanStart.startsWith('FASE')) {
@@ -610,33 +611,36 @@
             } 
             else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
                 let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim();
+                // APPLICAZIONE GRASSETTO QUI
+                pText = pText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
             else if (cleanStart.startsWith('PAGINA')) {
                 l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
                 
-                // Regex migliorata: accetta PAGINA con o senza i due punti!
                 let pageMatch = l.match(/PAGINA\s*\d+:?/i); 
                 let badgeText = pageMatch ? pageMatch[0].replace(':', '').trim() : "PAGINA";
                 
                 let remaining = pageMatch ? l.substring(l.indexOf(pageMatch[0]) + pageMatch[0].length).trim() : l.trim();
                 
-                let upperRemaining = remaining.toUpperCase();
-                let trapIndex = upperRemaining.indexOf('TRAPPOLA:');
-                
-                let mainText = remaining;
+                // --- ESTRAZIONE A CASCATA (Trappola -> Extra Quiz -> Main Text) ---
                 let trapText = "";
-
-                if(trapIndex !== -1) {
-                    mainText = remaining.substring(0, trapIndex).trim();
-                    let afterTrap = remaining.substring(trapIndex + 9).replace(/^[:\s]+/, '').trim();
-                    trapText = "TRAPPOLA: " + afterTrap;
-                } else if (remaining.includes('➔') || remaining.includes('->')) {
-                    let trapSplit = remaining.split(/➔|->/);
-                    mainText = trapSplit[0].trim();
-                    if(trapSplit[1]) trapText = "TRAPPOLA: " + trapSplit[1].trim();
+                let trapMatch = remaining.match(/TRAPPOLA:(.*)/i);
+                if (trapMatch) {
+                    trapText = "TRAPPOLA: " + trapMatch[1].trim();
+                    remaining = remaining.substring(0, trapMatch.index).trim(); // Taglia via la trappola
                 }
 
+                let extraText = "";
+                let extraMatch = remaining.match(/(?:🚨\s*)?EXTRA QUIZ:(.*)/i);
+                if (extraMatch) {
+                    extraText = "EXTRA QUIZ: " + extraMatch[1].trim();
+                    remaining = remaining.substring(0, extraMatch.index).trim(); // Taglia via l'extra quiz
+                }
+
+                let mainText = remaining; // Quello che resta è la regola base!
+
+                // Formattazione Freccia
                 let arrowMatch = mainText.match(/➔|->/);
                 if (arrowMatch) {
                     let idx = mainText.indexOf(arrowMatch[0]);
@@ -645,13 +649,19 @@
                     mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="testo-regola">${rule}</span>`;
                 }
 
+                // Applica grassetto a TUTTE le sezioni
                 mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if(extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if(trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
                 html += `
                     <div class="pagina-row">
                         <div class="pagina-badge">${badgeText}</div>
-                        <div class="pagina-text">${mainText} ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div>
+                        <div class="pagina-text">
+                            ${mainText} 
+                            ${extraText ? `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i>${extraText}</div>` : ''}
+                            ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}
+                        </div>
                     </div>
                 `;
             }
