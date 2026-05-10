@@ -1032,13 +1032,15 @@ function renderArchiveList(searchQuery = '') {
 
 // --- VARIABILE PIE' DI PAGINA (LOGO + COPYRIGHT) ---
     const printFooterHtmlBlock = `
-        <div class="print-footer">
+        <div class="print-footer" style="align-items: flex-end;">
             <div style="display: flex; align-items: center;">
                 <img src="logo-conti.jpg" alt="Logo Conti" onerror="this.style.display='none'">
                 <span class="print-footer-text" style="margin-left: 12px; font-size: 7.5pt;">MATERIALE DIDATTICO RISERVATO - A CURA DI M. FORTUNATO (INSEGNANTE/ISTRUTTORE ABILITATO)</span>
             </div>
-            <span style="font-style: italic; font-size: 7.5pt; text-align: right;">COPYRIGHT &copy; ${new Date().getFullYear()}</span>
-            <span style="font-style: italic; font-size: 7.5pt; text-align: right;">MICHELE FORTUNATO</span>
+            <div style="font-style: italic; font-size: 7.5pt; text-align: right; line-height: 1.2;">
+                COPYRIGHT &copy; ${new Date().getFullYear()}<br>
+                <span style="font-weight: 800; font-style: normal;">MICHELE FORTUNATO</span>
+            </div>
         </div>
     `;
 
