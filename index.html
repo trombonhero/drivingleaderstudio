@@ -135,25 +135,33 @@
             .d-quiz-item i { margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt;}
 
             /* REGOLE SALVAVITA ANTI-TAGLIO (Fix definitivo per Bug Chrome/Edge in Stampa) */
-            .incipit-globale, .incipit-fase, .fase-title, .d-section {
+            .incipit-globale, .incipit-fase, .fase-title, .d-section, .matrice-row {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
                 display: inline-block !important; /* Costringe il browser a non spezzare il blocco */
                 width: 100% !important;
             }
+
+            .matrice-title {
+                page-break-after: avoid !important; /* Impedisce che il titolo resti da solo a fine pagina */
+                break-after: avoid !important;
+                page-break-inside: avoid !important;
+                display: inline-block !important;
+                width: 100% !important;
+            }
             
-            .pagina-row, .matrice-row, .d-quiz-item { 
-                display: block !important; /* Rimuove il Flexbox in stampa (causa dei tagli) */
+            .pagina-row, .d-quiz-item { 
+                display: block !important; /* Rimuove il Flexbox in stampa */
                 page-break-inside: avoid !important; 
                 break-inside: avoid !important; 
             }
             
-            /* Sostituti del Flexbox per allineare a sinistra i badge in stampa */
+            /* Sostituti del Flexbox per allineare a sinistra i badge/icone in stampa */
             .pagina-badge { float: left !important; margin-right: 12px !important; margin-bottom: 4px !important; }
             .pagina-text { display: block !important; overflow: hidden !important; }
             
             .matrice-row > i { float: left !important; margin-right: 10px !important; margin-top: 3px !important; }
-            .matrice-row > div { display: block !important; overflow: hidden !important; }
+            .matrice-row > div { display: block !important; } /* Niente overflow per evitare che il testo venga mozzato in basso */
             
             .d-quiz-item > i { float: left !important; margin-top: 4px !important; margin-right: 6px !important; }
             .d-quiz-item > div { display: block !important; overflow: hidden !important; }
