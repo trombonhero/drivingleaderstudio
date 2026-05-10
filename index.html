@@ -1030,20 +1030,17 @@ function renderArchiveList(searchQuery = '') {
         }
     }
 
-    // --- VARIABILE PIE' DI PAGINA (LOGO + COPYRIGHT) ---
+// --- VARIABILE PIE' DI PAGINA (LOGO + COPYRIGHT) ---
     const printFooterHtmlBlock = `
-        <div class="print-footer" style="align-items: flex-end;">
-            <div style="display: flex; align-items: center; max-width: 65%;">
+        <div class="print-footer">
+            <div style="display: flex; align-items: center;">
                 <img src="logo-conti.jpg" alt="Logo Conti" onerror="this.style.display='none'">
-                <div style="margin-left: 12px; line-height: 1.3;">
-                    <span class="print-footer-text" style="display: block; font-size: 7.5pt;">Testi e Metodo Didattico a cura di: Michele Fortunato (Insegnante e Istruttore di Guida abilitato).</span>
-                    <span style="font-size: 7.5pt;">Realizzato in partnership con: Conti Autoscuole.</span>
+                <div style="margin-left: 12px; display: flex; flex-direction: column;">
+                    <span class="print-footer-text">COPYRIGHT &copy; ${new Date().getFullYear()} - MICHELE FORTUNATO</span>
+                    <span style="font-size: 6.5pt; font-weight: normal; margin-top: 2px; color: #64748b;">Testi a cura di: Michele Fortunato (Insegnante e Istruttore di Guida Abilitato)</span>
                 </div>
             </div>
-            <div style="text-align: right; line-height: 1.3; max-width: 35%;">
-                <span class="print-footer-text" style="display: block; font-size: 7.5pt;">&copy; ${new Date().getFullYear()} Michele Fortunato. Tutti i diritti riservati.</span>
-                <span style="font-style: italic; font-size: 7pt;">È vietata la riproduzione e la ridistribuzione non autorizzata.</span>
-            </div>
+            <span style="font-style: italic; font-size: 7.5pt; text-align: right;">Materiale Didattico Riservato - Riproduzione Vietata</span>
         </div>
     `;
 
