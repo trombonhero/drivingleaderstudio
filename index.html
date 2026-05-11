@@ -655,7 +655,7 @@
                 pText = pText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
-        else if (cleanStart.startsWith('PAGINA')) {
+            else if (cleanStart.startsWith('PAGINA')) {
                 l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
                 
                 let pageMatch = l.match(/PAGINA\s*\d+:?/i); 
@@ -663,23 +663,34 @@
                 
                 let remaining = pageMatch ? l.substring(l.indexOf(pageMatch[0]) + pageMatch[0].length).trim() : l.trim();
                 
-                // --- 1. ESTRAZIONE TRAPPOLA (Dal fondo verso l'alto) ---
+                // --- 1. ESTRAZIONE TRAPPOLA / ATTENZIONE (Dal fondo) ---
                 let trapText = "";
-                let trapMatch = remaining.match(/ATTENZIONE:(.*)/i);
+                let trapMatch = remaining.match(/(?:TRAPPOLA|ATTENZIONE):(.*)/i);
                 if (trapMatch) {
-                    trapText = "ATTENZIONE: " + trapMatch[1].trim();
-                    remaining = remaining.substring(0, trapMatch.index).trim(); // Taglia via la trappola
+                    // Cattura la parola esatta usata dall'IA (TRAPPOLA o ATTENZIONE)
+                    let keyword = remaining.match(/(TRAPPOLA|ATTENZIONE):/i)[1].toUpperCase();
+                    trapText = `${keyword}: ` + trapMatch[1].trim();
+                    remaining = remaining.substring(0, trapMatch.index).trim(); 
                 }
 
-                // --- 2. ESTRAZIONE EXTRA QUIZ ---
+                // --- 2. ESTRAZIONE EXTRA (Anche Multipli!) ---
                 let extraText = "";
-                let extraMatch = remaining.match(/(?:🚨\s*)?EXTRA:(.*)/i);
+                let extraMatch = remaining.match(/(?:🚨\s*)?(?:EXTRA QUIZ|EXTRA):(.*)/i);
                 if (extraMatch) {
-                    extraText = "EXTRA: " + extraMatch[1].trim();
-                    remaining = remaining.substring(0, extraMatch.index).trim(); // Taglia via l'extra quiz
+                    extraText = extraMatch[1].trim();
+                    remaining = remaining.substring(0, extraMatch.index).trim(); 
+
+                    // TRUCCO MAGICO: Se ci sono altri "EXTRA:" incastrati, li divide in box separati!
+                    // 1. Sostituisce le frecce con un'icona carina
+                    extraText = extraText.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right-long text-emerald-500 mx-1"></i>');
+                    // 2. Chiude il div e ne apre uno nuovo ogni volta che legge "EXTRA:"
+                    extraText = extraText.replace(/(?:EXTRA QUIZ|EXTRA):/gi, '</div><div class="pagina-extra" style="margin-top:6px;"><i class="fa-solid fa-circle-info mr-1"></i> <strong>EXTRA:</strong> ');
+
+                    // 3. Avvolge tutto nel contenitore principale
+                    extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong>EXTRA:</strong> ${extraText}</div>`;
                 }
 
-                // --- 3. TESTO PRINCIPALE (La regola pulita) ---
+                // --- 3. TESTO PRINCIPALE ---
                 let mainText = remaining; 
 
                 // Formattazione Freccia per il testo principale
@@ -696,13 +707,13 @@
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                // L'uso dei <div> per extraText e trapText forza automaticamente l'"a capo"!
+                // Stampa la riga in HTML
                 html += `
                     <div class="pagina-row">
                         <div class="pagina-badge">${badgeText}</div>
                         <div class="pagina-text">
                             ${mainText} 
-                            ${extraText ? `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i>${extraText}</div>` : ''}
+                            ${extraText}
                             ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}
                         </div>
                     </div>
