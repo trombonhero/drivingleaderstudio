@@ -134,41 +134,45 @@
             .d-quiz-item { margin-bottom: 6px; font-size: 10pt; line-height: 1.3; display: flex; align-items: flex-start;}
             .d-quiz-item i { margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt;}
 
-            /* =======================================================
-               RIPRISTINO E FIX DEFINITIVO (PULITO E STANDARD)
+/* =======================================================
+               IL VERO FIX PER IL FOOTER (Trucco del Margine Negativo)
                ======================================================= */
-            
-            /* 1. RESET SANO DEI CONTENITORI PRINCIPALI */
-            body, #print-area, .batch-page, .batch-page-fluid {
+
+            /* 1. CREIAMO UN MARGINE INFERIORE FISICO SUL FOGLIO (2.5 cm) */
+            @page {
+                margin-top: 15mm !important;
+                margin-left: 10mm !important;
+                margin-right: 10mm !important;
+                margin-bottom: 25mm !important; /* La stampante si ferma TASSATIVAMENTE qui */
+            }
+
+            /* 2. SPINGIAMO IL FOOTER NEL MARGINE (Sotto l'area del testo!) */
+            .print-footer {
+                position: fixed !important;
+                bottom: -25mm !important; /* TRUCCO MAGICO: spinge il footer FUORI dall'area del testo */
+                left: 0 !important;
+                width: 100% !important;
+                height: 20mm !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                border-top: 1px solid #cbd5e1 !important;
+                padding-top: 5px !important;
+                background-color: transparent !important;
+                z-index: 9999 !important;
+            }
+
+            /* 3. RESET DEI CONTENITORI (Spegniamo il Flexbox globale per Chrome) */
+            body, main, #print-area, .batch-page, .batch-page-fluid {
                 display: block !important;
                 position: relative !important;
                 height: auto !important;
+                overflow: visible !important;
             }
 
-            /* 2. ZONA FOOTER (Sicura e allineata correttamente) */
-            @page {
-                margin: 10mm 10mm 20mm 10mm !important; /* Margine di base del foglio */
-            }
-            
-            #print-area {
-                padding-bottom: 40px !important; /* Ferma il testo PRIMA che tocchi il footer */
-            }
+            * { box-sizing: border-box !important; }
 
-            .print-footer {
-                position: fixed !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 30px !important;
-                background-color: white !important;
-                display: flex !important; /* Serve per tenere il logo a sinistra e il testo a destra */
-                align-items: center !important;
-                justify-content: space-between !important;
-                z-index: 9999 !important;
-                padding-top: 5px !important;
-            }
-
-            /* 3. PROTEZIONE TITOLI */
+            /* 4. PROTEZIONE TITOLI E SEZIONI */
             .incipit-globale, .incipit-fase, .fase-title, .d-section, .matrice-title {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
@@ -181,30 +185,26 @@
                 break-after: avoid !important;
             }
 
-            /* 4. BLOCCHI RIGHE E QUIZ (Il metodo Classico CSS) */
+            /* 5. BLOCCHI RIGHE STANDARD (Niente tagli a metà, usa overflow:hidden) */
             .pagina-row, .matrice-row, .d-quiz-item {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                display: block !important; 
+                display: block !important;
                 width: 100% !important;
                 margin-bottom: 6px !important;
-                overflow: hidden !important; /* TRUCCO CHIAVE: Contiene gli elementi fluttuanti e calcola l'altezza esatta */
+                overflow: hidden !important;
             }
 
-            /* Icone e Badge a sinistra */
             .pagina-badge { float: left !important; margin-right: 12px !important; margin-bottom: 4px !important; }
             .matrice-row > i, .d-quiz-item > i { float: left !important; width: 24px !important; margin-top: 3px !important; }
 
-            /* Testi a destra (Impedisce che il testo vada a capo sotto le icone) */
-            .pagina-text, .matrice-row > div, .d-quiz-item > div { 
-                display: block !important; 
-                overflow: hidden !important; 
+            .pagina-text, .matrice-row > div, .d-quiz-item > div {
+                display: block !important;
+                overflow: hidden !important;
             }
 
-            /* Ripristino elementi interni */
             .matrice-row > div > br { display: block !important; }
             .matrice-exp { display: block !important; margin-top: 2px !important; }
-        }
     </style>
 </head>
 <body>
