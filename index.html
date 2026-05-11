@@ -134,21 +134,13 @@
             .d-quiz-item { margin-bottom: 6px; font-size: 10pt; line-height: 1.3; display: flex; align-items: flex-start;}
             .d-quiz-item i { margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt;}
 
-/* =======================================================
-               IL VERO FIX DEFINITIVO (Reset Flexbox e Margin Overlay) 
+            /* =======================================================
+               FUSIONE FINALE: TABELLE + CAMPO DI FORZA FOOTER
                ======================================================= */
             
-            /* 1. SPEGNIAMO IL FLEXBOX GLOBALE: È lui che impedisce a Chrome di rispettare i tagli! */
-            body, main, #print-area, .batch-page, .batch-page-fluid {
-                display: block !important;
-                height: auto !important;
-                overflow: visible !important;
-                position: static !important;
-            }
-
-            /* 2. ZONA DI SICUREZZA PER IL FOOTER */
+            /* 1. CAMPO DI FORZA A FINE PAGINA (Il segreto per non accavallare i testi) */
             @page {
-                margin-bottom: 22mm !important; /* Crea uno spazio fisico vuoto a fine pagina */
+                margin-bottom: 35mm !important; /* Ordina alla stampante di fermare il testo 3.5cm prima della fine del foglio! */
             }
 
             .print-footer {
@@ -156,14 +148,22 @@
                 bottom: 0 !important;
                 left: 0 !important;
                 width: 100% !important;
-                background-color: white !important; /* Schermatura per coprire le sbavature */
-                padding-top: 10px !important;
+                background-color: transparent !important;
+                padding-bottom: 10mm !important; /* Lo alza di 1cm per evitare che la stampante fisica tagli via il testo rosso */
                 z-index: 9999 !important;
+            }
+
+            /* 2. SPEGNIAMO IL FLEXBOX GLOBALE */
+            body, main, #print-area, .batch-page, .batch-page-fluid {
+                display: block !important;
+                height: auto !important;
+                overflow: visible !important;
+                position: static !important;
             }
 
             * { box-sizing: border-box !important; }
 
-            /* 3. BLOCCHI DI CEMENTO (Ora funzioneranno perché il flex padre è spento) */
+            /* 3. BLOCCHI TITOLI E SEZIONI */
             .incipit-globale, .incipit-fase, .fase-title, .d-section, .matrice-title {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
@@ -177,32 +177,57 @@
                 padding-bottom: 4px !important;
             }
 
-            .pagina-row, .matrice-row, .d-quiz-item {
+            /* 4. MAPPE E DISPENSE (Metodo Inline-Block) */
+            .pagina-row, .d-quiz-item {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
                 -webkit-column-break-inside: avoid !important;
-                display: inline-block !important; /* Il metodo più sicuro e stabile */
+                display: inline-block !important; 
                 width: 100% !important;
                 vertical-align: top !important;
                 margin-bottom: 4px !important;
             }
 
-            /* Layout interno a Float (invisibile ai problemi di rottura) */
             .pagina-badge { float: left !important; margin-right: 12px !important; margin-bottom: 4px !important; }
             .pagina-text { display: block !important; overflow: visible !important; }
-
-            .matrice-row > i { float: left !important; margin-right: 10px !important; margin-top: 3px !important; }
-            .matrice-row > div { display: block !important; overflow: visible !important; }
 
             .d-quiz-item > i { float: left !important; margin-top: 4px !important; margin-right: 6px !important; }
             .d-quiz-item > div { display: block !important; overflow: visible !important; }
 
-            /* Recinto di chiusura dei float */
-            .pagina-row::after, .matrice-row::after, .d-quiz-item::after {
+            /* 5. L'ARMA NUCLEARE (Riattivata per la Matrice Quiz - Layout a Tabella) */
+            .matrice-row {
+                page-break-inside: avoid !important;
+                break-inside: avoid-page !important;
+                display: table !important; /* Costringe Chrome a vedere riga e freccia come un mattone unito */
+                width: 100% !important;
+                margin-bottom: 6px !important;
+            }
+
+            .matrice-row > i {
+                display: table-cell !important;
+                vertical-align: top !important;
+                float: none !important;
+                width: 24px !important;
+                padding-top: 3px !important;
+            }
+
+            .matrice-row > div {
+                display: table-cell !important;
+                vertical-align: top !important;
+                float: none !important;
+                padding-bottom: 6px !important;
+            }
+
+            .matrice-row > div > br { display: block !important; }
+            .matrice-exp { display: block !important; margin-top: 2px !important; }
+
+            /* Recinto di chiusura solo per i float (Le tabelle non ne hanno bisogno) */
+            .pagina-row::after, .d-quiz-item::after {
                 content: "";
                 display: table;
                 clear: both;
             }
+            .matrice-row::after { display: none !important; }
         }
     </style>
 </head>
