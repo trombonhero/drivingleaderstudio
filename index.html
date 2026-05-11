@@ -290,8 +290,8 @@
                 <div id="archive-container" class="space-y-6 pb-32"></div>
             </div>
 
-            <div id="batch-action-bar" class="hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 p-4 rounded-full shadow-2xl z-50 flex items-center gap-6 transition-all duration-300">
-                <div class="flex items-center gap-4">
+            <div id="batch-action-bar" class="hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 p-4 rounded-full shadow-2xl z-50 flex items-center gap-4 md:gap-6 transition-all duration-300 max-w-[95vw] overflow-x-auto">
+                <div class="flex items-center gap-4 shrink-0">
                     <div class="flex items-center gap-2">
                         <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold" id="sel-count">0</div>
                         <span class="text-white font-bold text-sm hidden md:inline">Selezionati</span>
@@ -301,26 +301,26 @@
                         <span class="text-yellow-400 font-bold text-sm" id="sel-time">0 min</span>
                     </div>
                 </div>
-                <div class="flex gap-4 border-l border-slate-600 pl-6">
+                <div class="flex gap-4 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
                     <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
-                        <input type="checkbox" id="batch-mappe" checked class="w-4 h-4 accent-blue-500 rounded cursor-pointer"> Mappe
+                        <input type="checkbox" id="batch-mappe" checked class="w-4 h-4 accent-blue-500 rounded cursor-pointer"> <span class="hidden md:inline">Mappe</span><span class="md:hidden">Map</span>
                     </label>
                     <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
-                        <input type="checkbox" id="batch-matrici" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer"> Matrici
+                        <input type="checkbox" id="batch-matrici" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer"> <span class="hidden md:inline">Matrici</span><span class="md:hidden">Mat</span>
                     </label>
                     <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
-                        <input type="checkbox" id="batch-dispense" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer"> Dispense
+                        <input type="checkbox" id="batch-dispense" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer"> <span class="hidden md:inline">Dispense</span><span class="md:hidden">Disp</span>
                     </label>
                 </div>
-                <div class="flex gap-2 border-l border-slate-600 pl-6">
-                    <button onclick="deselectAll()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full font-bold transition shadow flex items-center text-sm border border-slate-500">
+                <div class="flex gap-2 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
+                    <button onclick="deselectAll()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full font-bold transition shadow flex items-center justify-center text-sm border border-slate-500 whitespace-nowrap shrink-0">
                         Annulla
                     </button>
-                    <button onclick="printBatch()" class="bg-white hover:bg-slate-200 text-slate-900 px-5 py-2 rounded-full font-black transition shadow flex items-center text-sm">
-                        <i class="fa-solid fa-print mr-2 text-blue-600"></i> Crea PDF Unico
+                    <button onclick="printBatch()" class="bg-white hover:bg-slate-200 text-slate-900 px-5 py-2 rounded-full font-black transition shadow flex items-center justify-center text-sm whitespace-nowrap shrink-0">
+                        <i class="fa-solid fa-print mr-2 text-blue-600"></i> Crea PDF
                     </button>
-                    <button onclick="deleteBatch()" class="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded-full font-black transition shadow flex items-center text-sm">
-                        <i class="fa-solid fa-trash-can mr-2"></i> Elimina
+                    <button onclick="deleteBatch()" class="bg-red-600 hover:bg-red-500 text-white px-4 md:px-5 py-2 rounded-full font-black transition shadow flex items-center justify-center text-sm whitespace-nowrap shrink-0">
+                        <i class="fa-solid fa-trash-can md:mr-2"></i> <span class="hidden md:inline">Elimina</span>
                     </button>
                 </div>
             </div>
@@ -684,10 +684,10 @@
                     // 1. Sostituisce le frecce con un'icona carina
                     extraText = extraText.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right-long text-emerald-500 mx-1"></i>');
                     // 2. Chiude il div e ne apre uno nuovo ogni volta che legge "EXTRA:"
-                    extraText = extraText.replace(/(?:EXTRA QUIZ|EXTRA):/gi, '</div><div class="pagina-extra" style="margin-top:6px;"><i class="fa-solid fa-circle-info mr-1"></i> <strong>EXTRA:</strong> ');
+                    extraText = extraText.replace(/(?:EXTRA QUIZ|EXTRA):/gi, '</div><div class="pagina-extra" style="margin-top:6px;"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ');
 
                     // 3. Avvolge tutto nel contenitore principale
-                    extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong>EXTRA:</strong> ${extraText}</div>`;
+                    extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ${extraText}</div>`;
                 }
 
                 // --- 3. TESTO PRINCIPALE ---
