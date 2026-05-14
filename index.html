@@ -612,7 +612,7 @@
                 pText = pText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
-            else if (cleanStart.startsWith('PAGINA')) {
+else if (cleanStart.startsWith('PAGINA')) {
                 l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
                 
                 let pageMatch = l.match(/PAGINA\s*\d+:?/i); 
@@ -641,7 +641,18 @@
                     extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ${extraText}</div>`;
                 }
 
-                // --- 3. TESTO PRINCIPALE ---
+                // --- 3. ESTRAZIONE GANCIO (Novità!) ---
+                let gancioText = "";
+                let gancioMatch = remaining.match(/IL GANCIO:(.*)/i);
+                if (gancioMatch) {
+                    gancioText = gancioMatch[1].trim();
+                    remaining = remaining.substring(0, gancioMatch.index).trim(); 
+                    
+                    // Box visivo viola/indaco con icona megafono
+                    gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioText}</span></div>`;
+                }
+
+                // --- 4. TESTO PRINCIPALE ---
                 let mainText = remaining; 
 
                 let arrowMatch = mainText.match(/➔|->/);
@@ -652,14 +663,18 @@
                     mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="testo-regola">${rule}</span>`;
                 }
 
+                // Applica il grassetto a tutte le sezioni
                 mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if (gancioText) gancioText = gancioText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
+                // Impaginazione: Il gancio viene posizionato per PRIMO
                 html += `
                     <div class="pagina-row">
                         <div class="pagina-badge">${badgeText}</div>
                         <div class="pagina-text">
+                            ${gancioText}
                             ${mainText} 
                             ${extraText}
                             ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}
