@@ -613,59 +613,62 @@
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
 else if (cleanStart.startsWith('PAGINA')) {
-                l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
+                // 0. Pulizia estrema iniziale: disintegra i pallini ed emoji non voluti PRIMA di leggere
+                l = l.replace(/^\*\s*/, '').replace(/🟢|⚠️|🚨/g, ''); 
                 
                 let pageMatch = l.match(/PAGINA\s*\d+:?/i); 
                 let badgeText = pageMatch ? pageMatch[0].replace(':', '').trim() : "PAGINA";
                 
                 let remaining = pageMatch ? l.substring(l.indexOf(pageMatch[0]) + pageMatch[0].length).trim() : l.trim();
                 
-                // --- IL FRENO DI EMERGENZA (Dice al codice dove fermarsi a tagliare) ---
-                let lookahead = /(?=(?:🚨\s*)?(?:EXTRA QUIZ|EXTRA):|(?:TRAPPOLA|ATTENZIONE):|IL GANCIO:|(?:🟢\s*)?NESSUN QUIZ MINISTERIALE|\*\*[^*]+\*\*\s*(?:➔|->)|$)/i;
-
-                // --- 1. ESTRAZIONE GANCIO ---
-                let gancioText = "";
-                let gancioMatch = remaining.match(new RegExp(`IL GANCIO:\\s*(.*?)${lookahead.source}`, 'is'));
-                if (gancioMatch) {
-                    gancioText = gancioMatch[1].trim();
-                    remaining = remaining.replace(gancioMatch[0], '').trim(); 
-                    gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioText}</span></div>`;
+                // --- 1. ESTRAZIONE TRAPPOLA / ATTENZIONE (Taglio netto dal fondo) ---
+                let trapText = "";
+                let trapRegex = /(TRAPPOLA|ATTENZIONE):\s*([\s\S]*)$/i;
+                let trapMatch = remaining.match(trapRegex);
+                if (trapMatch) {
+                    let keyword = trapMatch[1].toUpperCase();
+                    trapText = `${keyword}: ` + trapMatch[2].trim();
+                    remaining = remaining.substring(0, trapMatch.index).trim(); 
                 }
 
-                // --- 2. ESTRAZIONE NESSUN QUIZ MINISTERIALE (Con Box Dedicato!) ---
-                let nessunText = "";
-                let nessunMatch = remaining.match(new RegExp(`(?:🟢\\s*)?NESSUN QUIZ MINISTERIALE\\s*(?:➔|->|:)?\\s*(.*?)${lookahead.source}`, 'is'));
-                if (nessunMatch) {
-                    nessunText = nessunMatch[1].trim();
-                    remaining = remaining.replace(nessunMatch[0], '').trim();
-                    // Box azzurro "Relax" per indicare assenza di quiz
-                    nessunText = `<div style="color: #0284c7; font-weight: 600; display: block; margin-top: 6px; padding: 0.4rem 0.6rem; border-left: 3px solid #38bdf8; background: rgba(56, 189, 248, 0.1); font-size: 0.95rem; border-radius: 0.25rem;"><i class="fa-solid fa-mug-hot mr-2"></i><strong style="color: inherit;">NESSUN QUIZ:</strong> <span style="color: inherit; font-weight: normal;">${nessunText}</span></div>`;
-                }
-
-                // --- 3. ESTRAZIONE EXTRA (Togliamo EXTRA dal lookahead per prenderli tutti di fila) ---
-                let extraLookahead = /(?=(?:TRAPPOLA|ATTENZIONE):|IL GANCIO:|(?:🟢\s*)?NESSUN QUIZ MINISTERIALE|\*\*[^*]+\*\*\s*(?:➔|->)|$)/i;
+                // --- 2. ESTRAZIONE EXTRA (Taglio dal fondo, infallibile per catturarli tutti) ---
                 let extraText = "";
-                let extraMatch = remaining.match(new RegExp(`(?:🚨\\s*)?(?:EXTRA QUIZ|EXTRA):\\s*(.*?)${extraLookahead.source}`, 'is'));
+                let extraRegex = /(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i;
+                let extraMatch = remaining.match(extraRegex);
                 if (extraMatch) {
-                    extraText = extraMatch[1].trim();
-                    remaining = remaining.replace(extraMatch[0], '').trim(); 
+                    extraText = extraMatch[2].trim();
+                    remaining = remaining.substring(0, extraMatch.index).trim(); 
 
                     extraText = extraText.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right-long text-emerald-500 mx-1"></i>');
-                    extraText = extraText.replace(/(?:EXTRA QUIZ|EXTRA):/gi, '</div><div class="pagina-extra" style="margin-top:6px;"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ');
+                    extraText = extraText.replace(/(EXTRA QUIZ|EXTRA):/gi, '</div><div class="pagina-extra" style="margin-top:6px;"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ');
                     extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ${extraText}</div>`;
                 }
 
-                // --- 4. ESTRAZIONE TRAPPOLA / ATTENZIONE ---
-                let trapText = "";
-                let trapMatch = remaining.match(new RegExp(`(?:TRAPPOLA|ATTENZIONE):\\s*(.*?)${extraLookahead.source}`, 'is'));
-                if (trapMatch) {
-                    let keywordMatch = remaining.match(/(TRAPPOLA|ATTENZIONE):/i);
-                    let keyword = keywordMatch ? keywordMatch[1].toUpperCase() : "ATTENZIONE";
-                    trapText = `${keyword}: ` + trapMatch[1].trim();
-                    remaining = remaining.replace(trapMatch[0], '').trim(); 
+                // --- 3. ESTRAZIONE NESSUN QUIZ (Taglio netto dal fondo) ---
+                let nessunText = "";
+                let nessunRegex = /(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i;
+                let nessunMatch = remaining.match(nessunRegex);
+                if (nessunMatch) {
+                    nessunText = nessunMatch[2].trim();
+                    nessunText = nessunText.replace(/^(?:➔|->)/, '').trim(); // Pulisce frecce residue
+                    remaining = remaining.substring(0, nessunMatch.index).trim(); 
+                    
+                    // Formattazione pulita, sobria, senza colori o icone inutili
+                    nessunText = `<div style="display: block; margin-top: 4px;"><strong>NESSUN QUIZ:</strong> <span class="testo-regola">${nessunText}</span></div>`;
                 }
 
-                // --- 5. TESTO PRINCIPALE (La Regola) ---
+                // --- 4. ESTRAZIONE GANCIO ---
+                let gancioText = "";
+                let gancioRegex = /IL GANCIO:\s*(.*?)(?=\s*\*\*|$)/i; // Cerca in avanti solo fino al titolo o alla fine
+                let gancioMatch = remaining.match(gancioRegex);
+                if (gancioMatch) {
+                    gancioText = gancioMatch[1].trim();
+                    remaining = remaining.replace(gancioMatch[0], '').trim(); 
+                    
+                    gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioText}</span></div>`;
+                }
+
+                // --- 5. TESTO PRINCIPALE ---
                 let mainText = remaining; 
 
                 let arrowMatch = mainText.match(/➔|->/);
@@ -674,16 +677,18 @@ else if (cleanStart.startsWith('PAGINA')) {
                     let arg = mainText.substring(0, idx).trim();
                     let rule = mainText.substring(idx + arrowMatch[0].length).trim();
                     mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="testo-regola">${rule}</span>`;
+                } else if (mainText.length > 0) {
+                    mainText = `<span class="testo-regola">${mainText}</span>`;
                 }
 
-                // Applica il grassetto a tutte le sezioni
-                mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Applica il grassetto finale a tutte le sezioni
+                if (mainText) mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (gancioText) gancioText = gancioText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (nessunText) nessunText = nessunText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                // Stampa impaginando nell'ordine corretto
+                // Stampa tutto l'HTML nell'ordine perfetto
                 html += `
                     <div class="pagina-row">
                         <div class="pagina-badge">${badgeText}</div>
