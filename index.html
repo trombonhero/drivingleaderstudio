@@ -641,12 +641,14 @@ else if (cleanStart.startsWith('PAGINA')) {
                     extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ${extraText}</div>`;
                 }
 
-                // --- 3. ESTRAZIONE GANCIO (Novità!) ---
+                // --- 3. ESTRAZIONE GANCIO (Fixato per "Nessun Quiz") ---
                 let gancioText = "";
-                let gancioMatch = remaining.match(/IL GANCIO:(.*)/i);
+                // Freno di emergenza: Il Gancio si ferma prima di "NESSUN QUIZ" o del "**TITOLO"
+                let gancioRegex = /IL GANCIO:\s*(.*?)(?=\s*🟢?\s*NESSUN QUIZ MINISTERIALE|\s*\*\*\s*[A-Z0-9]|$)/i;
+                let gancioMatch = remaining.match(gancioRegex);
                 if (gancioMatch) {
                     gancioText = gancioMatch[1].trim();
-                    remaining = remaining.substring(0, gancioMatch.index).trim(); 
+                    remaining = remaining.replace(gancioMatch[0], '').trim(); 
                     
                     // Box visivo viola/indaco con icona megafono
                     gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioText}</span></div>`;
