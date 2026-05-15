@@ -654,7 +654,7 @@ else if (cleanStart.startsWith('PAGINA')) {
                     remaining = remaining.substring(0, nessunMatch.index).trim(); 
                     
                     // Formattazione pulita, sobria, senza colori o icone inutili
-                    nessunText = `<div style="display: block; margin-top: 4px;"><strong>NESSUN QUIZ:</strong> <span class="testo-regola">${nessunText}</span></div>`;
+                    nessunText = `<div style="display: block; margin-top: 4px; color: #475569;"><span style="background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 6px; border-radius: 4px; font-size: 0.85rem; margin-right: 6px;"><strong>NESSUN QUIZ</strong></span><span style="font-style: italic; font-size: 0.95rem;">${nessunText}</span></div>`;
                 }
 
                 // --- 4. ESTRAZIONE GANCIO ---
