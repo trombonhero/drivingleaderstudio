@@ -268,13 +268,18 @@
                         <input type="checkbox" id="batch-dispense" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer"> <span class="hidden md:inline">Dispense</span><span class="md:hidden">Disp</span>
                     </label>
                 </div>
-                <div class="flex gap-2 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
+<div class="flex gap-2 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
                     <button onclick="deselectAll()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full font-bold transition shadow flex items-center justify-center text-sm border border-slate-500 whitespace-nowrap shrink-0">
                         Annulla
                     </button>
-                    <button onclick="printBatch()" class="bg-white hover:bg-slate-200 text-slate-900 px-5 py-2 rounded-full font-black transition shadow flex items-center justify-center text-sm whitespace-nowrap shrink-0">
-                        <i class="fa-solid fa-print mr-2 text-blue-600"></i> Crea PDF
-                    </button>
+                    <div class="flex rounded-full shadow border border-slate-400 overflow-hidden shrink-0">
+                        <button onclick="printBatch()" class="bg-white hover:bg-slate-200 text-slate-900 px-5 py-2 font-black transition flex items-center justify-center text-sm whitespace-nowrap shrink-0">
+                            <i class="fa-solid fa-print mr-2 text-blue-600"></i> Crea PDF
+                        </button>
+                        <button onclick="openAdvancedPrint()" class="bg-slate-200 hover:bg-slate-300 border-l border-slate-400 text-slate-900 px-3 py-2 font-black transition flex items-center justify-center text-sm" title="Opzioni Avanzate e Ordine">
+                            <i class="fa-solid fa-sliders"></i>
+                        </button>
+                    </div>
                     <button onclick="deleteBatch()" class="bg-red-600 hover:bg-red-500 text-white px-4 md:px-5 py-2 rounded-full font-black transition shadow flex items-center justify-center text-sm whitespace-nowrap shrink-0">
                         <i class="fa-solid fa-trash-can md:mr-2"></i> <span class="hidden md:inline">Elimina</span>
                     </button>
@@ -354,7 +359,35 @@
 
     </div> 
     
-    <div id="print-area"></div>
+<div id="print-area"></div>
+
+    <div id="advanced-print-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
+        <div class="bg-slate-900 border border-slate-600 rounded-2xl w-full max-w-lg p-6 shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center mb-6 shrink-0 border-b border-slate-700 pb-4">
+                <h2 class="text-2xl font-black text-white"><i class="fa-solid fa-sliders text-blue-500 mr-2"></i> Regia di Stampa</h2>
+                <button onclick="closeAdvancedPrint()" class="text-slate-400 hover:text-red-400 text-2xl transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <p class="text-slate-400 text-sm mb-4 shrink-0">Ordina le lezioni usando le frecce. L'ordine scelto qui sarà l'ordine esatto del PDF.</p>
+            
+            <div id="advanced-queue-list" class="flex-grow overflow-y-auto space-y-2 mb-6 pr-2">
+                </div>
+
+            <div class="shrink-0 border-t border-slate-700 pt-4 space-y-4">
+                <label class="flex items-center gap-3 bg-slate-800 p-3 rounded-lg cursor-pointer border border-slate-600 hover:border-blue-500 transition">
+                    <input type="checkbox" id="override-time-cb" class="w-5 h-5 accent-blue-500 rounded cursor-pointer">
+                    <div>
+                        <span class="text-white font-bold block leading-tight">Forza ricalcolo tempo</span>
+                        <span class="text-xs text-slate-400">Assegna automaticamente 2 min per ogni Pagina/Slide</span>
+                    </div>
+                </label>
+
+                <button onclick="executeAdvancedPrint()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl shadow-lg shadow-blue-500/20 transition text-lg flex justify-center items-center">
+                    <i class="fa-solid fa-print mr-2"></i> Genera PDF Ordinato
+                </button>
+            </div>
+        </div>
+    </div>
 
 <script>
     /* ==========================================================================
@@ -1418,7 +1451,7 @@ function renderArchiveList(searchQuery = '') {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    function renameEntity(type, oldName, parentName = '') {
+function renameEntity(type, oldName, parentName = '') {
         let docRef = type === 'paragrafo' ? archiveDB.find(d => d.id === oldName) : null;
         let displayName = type === 'paragrafo' && docRef ? docRef.argomento : oldName;
         
@@ -1447,6 +1480,152 @@ function renderArchiveList(searchQuery = '') {
             localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
             renderArchiveList(document.getElementById('search-db').value);
         }
+    }
+
+    /* ==========================================================================
+       MODULO STAMPA AVANZATA E REGIA (Ordine + Tempo Dinamico)
+    ========================================================================== */
+    let advancedQueue = [];
+
+    function openAdvancedPrint() {
+        const selectedIds = Array.from(document.querySelectorAll('.doc-checkbox:checked')).map(cb => cb.value);
+        if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
+        
+        advancedQueue = selectedIds.map(id => archiveDB.find(d => d.id === id)).filter(Boolean);
+        
+        renderAdvancedQueue();
+        document.getElementById('advanced-print-modal').classList.remove('hidden');
+    }
+
+    function closeAdvancedPrint() {
+        document.getElementById('advanced-print-modal').classList.add('hidden');
+    }
+
+    function renderAdvancedQueue() {
+        const list = document.getElementById('advanced-queue-list');
+        list.innerHTML = '';
+        advancedQueue.forEach((doc, index) => {
+            const isFirst = index === 0;
+            const isLast = index === advancedQueue.length - 1;
+            list.innerHTML += `
+                <div class="bg-slate-800 p-3 rounded-lg flex justify-between items-center border border-slate-600 group hover:border-slate-400 transition">
+                    <div class="truncate pr-4 flex-grow">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="bg-slate-900 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded border border-slate-700">${index + 1}</span>
+                            <span class="text-xs text-blue-400 font-bold uppercase truncate">${doc.aula}</span>
+                        </div>
+                        <span class="text-white font-bold text-sm block truncate">${doc.argomento}</span>
+                    </div>
+                    <div class="flex gap-1 shrink-0">
+                        <button onclick="moveAdvancedItem(${index}, -1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isFirst ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isFirst ? 'disabled' : ''}><i class="fa-solid fa-chevron-up"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, 1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isLast ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isLast ? 'disabled' : ''}><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function moveAdvancedItem(index, direction) {
+        if (index + direction < 0 || index + direction >= advancedQueue.length) return;
+        const temp = advancedQueue[index];
+        advancedQueue[index] = advancedQueue[index + direction];
+        advancedQueue[index + direction] = temp;
+        renderAdvancedQueue();
+    }
+
+    function executeAdvancedPrint() {
+        const wantMappe = document.getElementById('batch-mappe').checked;
+        const wantMatrici = document.getElementById('batch-matrici').checked;
+        const wantDispense = document.getElementById('batch-dispense').checked;
+        const overrideTime = document.getElementById('override-time-cb').checked;
+
+        if(!wantMappe && !wantMatrici && !wantDispense) return alert("Seleziona almeno un tipo di documento dalla barra inferiore prima di aprire le opzioni.");
+
+        let combinedHtml = "";
+
+        advancedQueue.forEach((doc) => {
+            const success = processAndRender(doc.rawText, 'batch', true); 
+            if(!success) return;
+
+            const meta = currentDocMeta['batch'];
+            
+            // Override Tempo: Calcolo automatico a 2 minuti per PAGINA
+            if (overrideTime) {
+                const pageMatches = doc.rawText.match(/PAGINA\s*\d+:/gi);
+                const pageCount = pageMatches ? pageMatches.length : 0;
+                if (pageCount > 0) {
+                    meta.tempo = (pageCount * 2) + " min";
+                } else {
+                    meta.tempo = "Tempo non stimabile";
+                }
+            }
+
+            // Modelli Esatti CONTI AUTOSCUOLE richiesti
+            if(wantMappe) {
+                let printHeader = `
+                    <div class="print-header-container">
+                        <p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p>
+                        <p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p>
+                        <h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1>
+                        <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                            <h2 class="print-header-arg">${meta.obiettivo || ''}</h2>
+                            ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
+                        </div>
+                    </div>`;
+                let content = document.getElementById('batch-mappa-render').innerHTML;
+                combinedHtml += `<div class="batch-page-fluid">${printHeader}${content}</div>`;
+            }
+
+            if(wantMatrici) {
+                let printHeader = `
+                    <div class="print-header-container">
+                        <p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p>
+                        <p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p>
+                        <h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1>
+                        <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                            <h2 class="print-header-arg">${meta.obiettivo || ''}</h2>
+                        </div>
+                    </div>`;
+                let content = document.getElementById('batch-matrice-render').innerHTML;
+                combinedHtml += `<div class="batch-page">${printHeader}${content}</div>`;
+            }
+
+            if(wantDispense && currentDispensaHtml['batch']) {
+                let printHeader = `
+                    <div class="print-header-container">
+                        <p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p>
+                        <p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p>
+                        <h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1>
+                        <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                            <h2 class="print-header-arg">${meta.obiettivo || ''}</h2>
+                        </div>
+                    </div>`;
+                let content = currentDispensaHtml['batch'];
+                combinedHtml += `<div class="batch-page">${printHeader}${content}</div>`;
+            }
+        });
+
+        document.getElementById('print-area').innerHTML = `
+            <table style="width: 100%; border: none; border-collapse: collapse;">
+                <tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot>
+                <tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">
+                    ${combinedHtml}
+                </td></tr></tbody>
+            </table>
+            ${printFooterHtmlBlock}
+        `;
+        
+        let baseName = "regia_avanzata"; 
+        const originalTitle = document.title;
+        document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
+        
+        closeAdvancedPrint();
+        
+        setTimeout(() => {
+            window.print();
+            document.title = originalTitle; 
+            document.getElementById('print-area').innerHTML = '';
+        }, 300);
     }
     
     if(archiveDB.length === 0) navTo('generator'); else navTo('archive');
