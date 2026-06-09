@@ -127,19 +127,14 @@
             .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt; width: 12px !important;}
             .d-quiz-item > div { display: block !important; overflow: hidden !important; }
 
-            /* --- NUOVI STILI: MAPPA CONCETTUALE --- */
-            .cmap-container { font-family: 'Segoe UI', Arial, sans-serif; display: block; padding: 10px 0; }
-            .cmap-title { text-align: center; border: 3px solid #0f172a; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 16pt; margin-bottom: 25px; background: #f8fafc; text-transform: uppercase; color: #0f172a; page-break-after: avoid !important;}
-            .cmap-node { display: block !important; margin-bottom: 15px; page-break-inside: avoid !important; break-inside: avoid !important; width: 100%; border: 2px solid #334155; border-radius: 8px; overflow: hidden;}
-            .cmap-header { background: #334155; color: white; padding: 6px 12px; font-weight: 900; font-size: 11pt; border-bottom: 2px solid #334155;}
-            .cmap-content { padding: 12px; background: white;}
-            .cmap-elements { display: block !important; width: 100%; }
-            .cmap-box { display: block; padding: 6px 10px; border-radius: 6px; font-size: 10pt; margin-bottom: 6px; line-height: 1.3; page-break-inside: avoid !important;}
-            .cmap-gancio { background: #f3e8ff !important; border-left: 5px solid #7e22ce !important; color: #4c1d95 !important; }
-            .cmap-rule { background: #e0f2fe !important; border-left: 5px solid #0284c7 !important; color: #075985 !important; font-weight: bold;}
-            .cmap-extra { background: #dcfce3 !important; border-left: 5px solid #16a34a !important; color: #14532d !important; }
-            .cmap-trap { background: #fee2e2 !important; border-left: 5px solid #dc2626 !important; color: #7f1d1d !important; }
-            .cmap-nessun { background: #f1f5f9 !important; border-left: 5px solid #64748b !important; color: #334155 !important; }
+/* --- STILE MAPPA CONCETTUALE ALLIEVI (Organigramma) --- */
+            .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
+            .mindmap-root { background: #0f172a; color: white; font-weight: 900; font-size: 16pt; padding: 12px 30px; border-radius: 8px; text-transform: uppercase; margin-bottom: 25px; text-align: center; border: 2px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%;}
+            .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; align-items: flex-start;}
+            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 220px; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; background: #f8fafc;}
+            .mindmap-phase-node { background: #d97706; color: white; font-weight: 900; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 11pt; text-transform: uppercase; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+            .mindmap-item { background: white; border-left: 5px solid #3b82f6; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; font-size: 10pt; font-weight: 800; color: #1e293b; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center; text-transform: uppercase;}
+            .mindmap-item-extra { border-left-color: #10b981; font-style: normal; color: #065f46; background: #f0fdf4;}
         }
     </style>
 </head>
@@ -615,7 +610,8 @@ function renderMappa(text, prefix) {
         });
 
         let html = '';
-        let cmapHtmlNodes = ''; // Memoria Mappa Concettuale
+        let conceptData = {}; // Memoria per raggruppare i concetti per FASE
+        let currentFase = "CONCETTI CHIAVE"; // Fase di default se l'IA non ne genera una
         currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
         
         mergedLines.forEach(line => {
@@ -635,6 +631,7 @@ function renderMappa(text, prefix) {
             else if (cleanStart.startsWith('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
+                currentFase = title; // Registriamo la fase corrente per la mappa allievi
             } 
             else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
                 let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -686,11 +683,12 @@ function renderMappa(text, prefix) {
                 }
 
                 let mainText = remaining; 
-                let mainRaw = remaining; 
+                let argToExtract = ""; // Parola chiave per gli allievi
                 let arrowMatch = mainText.match(/➔|->/);
                 if (arrowMatch) {
                     let idx = mainText.indexOf(arrowMatch[0]);
                     let arg = mainText.substring(0, idx).trim();
+                    argToExtract = arg.replace(/\*\*/g, '').trim(); // Salva per la mappa
                     let rule = mainText.substring(idx + arrowMatch[0].length).trim();
                     mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="testo-regola">${rule}</span>`;
                 } else if (mainText.length > 0) {
@@ -702,33 +700,75 @@ function renderMappa(text, prefix) {
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                // Mappa NORMALE
-                html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText}${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
+                // Mappa Normale (Docente)
+                html += `
+                    <div class="pagina-row">
+                        <div class="pagina-badge">${badgeText}</div>
+                        <div class="pagina-text">
+                            ${gancioText}
+                            ${mainText} 
+                            ${nessunText}
+                            ${extraText}
+                            ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}
+                        </div>
+                    </div>
+                `;
 
-                // Mappa CONCETTUALE
-                let numMatch = badgeText.match(/\d+/);
-                let pageNumber = numMatch ? numMatch[0] : "P";
+                // LOGICA MAPPA ALLIEVI
+                if (!conceptData[currentFase]) conceptData[currentFase] = [];
                 
-                let cmapItems = "";
-                if (gancioRaw) cmapItems += `<div class="cmap-box cmap-gancio"><strong>IL GANCIO:</strong> ${gancioRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
-                if (mainRaw) cmapItems += `<div class="cmap-box cmap-rule">${mainRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/➔|->/g, '&#8594;')}</div>`;
-                if (nessunRaw) cmapItems += `<div class="cmap-box cmap-nessun"><strong>NESSUN QUIZ:</strong> ${nessunRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
-                if (extraRaw) cmapItems += `<div class="cmap-box cmap-extra"><strong>EXTRA:</strong> ${extraRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/➔|->/g, '&#8594;')}</div>`;
-                if (trapRaw) cmapItems += `<div class="cmap-box cmap-trap"><strong>${trapKeyword}:</strong> ${trapRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+                if (argToExtract) {
+                    conceptData[currentFase].push(`<div class="mindmap-item">${argToExtract}</div>`);
+                }
+                if (extraRaw) {
+                    let extArrowMatch = extraRaw.match(/➔|->/);
+                    if(extArrowMatch) {
+                        let extIdx = extraRaw.indexOf(extArrowMatch[0]);
+                        let extArg = extraRaw.substring(0, extIdx).replace(/\*\*/g, '').trim();
+                        if(extArg) conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-extra">EXTRA: ${extArg}</div>`);
+                    }
+                }
+            }
+        });
 
-                cmapHtmlNodes += `<div class="cmap-node"><div class="cmap-header">PAGINA ${pageNumber}</div><div class="cmap-content"><div class="cmap-elements">${cmapItems}</div></div></div>`;
+        // GENERAZIONE HTML MAPPA ALLIEVI
+        let cmapHtmlNodes = '';
+        Object.keys(conceptData).forEach(fase => {
+            if (conceptData[fase].length > 0) {
+                cmapHtmlNodes += `
+                    <div class="mindmap-phase-col">
+                        <div class="mindmap-phase-node">${fase}</div>
+                        ${conceptData[fase].join('')}
+                    </div>
+                `;
             }
         });
 
         if (cmapHtmlNodes !== '') {
-            currentConceptMapHtml[prefix] = `<div class="cmap-container"><div class="cmap-title">MAPPA CONCETTUALE: <br><span style="color:#d97706; font-size:12pt; display:block; margin-top:5px;">${currentDocMeta[prefix].argomento || 'Argomento'}</span></div>${cmapHtmlNodes}</div>`;
+            currentConceptMapHtml[prefix] = `
+                <div class="mindmap-container">
+                    <div class="mindmap-root">${currentDocMeta[prefix].argomento || 'Argomento della Lezione'}</div>
+                    <div class="mindmap-phases">
+                        ${cmapHtmlNodes}
+                    </div>
+                </div>
+            `;
         } else {
             currentConceptMapHtml[prefix] = "";
         }
 
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
-            headerHtml = `<div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4"><div class="overflow-hidden"><p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p><h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2><h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3></div>${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}</div>`;
+            headerHtml = `
+                <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4">
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
+                        <h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2>
+                        <h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3>
+                    </div>
+                    ${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}
+                </div>
+            `;
         }
 
         const renderContainer = document.getElementById(`${prefix}-mappa-render`);
@@ -1114,7 +1154,7 @@ function renderMappa(text, prefix) {
         const wantDispense = document.getElementById('batch-dispense').checked;
         const wantConcept = document.getElementById('batch-concept').checked;
 
-        if(!wantMappe && !wantMatrici && !wantDispense) return alert("Seleziona almeno un tipo di documento da stampare.");
+        if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept) return alert("Seleziona almeno un tipo di documento da stampare.");
         if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
 
         let combinedHtml = "";
@@ -1430,8 +1470,7 @@ function renderMappa(text, prefix) {
         const wantConcept = document.getElementById('batch-concept').checked;
         const overrideTime = document.getElementById('override-time-cb').checked;
 
-        if(!wantMappe && !wantMatrici && !wantDispense) return alert("Seleziona almeno un tipo di documento dalla barra prima di stampare.");
-
+if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept) return alert("Seleziona almeno un tipo di documento dalla barra prima di stampare.");
         let combinedHtml = "";
 
         advancedQueue.forEach((doc) => {
