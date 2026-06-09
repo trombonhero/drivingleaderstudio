@@ -126,6 +126,20 @@
             .d-quiz-item { display: block !important; margin-bottom: 6px; font-size: 10pt; line-height: 1.3; page-break-inside: avoid !important; break-inside: avoid !important; overflow: hidden !important; width: 100% !important;}
             .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt; width: 12px !important;}
             .d-quiz-item > div { display: block !important; overflow: hidden !important; }
+
+            /* --- NUOVI STILI: MAPPA CONCETTUALE --- */
+            .cmap-container { font-family: 'Segoe UI', Arial, sans-serif; display: block; padding: 10px 0; }
+            .cmap-title { text-align: center; border: 3px solid #0f172a; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 16pt; margin-bottom: 25px; background: #f8fafc; text-transform: uppercase; color: #0f172a; page-break-after: avoid !important;}
+            .cmap-node { display: block !important; margin-bottom: 15px; page-break-inside: avoid !important; break-inside: avoid !important; width: 100%; border: 2px solid #334155; border-radius: 8px; overflow: hidden;}
+            .cmap-header { background: #334155; color: white; padding: 6px 12px; font-weight: 900; font-size: 11pt; border-bottom: 2px solid #334155;}
+            .cmap-content { padding: 12px; background: white;}
+            .cmap-elements { display: block !important; width: 100%; }
+            .cmap-box { display: block; padding: 6px 10px; border-radius: 6px; font-size: 10pt; margin-bottom: 6px; line-height: 1.3; page-break-inside: avoid !important;}
+            .cmap-gancio { background: #f3e8ff !important; border-left: 5px solid #7e22ce !important; color: #4c1d95 !important; }
+            .cmap-rule { background: #e0f2fe !important; border-left: 5px solid #0284c7 !important; color: #075985 !important; font-weight: bold;}
+            .cmap-extra { background: #dcfce3 !important; border-left: 5px solid #16a34a !important; color: #14532d !important; }
+            .cmap-trap { background: #fee2e2 !important; border-left: 5px solid #dc2626 !important; color: #7f1d1d !important; }
+            .cmap-nessun { background: #f1f5f9 !important; border-left: 5px solid #64748b !important; color: #334155 !important; }
         }
     </style>
 </head>
@@ -257,9 +271,12 @@
                         <span class="text-yellow-400 font-bold text-sm" id="sel-time">0 min</span>
                     </div>
                 </div>
-                <div class="flex gap-4 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
+<div class="flex gap-4 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
                     <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
                         <input type="checkbox" id="batch-mappe" checked class="w-4 h-4 accent-blue-500 rounded cursor-pointer"> <span class="hidden md:inline">Mappe</span><span class="md:hidden">Map</span>
+                    </label>
+                    <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
+                        <input type="checkbox" id="batch-concept" class="w-4 h-4 accent-purple-500 rounded cursor-pointer"> <span class="hidden md:inline">M. Concettuale</span><span class="md:hidden">M.C.</span>
                     </label>
                     <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
                         <input type="checkbox" id="batch-matrici" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer"> <span class="hidden md:inline">Matrici</span><span class="md:hidden">Mat</span>
@@ -403,6 +420,7 @@
     let currentDocMeta = { gen: {}, read: {}, batch: {} };
     let currentCsvData = { gen: [], read: [], batch: [] };
     let currentDispensaHtml = { gen: "", read: "", batch: "" }; 
+    let currentConceptMapHtml = { gen: "", read: "", batch: "" };
     
     let rawInputBuffer = "";
     let currentReaderDocId = null;
@@ -582,35 +600,22 @@
         return html;
     }
 
-    function renderMappa(text, prefix) {
+function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let mergedLines = [];
         
         lines.forEach(line => {
             let l = line.trim();
             if (!l) return;
-            
             let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
-            
-            let isKeyword = cleanStart.startsWith('AULA:') || 
-                            cleanStart.startsWith('CAPITOLO:') || 
-                            cleanStart.startsWith('OBIETTIVO:') || 
-                            cleanStart.startsWith('PARAGRAFO:') || 
-                            cleanStart.startsWith('ARGOMENTO:') || 
-                            cleanStart.startsWith('TEMPO STIMATO:') || 
-                            cleanStart.startsWith('IL SENSO PRATICO:') || 
-                            cleanStart.startsWith('FASE') || 
-                            cleanStart.startsWith('OBIETTIVO PRATICO:') || 
-                            cleanStart.startsWith('PAGINA');
+            let isKeyword = cleanStart.startsWith('AULA:') || cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:') || cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:') || cleanStart.startsWith('TEMPO STIMATO:') || cleanStart.startsWith('IL SENSO PRATICO:') || cleanStart.startsWith('FASE') || cleanStart.startsWith('OBIETTIVO PRATICO:') || cleanStart.startsWith('PAGINA');
 
-            if (isKeyword || mergedLines.length === 0) {
-                mergedLines.push(l); 
-            } else {
-                mergedLines[mergedLines.length - 1] += " " + l;
-            }
+            if (isKeyword || mergedLines.length === 0) mergedLines.push(l); 
+            else mergedLines[mergedLines.length - 1] += " " + l;
         });
 
         let html = '';
+        let cmapHtmlNodes = ''; // Memoria Mappa Concettuale
         currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
         
         mergedLines.forEach(line => {
@@ -619,21 +624,12 @@
 
             let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
 
-            if (cleanStart.startsWith('AULA:')) {
-                currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
-            }
-            else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) {
-                currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
-            }
-            else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) {
-                currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
-            }
-            else if (cleanStart.startsWith('TEMPO STIMATO:')) {
-                currentDocMeta[prefix].tempo = l.replace(/.*?TEMPO STIMATO:/i, '').replace(/[\*\_]/g, '').trim();
-            }
+            if (cleanStart.startsWith('AULA:')) currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('TEMPO STIMATO:')) currentDocMeta[prefix].tempo = l.replace(/.*?TEMPO STIMATO:/i, '').replace(/[\*\_]/g, '').trim();
             else if (cleanStart.startsWith('IL SENSO PRATICO:')) {
-                let pText = l.replace(/.*?IL SENSO PRATICO:/i, '').trim();
-                pText = pText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                let pText = l.replace(/.*?IL SENSO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-globale"><div class="incipit-titolo"><i class="fa-solid fa-lightbulb mr-2"></i>Il Senso Pratico</div>${pText}</div>`;
             }
             else if (cleanStart.startsWith('FASE')) {
@@ -641,8 +637,7 @@
                 html += `<div class="fase-title">${title}</div>`;
             } 
             else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
-                let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim();
-                pText = pText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
             else if (cleanStart.startsWith('PAGINA')) {
@@ -650,51 +645,48 @@
                 
                 let pageMatch = l.match(/PAGINA\s*\d+:?/i); 
                 let badgeText = pageMatch ? pageMatch[0].replace(':', '').trim() : "PAGINA";
-                
                 let remaining = pageMatch ? l.substring(l.indexOf(pageMatch[0]) + pageMatch[0].length).trim() : l.trim();
                 
-                let trapText = "";
+                let trapText = "", trapRaw = "", trapKeyword = "ATTENZIONE";
                 let trapRegex = /(TRAPPOLA|ATTENZIONE):\s*([\s\S]*)$/i;
                 let trapMatch = remaining.match(trapRegex);
                 if (trapMatch) {
-                    let keyword = trapMatch[1].toUpperCase();
-                    trapText = `${keyword}: ` + trapMatch[2].trim();
+                    trapKeyword = trapMatch[1].toUpperCase();
+                    trapRaw = trapMatch[2].trim();
+                    trapText = `${trapKeyword}: ` + trapRaw;
                     remaining = remaining.substring(0, trapMatch.index).trim(); 
                 }
 
-                let extraText = "";
+                let extraText = "", extraRaw = "";
                 let extraRegex = /(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i;
                 let extraMatch = remaining.match(extraRegex);
                 if (extraMatch) {
-                    extraText = extraMatch[2].trim();
+                    extraRaw = extraMatch[2].trim();
+                    extraText = extraRaw.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right-long text-emerald-500 mx-1"></i>');
                     remaining = remaining.substring(0, extraMatch.index).trim(); 
-
-                    extraText = extraText.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right-long text-emerald-500 mx-1"></i>');
-                    extraText = extraText.replace(/(EXTRA QUIZ|EXTRA):/gi, '</div><div class="pagina-extra" style="margin-top:6px;"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ');
                     extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ${extraText}</div>`;
                 }
 
-                let nessunText = "";
+                let nessunText = "", nessunRaw = "";
                 let nessunRegex = /(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i;
                 let nessunMatch = remaining.match(nessunRegex);
                 if (nessunMatch) {
-                    nessunText = nessunMatch[2].trim();
-                    nessunText = nessunText.replace(/^(?:➔|->)/, '').trim(); 
+                    nessunRaw = nessunMatch[2].trim().replace(/^(?:➔|->)/, '').trim();
                     remaining = remaining.substring(0, nessunMatch.index).trim(); 
-                    nessunText = `<div style="display: block; margin-top: 4px; color: #475569;"><span style="background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 6px; border-radius: 4px; font-size: 0.85rem; margin-right: 6px;"><strong>NESSUN QUIZ</strong></span><span style="font-style: italic; font-size: 0.95rem;">${nessunText}</span></div>`;
+                    nessunText = `<div style="display: block; margin-top: 4px; color: #475569;"><span style="background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 6px; border-radius: 4px; font-size: 0.85rem; margin-right: 6px;"><strong>NESSUN QUIZ</strong></span><span style="font-style: italic; font-size: 0.95rem;">${nessunRaw}</span></div>`;
                 }
 
-                let gancioText = "";
+                let gancioText = "", gancioRaw = "";
                 let gancioRegex = /IL GANCIO:\s*(.*?)(?=\s*\*\*|$)/i; 
                 let gancioMatch = remaining.match(gancioRegex);
                 if (gancioMatch) {
-                    gancioText = gancioMatch[1].trim();
+                    gancioRaw = gancioMatch[1].trim();
                     remaining = remaining.replace(gancioMatch[0], '').trim(); 
-                    gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioText}</span></div>`;
+                    gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioRaw}</span></div>`;
                 }
 
                 let mainText = remaining; 
-
+                let mainRaw = remaining; 
                 let arrowMatch = mainText.match(/➔|->/);
                 if (arrowMatch) {
                     let idx = mainText.indexOf(arrowMatch[0]);
@@ -709,35 +701,34 @@
                 if (gancioText) gancioText = gancioText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                if (nessunText) nessunText = nessunText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                html += `
-                    <div class="pagina-row">
-                        <div class="pagina-badge">${badgeText}</div>
-                        <div class="pagina-text">
-                            ${gancioText}
-                            ${mainText} 
-                            ${nessunText}
-                            ${extraText}
-                            ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}
-                        </div>
-                    </div>
-                `;
+                // Mappa NORMALE
+                html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText}${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
+
+                // Mappa CONCETTUALE
+                let numMatch = badgeText.match(/\d+/);
+                let pageNumber = numMatch ? numMatch[0] : "P";
+                
+                let cmapItems = "";
+                if (gancioRaw) cmapItems += `<div class="cmap-box cmap-gancio"><strong>IL GANCIO:</strong> ${gancioRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+                if (mainRaw) cmapItems += `<div class="cmap-box cmap-rule">${mainRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/➔|->/g, '&#8594;')}</div>`;
+                if (nessunRaw) cmapItems += `<div class="cmap-box cmap-nessun"><strong>NESSUN QUIZ:</strong> ${nessunRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+                if (extraRaw) cmapItems += `<div class="cmap-box cmap-extra"><strong>EXTRA:</strong> ${extraRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/➔|->/g, '&#8594;')}</div>`;
+                if (trapRaw) cmapItems += `<div class="cmap-box cmap-trap"><strong>${trapKeyword}:</strong> ${trapRaw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+
+                cmapHtmlNodes += `<div class="cmap-node"><div class="cmap-header">PAGINA ${pageNumber}</div><div class="cmap-content"><div class="cmap-elements">${cmapItems}</div></div></div>`;
             }
         });
 
+        if (cmapHtmlNodes !== '') {
+            currentConceptMapHtml[prefix] = `<div class="cmap-container"><div class="cmap-title">MAPPA CONCETTUALE: <br><span style="color:#d97706; font-size:12pt; display:block; margin-top:5px;">${currentDocMeta[prefix].argomento || 'Argomento'}</span></div>${cmapHtmlNodes}</div>`;
+        } else {
+            currentConceptMapHtml[prefix] = "";
+        }
+
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
-            headerHtml = `
-                <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4">
-                    <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
-                        <h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2>
-                        <h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3>
-                    </div>
-                    ${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}
-                </div>
-            `;
+            headerHtml = `<div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4"><div class="overflow-hidden"><p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p><h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2><h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3></div>${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}</div>`;
         }
 
         const renderContainer = document.getElementById(`${prefix}-mappa-render`);
@@ -1121,6 +1112,7 @@
         const wantMappe = document.getElementById('batch-mappe').checked;
         const wantMatrici = document.getElementById('batch-matrici').checked;
         const wantDispense = document.getElementById('batch-dispense').checked;
+        const wantConcept = document.getElementById('batch-concept').checked;
 
         if(!wantMappe && !wantMatrici && !wantDispense) return alert("Seleziona almeno un tipo di documento da stampare.");
         if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
@@ -1135,6 +1127,11 @@
             if(!success) return;
 
             const meta = currentDocMeta['batch'];
+
+            if(wantConcept && currentConceptMapHtml['batch']) {
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale (Lavagna)'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                combinedHtml += `<div class="batch-page">${printHeader}${currentConceptMapHtml['batch']}</div>`;
+            }
 
             if(wantMappe) {
                 let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
@@ -1430,6 +1427,7 @@
         const wantMappe = document.getElementById('batch-mappe').checked;
         const wantMatrici = document.getElementById('batch-matrici').checked;
         const wantDispense = document.getElementById('batch-dispense').checked;
+        const wantConcept = document.getElementById('batch-concept').checked;
         const overrideTime = document.getElementById('override-time-cb').checked;
 
         if(!wantMappe && !wantMatrici && !wantDispense) return alert("Seleziona almeno un tipo di documento dalla barra prima di stampare.");
@@ -1446,6 +1444,11 @@
                 const pageMatches = doc.rawText.match(/PAGINA\s*\d+:/gi);
                 const pageCount = pageMatches ? pageMatches.length : 0;
                 meta.tempo = pageCount > 0 ? (pageCount * 2) + " min" : "Tempo non stimabile";
+            }
+
+            if(wantConcept && currentConceptMapHtml['batch']) {
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale (Lavagna)'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                combinedHtml += `<div class="batch-page">${printHeader}${currentConceptMapHtml['batch']}</div>`;
             }
 
             if(wantMappe) {
