@@ -410,7 +410,38 @@
     /* ==========================================================================
        STATO E VARIABILI GLOBALI
     ========================================================================== */
-    let archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzUaGb494IYDOr8kkUCvFZf-m0zD-E25XVGm61HnalomSJQzp5I1nDjyTeka_zBWFSN/exec";
+    let archiveDB = [];
+
+    // Carica il database dal cloud all'apertura del programma
+    async function loadFromCloud() {
+        try {
+            const response = await fetch(CLOUD_URL);
+            archiveDB = await response.json();
+            renderArchiveList();
+        } catch (e) {
+            console.error("Errore cloud, uso backup locale", e);
+            archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+            renderArchiveList();
+        }
+    }
+    loadFromCloud();
+
+async function syncDatabase() {
+        // Salva comunque una copia locale nel browser per sicurezza/emergenza offline
+        localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+        
+        // Spinge l'intero archivio su Google Drive
+        try {
+            await fetch(CLOUD_URL, {
+                method: "POST",
+                mode: "no-cors", // Evita blocchi di sicurezza del browser
+                body: JSON.stringify(archiveDB)
+            });
+        } catch (e) {
+            console.error("Errore sincronizzazione cloud", e);
+        }
+    }
     
     let currentDocMeta = { gen: {}, read: {}, batch: {} };
     let currentCsvData = { gen: [], read: [], batch: [] };
@@ -873,7 +904,7 @@ function renderMappa(text, prefix) {
 
         archiveDB.push(newItem);
         try {
-            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            syncDatabase();
             lastOpenedAula = newItem.aula;
             lastOpenedCapitolo = newItem.obiettivo;
             alert("Documento salvato con successo nell'Archivio Didattico!");
@@ -892,7 +923,7 @@ function renderMappa(text, prefix) {
             }
             archiveDB = archiveDB.filter(d => d.id !== docId);
             globalSelectedIds.delete(docId);
-            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            syncDatabase();
             renderArchiveList(document.getElementById('search-db').value);
             updateSelectionBar();
         }
@@ -911,7 +942,7 @@ function renderMappa(text, prefix) {
             
             archiveDB = archiveDB.filter(d => !selectedIds.includes(d.id));
             globalSelectedIds.clear();
-            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            syncDatabase();
             renderArchiveList(document.getElementById('search-db').value);
             updateSelectionBar();
         }
@@ -1291,7 +1322,7 @@ function renderMappa(text, prefix) {
                 document.getElementById('reader-item-title').innerText = archiveDB[docIndex].argomento;
 
                 try {
-                    localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                    syncDatabase();
                     toggleEditMode(); 
                     alert("Modifiche salvate con successo!");
                 } catch(e) {
@@ -1322,7 +1353,7 @@ function renderMappa(text, prefix) {
                     if(confirm("ATTENZIONE: Sostituzione totale del database. Procedere?")) {
                         archiveDB = importedData;
                         globalSelectedIds.clear();
-                        localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                        syncDatabase();
                         lastOpenedAula = null; lastOpenedCapitolo = null;
                         renderArchiveList();
                         alert("Database caricato con successo!");
@@ -1364,7 +1395,7 @@ function renderMappa(text, prefix) {
                 doc.rawText = doc.rawText.replace(new RegExp(`PARAGRAFO:\\s*${escapeRegExp(doc.argomento)}`, 'i'), `PARAGRAFO: ${newName}`); doc.argomento = newName; updatedCount++;
             }
         });
-        if (updatedCount > 0) { localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB)); renderArchiveList(document.getElementById('search-db').value); }
+        if (updatedCount > 0) { syncDatabase(); renderArchiveList(document.getElementById('search-db').value); }
     }
     
     function escapeQuotes(str) { return str.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
