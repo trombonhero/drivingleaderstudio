@@ -231,10 +231,15 @@
                         <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-server text-blue-500 mr-3"></i>Database Strumenti</h2>
                         <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate.</p>
                     </div>
-                    <div class="flex gap-3">
+<div class="flex gap-3">
                         <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
                             <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Esporta DB
                         </button>
+                        
+                        <button onclick="forceCloudMigration()" class="btn-action bg-blue-600 hover:bg-blue-500 shadow-blue-600/30">
+                            <i class="fa-solid fa-rocket mr-2"></i> Migra su Cloud
+                        </button>
+
                         <button onclick="document.getElementById('import-file').click()" class="btn-action bg-slate-700 hover:bg-slate-600 text-slate-200">
                             <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Importa DB
                         </button>
@@ -428,18 +433,49 @@
     loadFromCloud();
 
 async function syncDatabase() {
-        // Salva comunque una copia locale nel browser per sicurezza/emergenza offline
+        // Salva copia locale per sicurezza
         localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
         
-        // Spinge l'intero archivio su Google Drive
+        // Spinge l'intero archivio su Google Drive (Travestito da testo per superare il blocco)
         try {
             await fetch(CLOUD_URL, {
                 method: "POST",
-                mode: "no-cors", // Evita blocchi di sicurezza del browser
-                body: JSON.stringify(archiveDB)
+                body: JSON.stringify(archiveDB),
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                }
             });
+            console.log("Salvataggio su Cloud riuscito!");
         } catch (e) {
             console.error("Errore sincronizzazione cloud", e);
+        }
+    }
+
+    async function forceCloudMigration() {
+        // 1. Pesca i dati bloccati nella memoria del browser
+        let vecchiDati = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+        
+        if(vecchiDati.length === 0) {
+            return alert("Non ci sono vecchi dati da migrare nel browser.");
+        }
+        
+        if(!confirm(`Ho trovato ${vecchiDati.length} lezioni salvate nel tuo browser. Vuoi spingerle nel Cloud di Google Drive adesso?`)) return;
+        
+        archiveDB = vecchiDati; // Carica i vecchi dati nella memoria attiva
+        
+        try {
+            document.body.style.cursor = 'wait'; // Cursore di caricamento
+            await fetch(CLOUD_URL, {
+                method: "POST",
+                body: JSON.stringify(archiveDB),
+                headers: { "Content-Type": "text/plain;charset=utf-8" }
+            });
+            document.body.style.cursor = 'default';
+            alert("MIGRAZIONE COMPLETATA! Ora puoi controllare il tuo Google Drive.");
+            renderArchiveList(); // Aggiorna lo schermo
+        } catch (e) {
+            document.body.style.cursor = 'default';
+            alert("Errore durante la migrazione. La connessione è stata bloccata.");
         }
     }
     
