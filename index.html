@@ -418,18 +418,36 @@
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzx60aEBpbV1LTszWGW4nI5pjlYaNhDnI9Obqh7PagwB3kNwiCq464P4wuQ4xRMlce4/exec";
     let archiveDB = [];
 
-    // Carica il database dal cloud all'apertura del programma
+// Carica il database dal cloud all'apertura del programma
     async function loadFromCloud() {
         try {
-            const response = await fetch(CLOUD_URL);
-            archiveDB = await response.json();
+            // Un trucco per aggirare in modo sicuro la cache e i blocchi del browser in lettura
+            const response = await fetch(CLOUD_URL + "?cacheBust=" + Date.now(), {
+                method: "GET",
+                mode: "cors", // La lettura esige questa modalità
+                cache: "no-cache"
+            });
+            
+            // Attende la risposta in formato testo, poi tenta di capire se è vuota o no
+            const textResponse = await response.text();
+            
+            if (textResponse && textResponse.trim().startsWith("[")) {
+                archiveDB = JSON.parse(textResponse);
+                console.log(`Caricate ${archiveDB.length} lezioni dal Cloud.`);
+            } else {
+                console.log("Il Cloud ha restituito un formato inaspettato o vuoto. Uso il backup locale.");
+                archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+            }
             renderArchiveList();
+
         } catch (e) {
-            console.error("Errore cloud, uso backup locale", e);
+            console.error("Errore di caricamento dal Cloud, carico il backup locale:", e);
             archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
             renderArchiveList();
         }
     }
+    
+    // Inizializza subito
     loadFromCloud();
 
 async function syncDatabase() {
