@@ -112,9 +112,7 @@
                 background: white !important;
                 z-index: 1000;
             }
-            .print-footer * {
-                color: #475569 !important;
-            }
+            .print-footer * { color: #475569 !important; }
             .print-footer img { height: 26px; object-fit: contain; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
 
@@ -198,7 +196,6 @@
         <div id="batch-matrice-render"></div>
     </div>
 
-    <!-- UI APP PRINCIPALE -->
     <div id="app-ui" class="flex flex-col h-full relative z-10">
         
         <div class="bg-slate-900 border-b border-slate-800 px-8 py-5 flex justify-between items-center shrink-0 shadow-lg z-20">
@@ -311,7 +308,6 @@
                 </div>
             </div>
 
-            <!-- BARRA DELLE AZIONI IN BLOCCO -->
             <div id="batch-action-bar" class="hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 p-4 rounded-full shadow-2xl z-50 flex items-center gap-4 md:gap-6 transition-all duration-300 max-w-[95vw] overflow-x-auto">
                 <div class="flex items-center gap-4 shrink-0">
                     <div class="flex items-center gap-2">
@@ -356,7 +352,6 @@
             </div>
         </div>
 
-        <!-- READER E EDITOR SINGOLO -->
         <div id="view-reader" class="view-section p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
@@ -369,7 +364,6 @@
 
                     <div class="flex gap-3">
                         <div id="read-dispensa-btn-container"></div>
-                        <!-- NUOVO TASTO GOBBO -->
                         <button onclick="openTeleprompter()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold text-sm transition shadow-lg flex items-center shrink-0">
                             <i class="fa-solid fa-person-chalkboard mr-2"></i> Modalità Gobbo
                         </button>
@@ -432,7 +426,6 @@
         </div>
     </div> 
 
-    <!-- GOBBO / TELEPROMPTER MODAL COMPLETAMENTE INTEGRATO -->
     <div id="teleprompter-modal" class="hidden fixed inset-0 z-[99999] bg-[#09090b] overflow-y-auto flex-col text-white">
         <div class="max-w-[1200px] mx-auto w-full flex flex-col min-h-screen">
             <div class="flex justify-between items-center mb-8 sticky top-0 bg-[#09090b]/90 backdrop-blur-md p-6 border-b border-slate-800 z-50 shadow-2xl">
@@ -445,12 +438,10 @@
                 </button>
             </div>
             <div id="tele-content" class="px-6 pb-40 font-medium">
-                <!-- Nodi del Gobbo proiettati via JS -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- MODAL DI REGIA DI STAMPA AVANZATA CON NUOVO TASTO GOBBO -->
     <div id="advanced-print-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
         <div class="bg-slate-900 border border-slate-600 rounded-2xl w-full max-w-2xl p-6 shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-4 shrink-0 border-b border-slate-700 pb-4">
@@ -473,7 +464,6 @@
                     </div>
                 </label>
                 <div class="flex gap-3">
-                    <!-- NUOVO TASTO GOBBO ORDINATO -->
                     <button onclick="openAdvancedTeleprompter()" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-black py-4 rounded-xl shadow-lg shadow-purple-500/20 transition text-lg flex justify-center items-center">
                         <i class="fa-solid fa-person-chalkboard mr-2"></i> Gobbo Ordinato
                     </button>
@@ -486,20 +476,42 @@
     </div>
 
 <script type="module">
-    // INTEGRAZIONE ENTERPRISE FIREBASE CLOUD CON GOOGLE CANVAS PRE-SETUP
+    // INTEGRAZIONE DI SICUREZZA FIREBASE
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Setup variabili e chiavi della Sandbox di Google Canvas
-    const firebaseConfig = JSON.parse(__firebase_config);
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    // --- CONFIGURAZIONE FIREBASE ---
+    // Sostituisci i valori sottostanti con le tue reali chiavi di Firebase quando vorrai attivare il Cloud online.
+    const firebaseConfig = {
+        apiKey: "IL_TUO_API_KEY",
+        authDomain: "IL_TUO_PROJECT_ID.firebaseapp.com",
+        projectId: "IL_TUO_PROJECT_ID",
+        storageBucket: "IL_TUO_PROJECT_ID.appspot.com",
+        messagingSenderId: "IL_TUO_SENDER_ID",
+        appId: "IL_TUO_APP_ID"
+    };
 
-    let user, collectionRef;
+    let app, auth, db, user, collectionRef;
     let isFirebaseReady = false;
+    const appId = "driving-leader-db";
+
+    try {
+        // Verifica se l'utente ha inserito le chiavi personali o se si trova nell'ambiente sandbox preconfigurato
+        if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "IL_TUO_API_KEY") {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            isFirebaseReady = true;
+        } else if (typeof __firebase_config !== 'undefined') {
+            app = initializeApp(JSON.parse(__firebase_config));
+            auth = getAuth(app);
+            db = getFirestore(app);
+            isFirebaseReady = true;
+        }
+    } catch (e) {
+        console.error("Configurazione Cloud Firebase saltata. Attivazione fallback offline automatico.", e);
+    }
 
     // --- STRUTTURA DATI ATTIVI ---
     let archiveDB = [];
@@ -519,59 +531,72 @@
     let advancedQueue = [];
     let dragStartIndex = -1;
 
-    // --- FUNZIONE DI FALLBACK LOCALE (RIPRISTINATA PER EVITARE CRASH!) ---
+    // --- FUNZIONE DI EMERGENZA MEMORIA LOCALE BROWSER ---
     function loadFallbackLocal() {
         archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
         renderArchiveList();
         updateSelectionBar();
+        // Sposta l'utente sul generatore se non ci sono dati locali
+        if(archiveDB.length === 0) {
+            navTo('generator');
+        } else {
+            navTo('archive');
+        }
     }
 
-    // --- AUTENTICAZIONE E SYNC DI BACKGROUND ---
+    // --- GESTORE AUTENTICAZIONE E SYNC ---
     const initAuth = async () => {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-            await signInAnonymously(auth);
+        if (!isFirebaseReady) {
+            loadFallbackLocal();
+            return;
+        }
+        try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        } catch(err) {
+            console.error("Autenticazione Cloud fallita, avvio archivio locale:", err);
+            loadFallbackLocal();
         }
     };
     initAuth();
 
-    onAuthStateChanged(auth, (u) => {
-        if (u) {
-            user = u;
-            collectionRef = collection(db, 'artifacts', appId, 'users', user.uid, 'lezioni');
-            isFirebaseReady = true;
+    if (isFirebaseReady) {
+        onAuthStateChanged(auth, (u) => {
+            if (u) {
+                user = u;
+                collectionRef = collection(db, 'artifacts', appId, 'users', user.uid, 'lezioni');
 
-            // Migrazione automatica (se hai vecchi dati nel browser, li sposta in Cloud)
-            const localData = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
-            if (localData.length > 0) {
-                console.log(`Rilevato database locale: migrazione automatica nel Cloud in corso...`);
-                localData.forEach(async (d) => {
-                    await setDoc(doc(collectionRef, d.id), d);
-                });
-                localStorage.removeItem('driving_leader_studio_db'); // Svuota per non ripetere
-            }
-
-            // Sync Real-Time Firestore -> UI
-            onSnapshot(collectionRef, (snapshot) => {
-                const isFirstLoad = archiveDB.length === 0;
-                archiveDB = [];
-                snapshot.forEach(docSnap => archiveDB.push({ id: docSnap.id, ...docSnap.data() }));
-                renderArchiveList(document.getElementById('search-db')?.value || '');
-                updateSelectionBar();
-
-                // Reindirizzamento intelligente al primo avvio se sono presenti lezioni nel Cloud
-                if (isFirstLoad && archiveDB.length > 0) {
-                    navTo('archive');
+                // Migrazione silente immediata all'attivazione del Firebase
+                const localData = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+                if (localData.length > 0) {
+                    localData.forEach(async (d) => { await setDoc(doc(collectionRef, d.id), d); });
+                    localStorage.removeItem('driving_leader_studio_db');
                 }
-            }, (error) => {
-                console.error("Errore sincro Cloud Firebase:", error);
+
+                // Listener Cloud real-time
+                onSnapshot(collectionRef, (snapshot) => {
+                    const isFirstLoad = archiveDB.length === 0;
+                    archiveDB = [];
+                    snapshot.forEach(docSnap => archiveDB.push({ id: docSnap.id, ...docSnap.data() }));
+                    renderArchiveList(document.getElementById('search-db')?.value || '');
+                    updateSelectionBar();
+
+                    if (isFirstLoad) {
+                        if (archiveDB.length > 0) navTo('archive');
+                        else navTo('generator');
+                    }
+                }, (error) => {
+                    console.error("Errore sincro real-time Firebase:", error);
+                    loadFallbackLocal();
+                });
+            } else {
                 loadFallbackLocal();
-            });
-        } else {
-            loadFallbackLocal();
-        }
-    });
+            }
+        });
+    }
 
     /* ==========================================================================
        NAVIGAZIONE E FOCUS MODE
@@ -580,7 +605,6 @@
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
 
-        // Evidenziazione dinamica ed estetica dei bottoni della barra di navigazione
         document.querySelectorAll('.btn-nav').forEach(btn => btn.classList.remove('active'));
         const activeBtn = document.getElementById(`nav-btn-${viewId}`);
         if (activeBtn) activeBtn.classList.add('active');
@@ -634,10 +658,7 @@
             return false;
         }
 
-        let mappaRaw = "";
-        let matriceRaw = "";
-        let dispensaRaw = "";
-
+        let mappaRaw = "", matriceRaw = "", dispensaRaw = "";
         try {
             mappaRaw = rawText.split('=== MAPPA TECNICA ===')[1].split('=== MATRICE QUIZ ===')[0].trim();
             let remainder = rawText.split('=== MATRICE QUIZ ===')[1];
@@ -656,7 +677,6 @@
         renderMappa(mappaRaw, prefix);
         renderMatrice(matriceRaw, prefix);
         
-        // Dispensa
         const btnContainer = document.getElementById(`${prefix}-dispensa-btn-container`);
         if(dispensaRaw) {
             currentDispensaHtml[prefix] = parseDispensa(dispensaRaw);
@@ -697,22 +717,22 @@
 
             if (uL.startsWith('TITOLO:')) {
                 let titleText = l.substring(7).trim();
-                html += `<h3 class="d-title">${titleText}</h3>`;
+                html += `<h3 class="d-title text-xl font-bold mb-4 border-b pb-1">${titleText}</h3>`;
             }
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
+                html += `<div class="d-section d-sacro mb-4 p-4 rounded bg-slate-800/20 border border-slate-700"><div class="d-section-title font-bold mb-2 text-blue-400"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul class="list-disc pl-5 space-y-1">`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
-                html += `<div class="d-section d-pratica"><div class="d-section-title"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
+                html += `<div class="d-section d-pratica mb-4 p-4 rounded bg-green-950/10 border border-green-800/30 text-green-300"><div class="d-section-title font-bold mb-2 text-green-400"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
                 if(inSacro) html += `</ul></div>`;
                 if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
-                html += `<div class="d-section d-quiz"><div class="d-section-title"><i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)</div>`;
+                html += `<div class="d-section d-quiz mb-4 p-4 rounded bg-red-950/10 border border-red-800/30 text-red-300"><div class="d-section-title font-bold mb-2 text-red-400"><i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)</div>`;
             }
             else {
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -725,7 +745,7 @@
                 } else if (inQuiz && cleanLine) {
                     let qLine = cleanLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:700; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>')
                                          .replace(/VERO/g, '<span style="color:#16a34a; font-weight:700; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
-                    html += `<div class="d-quiz-item"><i class="fa-solid fa-caret-right"></i><div>${qLine}</div></div>`;
+                    html += `<div class="d-quiz-item flex items-start gap-2 mb-1"><i class="fa-solid fa-caret-right text-red-400 mt-1"></i><div>${qLine}</div></div>`;
                 }
             }
         });
@@ -775,7 +795,8 @@
                 currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
             }
             else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) {
-                currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
+                currentDocMeta[prefix].objective = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim(); // uniformo internal meta keys
+                currentDocMeta[prefix].obiettivo = currentDocMeta[prefix].objective;
             }
             else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) {
                 currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
@@ -853,6 +874,7 @@
                 if (gancioText) gancioText = gancioText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if (nessunText) nessunText = nessunText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
                 html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText} ${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
 
@@ -883,7 +905,7 @@
 
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
-            headerHtml = `<div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4"><div class="overflow-hidden"><p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p><h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].obiettivo || ''}</h2><h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].argomento || ''}</h3></div>${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}</div>`;
+            headerHtml = `<div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4"><div class="overflow-hidden"><p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p><h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2><h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3></div>${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}</div>`;
         }
 
         const renderContainer = document.getElementById(`${prefix}-mappa-render`);
@@ -926,7 +948,7 @@
     }
 
     /* ==========================================================================
-       LOGICA ARCHIVIO E RICERCA (Con Memoria Accordion & Sync Cloud)
+       LOGICA STRUMENTI ARCHIVIO (Salvataggio, Rimozione, Ricerca)
     ========================================================================== */
     async function saveToArchive() {
         const meta = currentDocMeta['gen'];
@@ -952,6 +974,8 @@
         if(exists) {
             if(!confirm(`Attenzione: Esiste già una lezione intitolata "${newItem.argomento}". Vuoi sostituirla?`)) return;
             if(isFirebaseReady) await deleteDoc(doc(collectionRef, exists.id));
+            else archiveDB = archiveDB.filter(doc => doc.id !== exists.id);
+            globalSelectedIds.delete(exists.id);
         }
 
         if (isFirebaseReady) {
@@ -959,18 +983,21 @@
                 await setDoc(doc(collectionRef, newItem.id), newItem);
                 lastOpenedAula = newItem.aula;
                 lastOpenedCapitolo = newItem.obiettivo;
-                alert("Documento salvato con successo nel Cloud!");
+                alert("Documento salvato nel Cloud con successo!");
                 navTo('archive');
             } catch (e) { alert("Errore connessione Cloud."); }
         } else {
             archiveDB.push(newItem);
             localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            lastOpenedAula = newItem.aula;
+            lastOpenedCapitolo = newItem.obiettivo;
+            alert("Salvato in locale (Offline).");
             navTo('archive');
         }
     }
 
     async function deleteArchivedDocument(docId) {
-        if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
+        if(confirm("Vuoi eliminare definitivamente questo documento?")) {
             const docObj = archiveDB.find(d => d.id === docId);
             if(docObj) {
                 lastOpenedAula = docObj.aula;
@@ -981,26 +1008,26 @@
             } else {
                 archiveDB = archiveDB.filter(d => d.id !== docId);
                 localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                renderArchiveList(document.getElementById('search-db').value);
             }
             globalSelectedIds.delete(docId);
             updateSelectionBar();
-            renderArchiveList();
         }
     }
 
     async function deleteBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         if(selectedIds.length === 0) return;
-        if(confirm(`Sei sicuro di voler eliminare in blocco i ${selectedIds.length} documenti? L'azione è irreversibile.`)) {
+        if(confirm(`Sei sicuro di voler eliminare in blocco i ${selectedIds.length} documenti selezionati?`)) {
             if(isFirebaseReady) {
                 for (const id of selectedIds) { await deleteDoc(doc(collectionRef, id)); }
             } else {
                 archiveDB = archiveDB.filter(d => !selectedIds.includes(d.id));
                 localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                renderArchiveList(document.getElementById('search-db').value);
             }
             globalSelectedIds.clear();
             updateSelectionBar();
-            renderArchiveList();
         }
     }
 
@@ -1019,7 +1046,7 @@
         container.innerHTML = '';
 
         if(archiveDB.length === 0) {
-            container.innerHTML = `<div class="text-center py-20 text-slate-500 italic"><i class="fa-solid fa-folder-open text-4xl mb-4 block text-slate-600"></i>Nessun documento salvato.</div>`;
+            container.innerHTML = `<div class="text-center py-20 text-slate-500 italic"><i class="fa-solid fa-folder-open text-4xl mb-4 block text-slate-600"></i>Nessun documento salvato nell'archivio.</div>`;
             return;
         }
 
@@ -1050,7 +1077,7 @@
                 <div class="p-6 flex justify-between items-center hover:bg-slate-800/80 transition-colors">
                     <h3 class="text-2xl font-black text-emerald-400 uppercase tracking-widest flex items-center">
                         <i class="fa-solid fa-school mr-4"></i>${aulaName}
-                        <button onclick="renameEntity('aula', '${escapeQuotes(aulaName)}')" class="ml-4 text-sm text-slate-500 hover:text-yellow-400 transition" title="Modifica"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="renameEntity('aula', '${escapeQuotes(aulaName)}')" class="ml-4 text-sm text-slate-500 hover:text-yellow-400 transition" title="Modifica titolo Aula"><i class="fa-solid fa-pen"></i></button>
                     </h3>
                     <div class="cursor-pointer px-4 py-2" onclick="document.getElementById('grid-aula-${aulaIndex}').classList.toggle('hidden'); this.querySelector('i').classList.toggle('fa-chevron-up'); this.querySelector('i').classList.toggle('fa-chevron-down');">
                         <i class="fa-solid ${isAulaExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-400 text-xl transition-transform"></i>
@@ -1074,7 +1101,7 @@
                                 <button onclick="renameEntity('capitolo', '${escapeQuotes(obName)}', '${escapeQuotes(aulaName)}')" class="ml-3 text-xs text-slate-500 hover:text-yellow-400 transition"><i class="fa-solid fa-pen"></i></button>
                             </div>
                             <div class="flex items-center shrink-0 cursor-pointer pl-4" onclick="document.getElementById('grid-cap-${aulaIndex}-${obIndex}').classList.toggle('hidden'); this.querySelector('i').classList.toggle('fa-chevron-up'); this.querySelector('i').classList.toggle('fa-chevron-down');">
-                                ${totalFolderMinutes > 0 ? `<span class="bg-slate-900 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-600 mr-4"><i class="fa-regular fa-clock"></i> Tot: ${totalFolderMinutes}m</span>` : ''}
+                                ${totalFolderMinutes > 0 ? `<span class="bg-slate-900 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-600 mr-4"><i class="fa-regular fa-clock"></i> Tot: ${totalFolderMinutes} min</span>` : ''}
                                 <i class="fa-solid ${isCapExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-500 transition-transform"></i>
                             </div>
                         </div>
@@ -1092,6 +1119,7 @@
                                 </h4>
                                 <div class="flex items-center mt-2 flex-wrap gap-y-1 cursor-pointer" onclick="openArchivedDocument('${docObj.id}')">
                                     <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i> ${docObj.date}</p>
+                                    ${docObj.tempo ? `<span class="bg-slate-800 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono ml-2 border border-slate-600"><i class="fa-regular fa-clock"></i> ${docObj.tempo}</span>` : ''}
                                 </div>
                             </div>
                             <div class="flex gap-2 mt-auto border-t border-slate-800 pt-3">
@@ -1113,7 +1141,7 @@
         const btn = document.getElementById('btn-toggle-aulas');
         if (allAulasExpanded) btn.innerHTML = '<i class="fa-solid fa-compress mr-2"></i> <span>Chiudi Tutte</span>';
         else { btn.innerHTML = '<i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>'; lastOpenedAula = null; lastOpenedCapitolo = null; }
-        renderArchiveList(document.getElementById('search-db') ? document.getElementById('search-db').value : '');
+        renderArchiveList(document.getElementById('search-db')?.value || '');
     }
 
     function toggleDocSelection(docId, isChecked) {
@@ -1142,7 +1170,9 @@
         updateSelectionBar();
     }
 
-    // --- STAMPA MULTIPLA CON NOMI FILE INTELLIGENTI ---
+    /* ==========================================================================
+       GESTIONE PDF - STAMPA MULTIPLA CON TITOLI INTELLIGENTI
+    ========================================================================== */
     function printBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         const wantMappe = document.getElementById('batch-mappe').checked;
@@ -1164,7 +1194,7 @@
                 combinedHtml += `<div class="batch-page">${printHeader}${currentConceptMapHtml['batch']}</div>`;
             }
             if(wantMappe) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
                 combinedHtml += `<div class="batch-page-fluid">${printHeader}${document.getElementById('batch-mappa-render').innerHTML}</div>`;
             }
             if(wantMatrici) {
@@ -1216,6 +1246,9 @@
         setTimeout(() => { window.print(); document.title = originalTitle; printArea.innerHTML = ''; }, 300);
     }
 
+    /* ==========================================================================
+       MODALITÀ LETTURA INTEGRATA & EDITOR VISTA SINGOLA
+    ========================================================================== */
     function openArchivedDocument(docId) {
         const docObj = archiveDB.find(d => d.id === docId);
         if(!docObj) return;
@@ -1259,7 +1292,7 @@
         const newText = document.getElementById('read-edit-textarea').value;
         const docIndex = archiveDB.findIndex(d => d.id === currentReaderDocId);
         if(docIndex !== -1) {
-            if (!newText.includes('=== MAPPA TECNICA ===') || !newText.includes('=== MATRICE QUIZ ===')) return alert("Errore: Delimitatori mancanti.");
+            if (!newText.includes('=== MAPPA TECNICA ===') || !newText.includes('=== MATRICE QUIZ ===')) return alert("Errore: Delimitatori principali obbligatori mancanti.");
             if(processAndRender(newText, 'read')) {
                 let updatedDoc = { ...archiveDB[docIndex], rawText: newText };
                 const meta = currentDocMeta['read'];
@@ -1273,7 +1306,7 @@
                 
                 if (isFirebaseReady) {
                     await setDoc(doc(collectionRef, updatedDoc.id), updatedDoc);
-                    toggleEditMode(); alert("Modifiche salvate nel Cloud!");
+                    toggleEditMode(); alert("Modifiche sincronizzate nel Cloud!");
                 } else {
                     archiveDB[docIndex] = updatedDoc;
                     localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
@@ -1312,7 +1345,7 @@
         }
     }
 
-    // --- ALTRE UTILITIES ---
+    // --- STRUMETAZIONI DI BACKUP INTERNO (ESPORTA / IMPORTA FILE .JSON) ---
     function exportArchiveDB() {
         if(archiveDB.length === 0) return alert("Database vuoto.");
         const dataStr = JSON.stringify(archiveDB, null, 2);
@@ -1320,9 +1353,38 @@
         let linkElement = document.createElement('a'); linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', `Studio_Database_${new Date().toISOString().slice(0,10)}.json`); linkElement.click();
     }
+
+    function importArchiveDB(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    if(confirm(`Rilevati ${importedData.length} documenti nel backup JSON. Sincronizzarli ora?`)) {
+                        if (isFirebaseReady) {
+                            for (let d of importedData) { await setDoc(doc(collectionRef, d.id), d); }
+                            alert("Sincronizzazione completata con successo nel Cloud!");
+                        } else {
+                            let merged = [...archiveDB];
+                            importedData.forEach(newDoc => { if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc); });
+                            archiveDB = merged;
+                            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                            renderArchiveList();
+                            alert("Database locale aggiornato correttamente!");
+                        }
+                    }
+                } else alert("File non valido. Assicurati che sia un backup valido.");
+            } catch(err) { alert("Errore di lettura: " + err.message); }
+            document.getElementById('import-file').value = ""; 
+        };
+        reader.readAsText(file);
+    }
+
     function exportCSV(prefix) {
         const csvArray = currentCsvData[prefix];
-        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato.");
+        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato disponibile.");
         let csvContent = "";
         csvArray.forEach(row => { csvContent += row.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",") + "\r\n"; });
         const safeName = (currentDocMeta[prefix].argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -1331,26 +1393,145 @@
         const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `Export_${safeName}.csv`);
         document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
+
     function escapeQuotes(str) { return str.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
     function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
-    // --- REGIA STAMPA AVANZATA ---
+    /* ==========================================================================
+       MODULO INTERATTIVO GOBBO (SINGOLO E IN SEQUENZA DA REGIA)
+    ========================================================================== */
+    function openTeleprompter() {
+        const docObj = archiveDB.find(d => d.id === currentReaderDocId);
+        if(!docObj) return;
+
+        const lines = docObj.rawText.split('\n');
+        let inMappa = false;
+        let mapLines = [];
+        for (let l of lines) {
+            if(l.includes('=== MAPPA TECNICA ===')) { inMappa = true; continue; }
+            if(l.includes('=== MATRICE QUIZ ===')) break;
+            if(inMappa && l.trim() !== '') mapLines.push(l.trim());
+        }
+
+        let html = '';
+        let currentString = '';
+        mapLines.forEach(line => {
+            if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA)/)) {
+                if(currentString) html += processTeleLine(currentString);
+                currentString = line;
+            } else {
+                currentString += ' ' + line;
+            }
+        });
+        if(currentString) html += processTeleLine(currentString);
+
+        document.getElementById('tele-aula').innerText = docObj.aula || "Mappa Tecnica";
+        document.getElementById('tele-titolo').innerText = docObj.argomento || "Argomento";
+        document.getElementById('tele-content').innerHTML = html;
+        
+        document.getElementById('teleprompter-modal').classList.remove('hidden');
+        document.getElementById('teleprompter-modal').classList.add('flex');
+    }
+
+    function closeTeleprompter() {
+        document.getElementById('teleprompter-modal').classList.add('hidden');
+        document.getElementById('teleprompter-modal').classList.remove('flex');
+    }
+
+    function processTeleLine(l) {
+        let clean = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        let u = l.toUpperCase();
+        
+        if(u.startsWith('IL GANCIO:')) {
+            return `<div class="text-purple-400 text-3xl mb-8 p-6 border-l-8 border-purple-500 bg-purple-900/20 rounded-r-2xl font-bold tracking-wide leading-relaxed"><strong>IL GANCIO:</strong> ${clean.substring(10)}</div>`;
+        }
+        if(u.startsWith('FASE')) {
+            return `<div class="text-blue-400 text-5xl mt-16 mb-8 font-black uppercase tracking-widest border-b-4 border-blue-500/50 pb-4">${clean.replace(/[\*🛑\#]/g, '')}</div>`;
+        }
+        if(u.startsWith('PAGINA')) {
+            let match = clean.match(/PAGINA\s*\d+:?/i);
+            let bText = match ? match[0].replace(':', '') : "PAGINA";
+            let rest = match ? clean.substring(match.index + match[0].length).trim() : clean;
+
+            let extra = "", trap = "", nessun = "";
+            let tMatch = rest.match(/(TRAPPOLA|ATTENZIONE):\s*([\s\S]*)$/i);
+            if(tMatch) { trap = `<div class="text-red-400 text-3xl p-6 bg-red-900/20 border-l-8 border-red-500 rounded-r-2xl font-black mb-8 leading-relaxed"><i class="fa-solid fa-triangle-exclamation mr-3"></i> <strong>${tMatch[1].toUpperCase()}:</strong> ${tMatch[2]}</div>`; rest = rest.substring(0, tMatch.index); }
+            
+            let eMatch = rest.match(/(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i);
+            if(eMatch) { extra = `<div class="text-emerald-400 text-2xl p-6 bg-emerald-900/20 border-l-8 border-emerald-500 rounded-r-2xl font-bold mb-8 leading-relaxed"><i class="fa-solid fa-circle-info mr-3"></i> <strong>EXTRA:</strong> ${eMatch[2].replace(/➔|->/g, '&#8594;')}</div>`; rest = rest.substring(0, eMatch.index); }
+            
+            let nMatch = rest.match(/(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i);
+            if(nMatch) { nessun = `<div class="text-slate-400 text-2xl mb-8 font-medium italic"><span class="bg-slate-700 text-white px-3 py-1 rounded text-lg mr-3 not-italic">NESSUN QUIZ</span>${nMatch[2].replace(/^(?:➔|->)/, '')}</div>`; rest = rest.substring(0, nMatch.index); }
+            
+            let rule = rest;
+            if(rule.includes('➔') || rule.includes('->')) {
+                rule = rule.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right text-blue-500 mx-3"></i>');
+            }
+            let ruleHtml = rule.trim() ? `<p class="text-slate-200 text-3xl leading-relaxed mb-8">${rule}</p>` : '';
+
+            return `<div class="mb-10"><span class="bg-blue-600 text-white text-2xl px-4 py-2 rounded-lg mr-4 font-black shadow-lg inline-block mb-4">${bText}</span>${ruleHtml}${nessun}${extra}${trap}</div>`;
+        }
+        return '';
+    }
+
+    function openAdvancedTeleprompter() {
+        if(advancedQueue.length === 0) return alert("Nessuna lezione caricata in regia.");
+        
+        let combinedHtml = "";
+        advancedQueue.forEach((docObj, index) => {
+            const lines = docObj.rawText.split('\n');
+            let inMappa = false;
+            let mapLines = [];
+            for (let l of lines) {
+                if(l.includes('=== MAPPA TECNICA ===')) { inMappa = true; continue; }
+                if(l.includes('=== MATRICE QUIZ ===')) break;
+                if(inMappa && l.trim() !== '') mapLines.push(l.trim());
+            }
+
+            let html = `<div class="mb-16 border-b-2 border-slate-800 pb-16"><h4 class="text-2xl font-black text-emerald-400 uppercase tracking-widest mb-6">LEZIONE ${index + 1}: ${docObj.argomento}</h4>`;
+            let currentString = '';
+            mapLines.forEach(line => {
+                if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA)/)) {
+                    if(currentString) html += processTeleLine(currentString);
+                    currentString = line;
+                } else {
+                    currentString += ' ' + line;
+                }
+            });
+            if(currentString) html += processTeleLine(currentString);
+            html += `</div>`;
+            combinedHtml += html;
+        });
+
+        document.getElementById('tele-aula').innerText = "Regia Sequenziale / Gobbo Ordinato";
+        document.getElementById('tele-titolo').innerText = "Fascicolo Presentazione Coordinato";
+        document.getElementById('tele-content').innerHTML = combinedHtml;
+        
+        closeAdvancedPrint(); 
+        document.getElementById('teleprompter-modal').classList.remove('hidden');
+        document.getElementById('teleprompter-modal').classList.add('flex');
+    }
+
+    /* ==========================================================================
+       GESTIONE REGIA DI STAMPA AVANZATA (Drag & Drop)
+    ========================================================================== */
     function openAdvancedPrint() {
         const selectedIds = Array.from(globalSelectedIds);
-        if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
+        if(selectedIds.length === 0) return alert("Seleziona almeno una scheda prima.");
         advancedQueue = selectedIds.map(id => archiveDB.find(d => d.id === id)).filter(Boolean);
-        renderAdvancedQueue(); document.getElementById('advanced-print-modal').classList.remove('hidden');
+        renderAdvancedQueue(); 
+        document.getElementById('advanced-print-modal').classList.remove('hidden');
     }
     function closeAdvancedPrint() { document.getElementById('advanced-print-modal').classList.add('hidden'); }
     function renderAdvancedQueue() {
         const list = document.getElementById('advanced-queue-list'); list.innerHTML = '';
-        advancedQueue.forEach((doc, index) => {
+        advancedQueue.forEach((docObj, index) => {
             list.innerHTML += `
                 <div draggable="true" ondragstart="dragStart(event, ${index})" ondragover="dragOver(event)" ondrop="drop(event, ${index})" 
                      class="bg-slate-800 p-3 rounded-lg flex justify-between items-center border border-slate-600 cursor-grab hover:border-blue-500 transition mb-2">
                     <div class="truncate pr-4 flex-grow flex items-center gap-4">
                         <i class="fa-solid fa-grip-vertical text-slate-500 text-lg"></i>
-                        <div class="truncate"><div class="flex items-center gap-2 mb-1"><span class="bg-slate-900 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded border border-slate-700">${index + 1}</span><span class="text-xs text-blue-400 font-bold uppercase truncate">${doc.aula}</span></div><span class="text-white font-bold text-sm block truncate">${doc.argomento}</span></div>
+                        <div class="truncate"><div class="flex items-center gap-2 mb-1"><span class="bg-slate-900 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded border border-slate-700">${index + 1}</span><span class="text-xs text-blue-400 font-bold uppercase truncate">${docObj.aula}</span></div><span class="text-white font-bold text-sm block truncate">${docObj.argomento}</span></div>
                     </div>
                     <div class="flex gap-1 shrink-0">
                         <button onclick="moveAdvancedItem(${index}, -${index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-angles-up text-xs"></i></button>
@@ -1365,70 +1546,40 @@
     function dragOver(event) { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }
     function drop(event, dropIndex) { event.preventDefault(); if(dragStartIndex === dropIndex || dragStartIndex === -1) return; const item = advancedQueue.splice(dragStartIndex, 1)[0]; advancedQueue.splice(dropIndex, 0, item); dragStartIndex = -1; renderAdvancedQueue(); }
     function moveAdvancedItem(index, direction) { if (index + direction < 0 || index + direction >= advancedQueue.length) return; const temp = advancedQueue[index]; advancedQueue[index] = advancedQueue[index + direction]; advancedQueue[index + direction] = temp; renderAdvancedQueue(); }
-    function updateModalTotalTime() {
-        const overrideTime = document.getElementById('override-time-cb').checked;
-        let total = 0;
-        advancedQueue.forEach(doc => {
-            if (overrideTime) { let m = doc.rawText.match(/PAGINA\s*\d+:/gi); if(m) total += (m.length * 2); } 
-            else { if(doc.tempo){ let m = doc.tempo.match(/\d+/); if (m) total += parseInt(m[0], 10); } }
-        });
-        document.getElementById('modal-total-time').innerText = total + " min";
-    }
-    function executeAdvancedPrint() {
-        const wantMappe = document.getElementById('batch-mappe').checked, wantMatrici = document.getElementById('batch-matrici').checked, wantDispense = document.getElementById('batch-dispense').checked, wantConcept = document.getElementById('batch-concept').checked;
-        const overrideTime = document.getElementById('override-time-cb').checked;
-        if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept) return alert("Seleziona almeno un tipo di documento dalla barra prima di stampare.");
-        let combinedHtml = "";
-        advancedQueue.forEach((doc) => {
-            if(!processAndRender(doc.rawText, 'batch', true)) return;
-            const meta = currentDocMeta['batch'];
-            if (overrideTime) { let m = doc.rawText.match(/PAGINA\s*\d+:/gi); meta.tempo = m ? (m.length * 2) + " min" : "Tempo non stimabile"; }
-            if(wantConcept && currentConceptMapHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${currentConceptMapHtml['batch']}</div>`;
-            if(wantMappe) combinedHtml += `<div class="batch-page-fluid"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>${document.getElementById('batch-mappa-render').innerHTML}</div>`;
-            if(wantMatrici) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
-            if(wantDispense && currentDispensaHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${currentDispensaHtml['batch']}</div>`;
-        });
-        document.getElementById('print-area').innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${combinedHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
-        
-        let baseName = "regia_avanzata", selCount = [wantMappe, wantMatrici, wantDispense, wantConcept].filter(Boolean).length;
-        if (selCount === 1) { if(wantMappe) baseName = "mappa"; if(wantMatrici) baseName = "matrice"; if(wantDispense) baseName = "dispensa"; if(wantConcept) baseName = "concettuale"; }
-        const originalTitle = document.title; document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
-        closeAdvancedPrint(); setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
-    }
-
-    // --- IMPORTAZIONE E PULIZIA DI EMERGENZA DEL CONTROLLO BROWSER ---
-    function importArchiveDB(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-                if (Array.isArray(importedData)) {
-                    if(confirm(`Rilevati ${importedData.length} documenti nel backup. Sincronizzarli sul Cloud?`)) {
-                        if (isFirebaseReady) {
-                            for (let d of importedData) {
-                                await setDoc(doc(collectionRef, d.id), d);
-                            }
-                            alert("Sincronizzazione completata con successo!");
-                        } else {
-                            let merged = [...archiveDB];
-                            importedData.forEach(newDoc => { if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc); });
-                            archiveDB = merged;
-                            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
-                            renderArchiveList();
-                            alert("Ripristino locale completato!");
-                        }
-                    }
-                } else alert("File non valido.");
-            } catch(err) { alert("Errore di importazione: " + err.message); }
-            document.getElementById('import-file').value = ""; 
-        };
-        reader.readAsText(file);
-    }
-
-    // --- EXPOSE GLOBALS ---
-    window.navTo = navTo; window.toggleMaximize = toggleMaximize; window.processDataFromInput = processDataFromInput; window.saveToArchive = saveToArchive; window.deleteArchivedDocument = deleteArchivedDocument; window.deleteBatch = deleteBatch; window.renderArchiveList = renderArchiveList; window.toggleAllAulas = toggleAllAulas; window.toggleDocSelection = toggleDocSelection; window.toggleChapter = toggleChapter; window.deselectAll = deselectAll; window.printBatch = printBatch; window.printDocument = printDocument; window.printDispensa = printDispensa; window.openArchivedDocument = openArchivedDocument; window.toggleEditMode = toggleEditMode; window.saveEditedDocument = saveEditedDocument; window.exportArchiveDB = exportArchiveDB; window.importArchiveDB = importArchiveDB; window.exportCSV = exportCSV; window.renameEntity = renameEntity; window.openAdvancedPrint = openAdvancedPrint; window.closeAdvancedPrint = closeAdvancedPrint; window.dragStart = dragStart; window.dragOver = dragOver; window.drop = drop; window.moveAdvancedItem = moveAdvancedItem; window.updateModalTotalTime = updateModalTotalTime; window.executeAdvancedPrint = executeAdvancedPrint;
+    
+    // --- ESPOSIZIONE DI SICUREZZA PER L'INTERFACCIA ---
+    window.navTo = navTo; 
+    window.toggleMaximize = toggleMaximize; 
+    window.processDataFromInput = processDataFromInput; 
+    window.saveToArchive = saveToArchive; 
+    window.deleteArchivedDocument = deleteArchivedDocument; 
+    window.deleteBatch = deleteBatch; 
+    window.renderArchiveList = renderArchiveList; 
+    window.toggleAllAulas = toggleAllAulas; 
+    window.toggleDocSelection = toggleDocSelection; 
+    window.toggleChapter = toggleChapter; 
+    window.deselectAll = deselectAll; 
+    window.printBatch = printBatch; 
+    window.printDocument = printDocument; 
+    window.printDispensa = printDispensa; 
+    window.openArchivedDocument = openArchivedDocument; 
+    window.toggleEditMode = toggleEditMode; 
+    window.saveEditedDocument = saveEditedDocument; 
+    window.exportArchiveDB = exportArchiveDB; 
+    window.importArchiveDB = importArchiveDB; 
+    window.exportCSV = exportCSV; 
+    window.renameEntity = renameEntity; 
+    window.openAdvancedPrint = openAdvancedPrint; 
+    window.closeAdvancedPrint = closeAdvancedPrint; 
+    window.dragStart = dragStart; 
+    window.dragOver = dragOver; 
+    window.drop = drop; 
+    window.moveAdvancedItem = moveAdvancedItem; 
+    window.updateModalTotalTime = updateModalTotalTime; 
+    window.executeAdvancedPrint = executeAdvancedPrint;
+    window.openTeleprompter = openTeleprompter;
+    window.closeTeleprompter = closeTeleprompter;
+    window.openAdvancedTeleprompter = openAdvancedTeleprompter;
 
 </script>
 </body>
