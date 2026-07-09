@@ -62,16 +62,59 @@
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         /* =======================================================
-           STILI DI STAMPA GLOBALI E FIX FOOTER SCUDO
+           STILI DI STAMPA PROFESSIONALI E CORREZIONE RIGIDA COLORI
            ======================================================= */
         @media print {
-            html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10.5pt !important; }
-            #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box, #teleprompter-modal { display: none !important; }
-            #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
+            html, body {
+                height: auto !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                background-color: white !important;
+                color: black !important;
+                font-size: 10.5pt !important;
+                display: block !important;
+            }
+            #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box, #teleprompter-modal, #advanced-print-modal {
+                display: none !important;
+            }
+            #print-area {
+                display: block !important;
+                padding: 0 !important;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                overflow: visible !important;
+                color: black !important;
+                background: white !important;
+            }
             
             @page { margin: 10mm 10mm 15mm 10mm !important; } 
             
-            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; }
+            #print-area * {
+                color: black !important;
+                background-color: transparent !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+            
+            .print-footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-top: 1px solid #cbd5e1;
+                padding-top: 8px;
+                font-size: 8pt;
+                color: #475569 !important;
+                background: white !important;
+                z-index: 1000;
+            }
+            .print-footer * {
+                color: #475569 !important;
+            }
             .print-footer img { height: 26px; object-fit: contain; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
 
@@ -83,19 +126,30 @@
             .pagina-text strong, .dispensa-page strong { color: #000 !important; font-weight: 700 !important; }
 
             .print-header-container { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; display: block !important; width: 100%; page-break-after: avoid !important;}
-            .print-header-aula { font-size: 9pt; color: #555; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-            .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000; }
-            .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
+            .print-header-aula { font-size: 9pt; color: #555 !important; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+            .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000 !important; }
+            .print-header-arg { font-size: 12pt; color: #444 !important; margin: 0; font-style: italic; font-weight: normal; }
 
-            .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 11pt !important; line-height: 1.4 !important; page-break-inside: avoid; }
+            .incipit-globale { 
+                background-color: #fef9c3 !important; 
+                border-left: 4px solid #d97706 !important; 
+                padding: 10px 15px !important; 
+                margin-bottom: 15px !important; 
+                border-radius: 4px; 
+                font-style: italic; 
+                color: #000 !important; 
+                font-size: 10pt !important; 
+                line-height: 1.3 !important; 
+                page-break-inside: avoid; 
+            }
+            .incipit-globale * { color: #000 !important; }
             .incipit-titolo { color: #b45309 !important; font-size: 12pt !important; margin-bottom: 4px !important; display: block; font-style: normal; text-transform: uppercase; background: transparent !important; padding: 0;}
             .incipit-globale strong { font-weight: 700 !important; color: inherit !important; display: inline !important; text-transform: none !important; }
             
             .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 14pt !important; margin-top: 18pt !important; padding-bottom: 3pt !important; margin-bottom: 8pt !important; page-break-after: avoid !important; font-weight: 900 !important; text-transform: uppercase; }
-            .incipit-fase { color: #222 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 11pt !important; line-height: 1.3 !important; page-break-after: avoid !important; }
+            .incipit-fase { color: #222 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 10pt !important; line-height: 1.3 !important; page-break-after: avoid !important; }
             .testo-regola { color: #000 !important; font-weight: 500 !important; }
             
-            /* REGOLE DI PROTEZIONE IMPAGINAZIONE RIGHE CHROME */
             .pagina-row { display: block !important; margin-bottom: 10pt !important; font-size: 10.5pt !important; line-height: 1.3 !important; page-break-inside: avoid !important; break-inside: avoid !important; border-bottom: 1px solid #eee; padding-bottom: 6px; overflow: hidden !important; width: 100% !important;}
             .pagina-badge { float: left !important; border: 1px solid black !important; padding: 2px 6px; font-weight: bold; margin-right: 12px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 9pt !important; margin-top: 2px; border-radius: 3px;}
             .pagina-text { display: block !important; color: black !important; overflow: hidden !important;}
@@ -103,38 +157,35 @@
             .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0; }
 
             .matrice-title { display: block !important; color: black !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 3px solid #fbbf24 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid !important; text-transform: uppercase; }
-            .matrice-row { display: block !important; margin-bottom: 5pt !important; padding-left: 12px; font-size: 10pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; font-style: normal !important; overflow: hidden !important; width: 100% !important;}
+            .matrice-row { display: block !important; margin-bottom: 5pt !important; padding-left: 12px; font-size: 10pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid; break-inside: avoid !important; font-style: normal !important; overflow: hidden !important; width: 100% !important;}
             .matrice-row > i { float: left !important; width: 20px !important; margin-top: 2px !important; }
             .matrice-row > div { display: block !important; overflow: hidden !important; }
             .v-badge { color: #10b981 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
             .f-badge { color: #ef4444 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
             .matrice-exp { display: block !important; font-size: 9pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.2 !important;}
-            .matrice-row > div > br { display: block !important; }
 
             .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; text-align: left; }
-            .d-header { text-align: left; border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 12px; }
-            .d-meta { font-size: 8.5pt; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; font-weight: bold;}
-            .d-title { font-size: 15pt; font-weight: 900; color: #0f172a; margin: 0; text-transform: uppercase; line-height: 1.2; page-break-after: avoid !important;}
+            .d-title { font-size: 15pt; font-weight: 900; color: #0f172a !important; margin: 0; text-transform: uppercase; line-height: 1.2; page-break-after: avoid !important;}
             .d-section { margin-bottom: 10px; padding: 10px 14px; border-radius: 6px; page-break-inside: avoid !important; text-align: left;}
-            .d-section-title { font-size: 11pt; font-weight: 900; color: #1e3a8a; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
-            .d-sacro { background-color: #f8fafc; border: 1px solid #e2e8f0; }
+            .d-section-title { font-size: 11pt; font-weight: 900; color: #1e3a8a !important; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
+            .d-sacro { background-color: #f8fafc !important; border: 1px solid #e2e8f0 !important; }
             .d-sacro ul { margin: 0; padding-left: 0; list-style-type: none; }
-            .d-sacro li { margin-bottom: 5px; font-size: 10pt; line-height: 1.3; color: #000; }
-            .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 10pt; line-height: 1.3; color: #064e3b; }
+            .d-sacro li { margin-bottom: 5px; font-size: 10pt; line-height: 1.3; color: #000 !important; }
+            .d-pratica { background-color: #f0fdf4 !important; border: 1px solid #bbf7d0 !important; font-size: 10pt; line-height: 1.3; color: #064e3b !important; }
             .d-pratica p { margin: 0 0 5px 0; }
-            .d-quiz { background-color: #fff1f2; border: 1px solid #fecaca; }
+            .d-quiz { background-color: #fff1f2 !important; border: 1px solid #fecaca !important; }
             .d-quiz-item { display: block !important; margin-bottom: 6px; font-size: 10pt; line-height: 1.3; page-break-inside: avoid !important; break-inside: avoid !important; overflow: hidden !important; width: 100% !important;}
-            .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt; width: 12px !important;}
+            .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171 !important; font-size: 8pt; width: 12px !important;}
             .d-quiz-item > div { display: block !important; overflow: hidden !important; }
 
             /* --- STILE MAPPA CONCETTUALE ALLIEVI (Organigramma) --- */
             .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
-            .mindmap-root { background: #0f172a; color: white; font-weight: 900; font-size: 16pt; padding: 12px 30px; border-radius: 8px; text-transform: uppercase; margin-bottom: 25px; text-align: center; border: 2px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%;}
+            .mindmap-root { background: #0f172a !important; color: white !important; font-weight: 900; font-size: 16pt; padding: 12px 30px; border-radius: 8px; text-transform: uppercase; margin-bottom: 25px; text-align: center; border: 2px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%;}
             .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; align-items: flex-start;}
-            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 220px; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; background: #f8fafc;}
-            .mindmap-phase-node { background: #d97706; color: white; font-weight: 900; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 11pt; text-transform: uppercase; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
-            .mindmap-item { background: white; border-left: 5px solid #3b82f6; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; font-size: 10pt; font-weight: 800; color: #1e293b; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center; text-transform: uppercase;}
-            .mindmap-item-extra { border-left-color: #10b981; font-style: normal; color: #065f46; background: #f0fdf4;}
+            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 220px; border: 2px dashed #cbd5e1 !important; border-radius: 12px; padding: 12px; background: #f8fafc !important;}
+            .mindmap-phase-node { background: #d97706 !important; color: white !important; font-weight: 900; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 11pt; text-transform: uppercase; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+            .mindmap-item { background: white !important; border-left: 5px solid #3b82f6 !important; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; font-size: 10pt; font-weight: 800; color: #1e293b !important; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center; text-transform: uppercase;}
+            .mindmap-item-extra { border-left-color: #10b981 !important; font-style: normal; color: #065f46 !important; background: #f0fdf4 !important;}
         }
     </style>
 </head>
@@ -221,15 +272,19 @@
 
         <div id="view-archive" class="view-section p-4 md:p-8 relative">
             <div class="max-w-5xl mx-auto w-full">
-                <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
+                <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner shadow-black/20">
                     <div>
-                        <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-cloud text-blue-500 mr-3"></i>Database Strumenti Cloud</h2>
-                        <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate nel Cloud e sincronizzate su tutti i dispositivi.</p>
+                        <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-server text-blue-500 mr-3"></i>Database Strumenti</h2>
+                        <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate.</p>
                     </div>
                     <div class="flex gap-3">
                         <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
                             <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Esporta DB
                         </button>
+                        <button onclick="document.getElementById('import-file').click()" class="btn-action bg-slate-700 hover:bg-slate-600 text-slate-200">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Importa DB
+                        </button>
+                        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importArchiveDB(event)">
                     </div>
                 </div>
 
@@ -244,14 +299,14 @@
                 </div>
 
                 <div id="archive-container" class="space-y-6 pb-32">
-                    <!-- Loading state for Cloud -->
                     <div class="text-center py-20 text-slate-500 italic flex flex-col items-center justify-center">
                         <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-blue-500 block"></i>
-                        Caricamento database dal Cloud in corso...
+                        Connessione al Cloud in corso...
                     </div>
                 </div>
             </div>
 
+            <!-- BARRA DELLE AZIONI IN BLOCCO -->
             <div id="batch-action-bar" class="hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 p-4 rounded-full shadow-2xl z-50 flex items-center gap-4 md:gap-6 transition-all duration-300 max-w-[95vw] overflow-x-auto">
                 <div class="flex items-center gap-4 shrink-0">
                     <div class="flex items-center gap-2">
@@ -296,6 +351,7 @@
             </div>
         </div>
 
+        <!-- READER E EDITOR SINGOLO -->
         <div id="view-reader" class="view-section p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
@@ -308,10 +364,6 @@
 
                     <div class="flex gap-3">
                         <div id="read-dispensa-btn-container"></div>
-                        <!-- NUOVO TASTO GOBBO -->
-                        <button onclick="openTeleprompter()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold text-sm transition shadow-lg flex items-center shrink-0">
-                            <i class="fa-solid fa-person-chalkboard mr-2"></i> Modalità Gobbo
-                        </button>
                         <button onclick="toggleEditMode()" id="btn-toggle-edit" class="text-yellow-400 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-yellow-500/30 hover:border-yellow-400 flex items-center shadow-lg shrink-0">
                             <i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento
                         </button>
@@ -371,27 +423,10 @@
         </div>
     </div> 
 
-    <!-- GOBBO / TELEPROMPTER MODAL -->
-    <div id="teleprompter-modal" class="hidden fixed inset-0 z-[99999] bg-[#09090b] overflow-y-auto flex-col text-white">
-        <div class="max-w-[1200px] mx-auto w-full flex flex-col min-h-screen">
-            <div class="flex justify-between items-center mb-8 sticky top-0 bg-[#09090b]/90 backdrop-blur-md p-6 border-b border-slate-800 z-50 shadow-2xl">
-                <div class="overflow-hidden pr-4">
-                    <h2 id="tele-aula" class="text-2xl font-bold text-blue-500 uppercase tracking-widest truncate mb-1">AULA</h2>
-                    <h3 id="tele-titolo" class="text-4xl font-black text-slate-100 truncate">Argomento</h3>
-                </div>
-                <button onclick="closeTeleprompter()" class="bg-slate-800 hover:bg-red-600 text-white px-8 py-4 rounded-full text-2xl font-black border border-slate-700 transition shadow-xl shrink-0">
-                    <i class="fa-solid fa-xmark mr-3"></i> Chiudi
-                </button>
-            </div>
-            <div id="tele-content" class="px-6 pb-40 font-medium">
-                <!-- Gobbo content injected here -->
-            </div>
-        </div>
-    </div>
-    
+    <!-- AREA DI PREVIEW DI STAMPA -->
     <div id="print-area"></div>
 
-    <!-- MODAL STAMPA AVANZATA -->
+    <!-- MODAL DI REGIA DI STAMPA AVANZATA -->
     <div id="advanced-print-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
         <div class="bg-slate-900 border border-slate-600 rounded-2xl w-full max-w-2xl p-6 shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-4 shrink-0 border-b border-slate-700 pb-4">
@@ -403,8 +438,11 @@
                     <button onclick="closeAdvancedPrint()" class="text-slate-400 hover:text-red-400 text-3xl transition leading-none"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
-            <p class="text-slate-400 text-sm mb-4 shrink-0"><i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> <strong>Novità:</strong> Ora puoi trascinare le lezioni su e giù col mouse o usare i tasti veloci "Sposta in Cima/Fondo"!</p>
+            
+            <p class="text-slate-400 text-sm mb-4 shrink-0"><i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> <strong>Sposta e Ordina:</strong> Trascina i blocchi col mouse o usa i tasti di ordinamento veloci!</p>
+            
             <div id="advanced-queue-list" class="flex-grow overflow-y-auto space-y-2 mb-6 pr-2"></div>
+
             <div class="shrink-0 border-t border-slate-700 pt-4 space-y-4">
                 <label class="flex items-center gap-3 bg-slate-800 p-3 rounded-lg cursor-pointer border border-slate-600 hover:border-blue-500 transition">
                     <input type="checkbox" id="override-time-cb" onchange="updateModalTotalTime()" class="w-5 h-5 accent-blue-500 rounded cursor-pointer">
@@ -413,6 +451,7 @@
                         <span class="text-xs text-slate-400">Aggiorna istantaneamente il contatore in alto e verrà stampato sul PDF.</span>
                     </div>
                 </label>
+
                 <button onclick="executeAdvancedPrint()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl shadow-lg shadow-blue-500/20 transition text-lg flex justify-center items-center">
                     <i class="fa-solid fa-print mr-2"></i> Genera PDF Ordinato
                 </button>
@@ -421,148 +460,188 @@
     </div>
 
 <script type="module">
-    // INTEGRAZIONE ENTERPRISE FIREBASE CLOUD (Niente più localStorage o script insicuri)
+    // INTEGRAZIONE DI FIREBASE CLOUD (Sincronizzazione automatica ad alta velocità)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    let app, auth, db, user, collectionRef;
+    // Setup variabili e chiavi della Sandbox di Google Canvas
+    const firebaseConfig = JSON.parse(__firebase_config);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+    let user, collectionRef;
     let isFirebaseReady = false;
 
-    // --- VARIABILI DI STATO ---
+    // --- STRUTTURA DATI ATTIVI ---
     let archiveDB = [];
     let currentDocMeta = { gen: {}, read: {}, batch: {} };
     let currentCsvData = { gen: [], read: [], batch: [] };
     let currentDispensaHtml = { gen: "", read: "", batch: "" }; 
     let currentConceptMapHtml = { gen: "", read: "", batch: "" };
+    
     let rawInputBuffer = "";
     let currentReaderDocId = null;
     let allAulasExpanded = false;
+
     let lastOpenedAula = null;
     let lastOpenedCapitolo = null;
+
     let globalSelectedIds = new Set();
     let advancedQueue = [];
     let dragStartIndex = -1;
 
-    // --- INIZIALIZZAZIONE CLOUD SICURO ---
-    if (typeof __firebase_config !== 'undefined' && typeof __app_id !== 'undefined') {
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const appId = __app_id;
-        
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
+    // --- AUTENTICAZIONE E SYNC DI BACKGROUND ---
+    const initAuth = async () => {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+            await signInAnonymously(auth);
+        }
+    };
+    initAuth();
 
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
+    onAuthStateChanged(auth, (u) => {
+        if (u) {
+            user = u;
+            collectionRef = collection(db, 'artifacts', appId, 'users', user.uid, 'lezioni');
+            isFirebaseReady = true;
+
+            // Migrazione automatica (se hai vecchi dati nel browser, li sposta in Cloud)
+            const localData = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+            if (localData.length > 0) {
+                console.log(`Rilevato database locale: migrazione automatica nel Cloud in corso...`);
+                localData.forEach(async (d) => {
+                    await setDoc(doc(collectionRef, d.id), d);
+                });
+                localStorage.removeItem('driving_leader_studio_db'); // Svuota per non ripetere
             }
-        };
-        initAuth();
 
-        onAuthStateChanged(auth, (u) => {
-            if (u) {
-                user = u;
-                collectionRef = collection(db, 'artifacts', appId, 'users', user.uid, 'lezioni');
-                isFirebaseReady = true;
+            // Sync Real-Time Firestore -> UI
+            onSnapshot(collectionRef, (snapshot) => {
+                archiveDB = [];
+                snapshot.forEach(docSnap => archiveDB.push({ id: docSnap.id, ...docSnap.data() }));
+                renderArchiveList(document.getElementById('search-db')?.value || '');
+                updateSelectionBar();
+            }, (error) => {
+                console.error("Errore sincro Cloud Firebase:", error);
+                loadFallbackLocal();
+            });
+        } else {
+            loadFallbackLocal();
+        }
+    });
 
-                // MAGIA: Migrazione automatica (se hai vecchi dati nel browser, li spara nel cloud Firebase e poi pulisce il browser)
-                const localData = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
-                if (localData.length > 0) {
-                    console.log(`Migrazione di ${localData.length} documenti verso Firebase...`);
-                    localData.forEach(async (d) => {
-                        await setDoc(doc(collectionRef, d.id), d);
-                    });
-                    localStorage.removeItem('driving_leader_studio_db'); // Pulizia
-                }
-
-                // Listener in Tempo Reale: appena cambia qualcosa nel cloud, si aggiorna la schermata
-                onSnapshot(collectionRef, (snapshot) => {
-                    archiveDB = [];
-                    snapshot.forEach(docSnap => archiveDB.push({ id: docSnap.id, ...docSnap.data() }));
-                    
-                    if (document.getElementById('view-archive').classList.contains('active')) {
-                        renderArchiveList(document.getElementById('search-db').value);
-                        updateSelectionBar();
-                    }
-                }, (error) => console.error("Errore di sync con Firebase:", error));
-            }
-        });
-    } else {
-        // Fallback in caso venga usato offline senza cloud
+    function loadFallbackLocal() {
         archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+        renderArchiveList();
+        updateSelectionBar();
     }
 
-    // --- FUNZIONI DI NAVIGAZIONE E UI ---
+    /* ==========================================================================
+       NAVIGAZIONE E FOCUS MODE
+    ========================================================================== */
     function navTo(viewId) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
+
         if(viewId === 'archive') {
             const searchBar = document.getElementById('search-db');
             if(searchBar) searchBar.value = '';
             renderArchiveList();
         }
-        document.querySelectorAll('.maximized-panel').forEach(p => toggleMaximize(p.id));
+        
+        document.querySelectorAll('.maximized-panel').forEach(p => {
+            toggleMaximize(p.id);
+        });
     }
 
     function toggleMaximize(panelId) {
         const panel = document.getElementById(panelId);
         const backdrop = document.getElementById('maximize-backdrop');
         const icon = panel.querySelector('.fa-expand, .fa-compress');
+        
         if (panel.classList.contains('maximized-panel')) {
             panel.classList.remove('maximized-panel');
             backdrop.classList.remove('active');
             if(icon) { icon.classList.remove('fa-compress'); icon.classList.add('fa-expand'); }
+            
             document.body.classList.remove('panel-maximized');
             document.body.appendChild(backdrop);
         } else {
             panel.parentElement.insertBefore(backdrop, panel);
+            
             panel.classList.add('maximized-panel');
             backdrop.classList.add('active');
             if(icon) { icon.classList.remove('fa-expand'); icon.classList.add('fa-compress'); }
+            
             document.body.classList.add('panel-maximized');
         }
     }
 
-    // --- PARSER E RENDERING ---
+    document.getElementById('maximize-backdrop').addEventListener('click', () => {
+        document.querySelectorAll('.maximized-panel').forEach(panel => {
+            toggleMaximize(panel.id);
+        });
+    });
+
+    /* ==========================================================================
+       LOGICA DI ELABORAZIONE TESTO IA
+    ========================================================================== */
     function processAndRender(rawText, prefix, silent = false) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
             if(!silent) alert("Attenzione: Il testo non contiene i delimitatori minimi necessari.");
             return false;
         }
 
-        let mappaRaw = "", matriceRaw = "", dispensaRaw = "";
+        let mappaRaw = "";
+        let matriceRaw = "";
+        let dispensaRaw = "";
+
         try {
             mappaRaw = rawText.split('=== MAPPA TECNICA ===')[1].split('=== MATRICE QUIZ ===')[0].trim();
             let remainder = rawText.split('=== MATRICE QUIZ ===')[1];
+            
             if (remainder.includes('=== DISPENSA ALLIEVI ===')) {
                 matriceRaw = remainder.split('=== DISPENSA ALLIEVI ===')[0].trim();
                 dispensaRaw = remainder.split('=== DISPENSA ALLIEVI ===')[1].trim();
             } else {
                 matriceRaw = remainder.trim();
             }
-        } catch(e) { return false; }
+        } catch(e) {
+            console.error("Errore di split testo", e);
+            return false;
+        }
 
         renderMappa(mappaRaw, prefix);
         renderMatrice(matriceRaw, prefix);
         
+        // Dispensa
         const btnContainer = document.getElementById(`${prefix}-dispensa-btn-container`);
         if(dispensaRaw) {
             currentDispensaHtml[prefix] = parseDispensa(dispensaRaw);
-            if(btnContainer) btnContainer.innerHTML = `<button onclick="printDispensa('${prefix}')" class="btn-dispensa mr-4"><i class="fa-solid fa-file-invoice mr-2"></i> Stampa Dispensa</button>`;
+            if(btnContainer) {
+                btnContainer.innerHTML = `
+                    <button onclick="printDispensa('${prefix}')" class="btn-dispensa mr-4">
+                        <i class="fa-solid fa-file-invoice mr-2"></i> Stampa Dispensa Allievi
+                    </button>
+                `;
+            }
         } else {
             currentDispensaHtml[prefix] = "";
             if(btnContainer) btnContainer.innerHTML = ""; 
         }
+
         return true;
     }
 
     function processDataFromInput() {
         const rawText = document.getElementById('raw-input').value;
         rawInputBuffer = rawText; 
-        if (processAndRender(rawText, 'gen')) {
+        const success = processAndRender(rawText, 'gen');
+        if (success) {
             document.getElementById('gen-results-area').classList.remove('hidden');
             document.getElementById('gen-results-area').classList.add('flex');
         }
@@ -572,47 +651,73 @@
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
         let inSacro = false, inPratica = false, inQuiz = false;
+
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
             let uL = l.toUpperCase();
-            if (uL.startsWith('TITOLO:')) return; 
+
+            if (uL.startsWith('TITOLO:')) {
+                let titleText = l.substring(7).trim();
+                html += `<h3 class="d-title">${titleText}</h3>`;
+            }
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced" style="margin-right:10px;"></i> La Norma (Sintesi)</div><ul>`;
+                html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
-                html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div>`;
+                html += `<div class="d-section d-pratica"><div class="d-section-title"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
-                if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
+                if(inSacro) html += `</ul></div>`;
+                if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
-                html += `<div class="d-section d-quiz"><div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb" style="margin-right:10px;"></i> Il Campo Minato (I Quiz)</div>`;
+                html += `<div class="d-section d-quiz"><div class="d-section-title"><i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)</div>`;
             }
             else {
-                let cleanLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/^[\-\*\•]\s*/, '').trim();
-                if (inSacro && cleanLine) html += `<li>${cleanLine}</li>`;
-                else if (inPratica && cleanLine) html += `<p style="margin-bottom: 8px;">${cleanLine}</p>`;
-                else if (inQuiz && cleanLine) {
-                    let qLine = cleanLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:700; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>').replace(/VERO/g, '<span style="color:#16a34a; font-weight:700; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>').replace(/\[(.*?)\]/g, '<span class="d-quiz-box">$1</span>');
+                let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
+                
+                if (inSacro && cleanLine) {
+                    html += `<li>${cleanLine}</li>`;
+                } else if (inPratica && cleanLine) {
+                    html += `<p class="mb-2">${cleanLine}</p>`;
+                } else if (inQuiz && cleanLine) {
+                    let qLine = cleanLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:700; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>')
+                                         .replace(/VERO/g, '<span style="color:#16a34a; font-weight:700; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
                     html += `<div class="d-quiz-item"><i class="fa-solid fa-caret-right"></i><div>${qLine}</div></div>`;
                 }
             }
         });
-        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`; if(inQuiz) html += `</div>`;
+
+        if(inSacro) html += `</ul></div>`;
+        if(inPratica) html += `</div>`;
+        if(inQuiz) html += `</div>`;
+        
         return html + '</div>';
     }
 
     function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let mergedLines = [];
+        
         lines.forEach(line => {
             let l = line.trim();
             if (!l) return;
             let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
-            let isKeyword = cleanStart.startsWith('AULA:') || cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:') || cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:') || cleanStart.startsWith('TEMPO STIMATO:') || cleanStart.startsWith('IL SENSO PRATICO:') || cleanStart.startsWith('FASE') || cleanStart.startsWith('OBIETTIVO PRATICO:') || cleanStart.startsWith('PAGINA');
+            let isKeyword = cleanStart.startsWith('AULA:') || 
+                            cleanStart.startsWith('CAPITOLO:') || 
+                            cleanStart.startsWith('OBIETTIVO:') || 
+                            cleanStart.startsWith('PARAGRAFO:') || 
+                            cleanStart.startsWith('ARGOMENTO:') || 
+                            cleanStart.startsWith('TEMPO STIMATO:') || 
+                            cleanStart.startsWith('IL SENSO PRATICO:') || 
+                            cleanStart.startsWith('FASE') || 
+                            cleanStart.startsWith('OBIETTIVO PRATICO:') || 
+                            cleanStart.startsWith('PAGINA');
+
             if (isKeyword || mergedLines.length === 0) mergedLines.push(l); 
             else mergedLines[mergedLines.length - 1] += " " + l;
         });
@@ -620,6 +725,7 @@
         let html = '';
         let conceptData = {}; 
         let currentFase = "CONCETTI CHIAVE"; 
+
         currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
         
         mergedLines.forEach(line => {
@@ -627,10 +733,18 @@
             if(!l) return;
             let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
 
-            if (cleanStart.startsWith('AULA:')) currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
-            else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
-            else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
-            else if (cleanStart.startsWith('TEMPO STIMATO:')) currentDocMeta[prefix].tempo = l.replace(/.*?TEMPO STIMATO:/i, '').replace(/[\*\_]/g, '').trim();
+            if (cleanStart.startsWith('AULA:')) {
+                currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
+            }
+            else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) {
+                currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
+            }
+            else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) {
+                currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
+            }
+            else if (cleanStart.startsWith('TEMPO STIMATO:')) {
+                currentDocMeta[prefix].tempo = l.replace(/.*?TEMPO STIMATO:/i, '').replace(/[\*\_]/g, '').trim();
+            }
             else if (cleanStart.startsWith('IL SENSO PRATICO:')) {
                 let pText = l.replace(/.*?IL SENSO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-globale"><div class="incipit-titolo"><i class="fa-solid fa-lightbulb mr-2"></i>Il Senso Pratico</div>${pText}</div>`;
@@ -638,7 +752,7 @@
             else if (cleanStart.startsWith('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
-                currentFase = title; 
+                currentFase = title;
             } 
             else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
                 let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -702,8 +816,21 @@
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText} ${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
+                // Mappa Normale (Docente)
+                html += `
+                    <div class="pagina-row">
+                        <div class="pagina-badge">${badgeText}</div>
+                        <div class="pagina-text">
+                            ${gancioText}
+                            ${mainText} 
+                            ${nessunText}
+                            ${extraText}
+                            ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}
+                        </div>
+                    </div>
+                `;
 
+                // LOGICA MAPPA ALLIEVI
                 if (!conceptData[currentFase]) conceptData[currentFase] = [];
                 if (argToExtract) conceptData[currentFase].push(`<div class="mindmap-item">${argToExtract}</div>`);
                 if (extraRaw) {
@@ -716,18 +843,37 @@
             }
         });
 
+        // GENERAZIONE HTML MAPPA ALLIEVI
         let cmapHtmlNodes = '';
         Object.keys(conceptData).forEach(fase => {
             if (conceptData[fase].length > 0) {
-                cmapHtmlNodes += `<div class="mindmap-phase-col"><div class="mindmap-phase-node">${fase}</div>${conceptData[fase].join('')}</div>`;
+                cmapHtmlNodes += `
+                    <div class="mindmap-phase-col">
+                        <div class="mindmap-phase-node">${fase}</div>
+                        ${conceptData[fase].join('')}
+                    </div>
+                `;
             }
         });
 
-        currentConceptMapHtml[prefix] = cmapHtmlNodes !== '' ? `<div class="mindmap-container"><div class="mindmap-root">${currentDocMeta[prefix].argomento || 'Argomento della Lezione'}</div><div class="mindmap-phases">${cmapHtmlNodes}</div></div>` : "";
+        currentConceptMapHtml[prefix] = cmapHtmlNodes !== '' ? `
+            <div class="mindmap-container">
+                <div class="mindmap-root">${currentDocMeta[prefix].argomento || 'Argomento della Lezione'}</div>
+                <div class="mindmap-phases">${cmapHtmlNodes}</div>
+            </div>` : "";
 
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
-            headerHtml = `<div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4"><div class="overflow-hidden"><p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p><h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2><h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3></div>${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}</div>`;
+            headerHtml = `
+                <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4">
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
+                        <h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2>
+                        <h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3>
+                    </div>
+                    ${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}
+                </div>
+            `;
         }
 
         const renderContainer = document.getElementById(`${prefix}-mappa-render`);
@@ -769,7 +915,9 @@
         if(renderContainer) renderContainer.innerHTML = html;
     }
 
-    // --- SALVATAGGIO IN CLOUD FIREBASE ---
+    /* ==========================================================================
+       LOGICA ARCHIVIO (Salvataggio, Lettura, Ricerca)
+    ========================================================================== */
     async function saveToArchive() {
         const meta = currentDocMeta['gen'];
         if(!meta.aula && !meta.obiettivo && !meta.argomento) {
@@ -805,7 +953,6 @@
                 navTo('archive');
             } catch (e) { alert("Errore connessione Cloud."); }
         } else {
-            // Fallback locale
             archiveDB.push(newItem);
             localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
             navTo('archive');
@@ -813,7 +960,12 @@
     }
 
     async function deleteArchivedDocument(docId) {
-        if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio Cloud?")) {
+        if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
+            const docObj = archiveDB.find(d => d.id === docId);
+            if(docObj) {
+                lastOpenedAula = docObj.aula;
+                lastOpenedCapitolo = docObj.obiettivo;
+            }
             if (isFirebaseReady) {
                 await deleteDoc(doc(collectionRef, docId));
             } else {
@@ -829,7 +981,7 @@
     async function deleteBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         if(selectedIds.length === 0) return;
-        if(confirm(`Sei sicuro di voler eliminare in blocco i ${selectedIds.length} documenti dal Cloud? L'azione è irreversibile.`)) {
+        if(confirm(`Sei sicuro di voler eliminare in blocco i ${selectedIds.length} documenti? L'azione è irreversibile.`)) {
             if(isFirebaseReady) {
                 for (const id of selectedIds) { await deleteDoc(doc(collectionRef, id)); }
             } else {
@@ -1150,81 +1302,6 @@
         }
     }
 
-    // --- NUOVA MODALITÀ GOBBO (TELEPROMPTER) ---
-    function openTeleprompter() {
-        const docObj = archiveDB.find(d => d.id === currentReaderDocId);
-        if(!docObj) return;
-
-        // Estrazione super-chiara solo dei testi per il gobbo
-        const lines = docObj.rawText.split('\n');
-        let inMappa = false;
-        let mapLines = [];
-        for (let l of lines) {
-            if(l.includes('=== MAPPA TECNICA ===')) { inMappa = true; continue; }
-            if(l.includes('=== MATRICE QUIZ ===')) break;
-            if(inMappa && l.trim() !== '') mapLines.push(l.trim());
-        }
-
-        let html = '';
-        let currentString = '';
-        mapLines.forEach(line => {
-            if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA)/)) {
-                if(currentString) html += processTeleLine(currentString);
-                currentString = line;
-            } else {
-                currentString += ' ' + line;
-            }
-        });
-        if(currentString) html += processTeleLine(currentString);
-
-        document.getElementById('tele-aula').innerText = docObj.aula || "Mappa Tecnica";
-        document.getElementById('tele-titolo').innerText = docObj.argomento || "Argomento";
-        document.getElementById('tele-content').innerHTML = html;
-        document.getElementById('teleprompter-modal').classList.remove('hidden');
-        document.getElementById('teleprompter-modal').classList.add('flex');
-    }
-
-    function closeTeleprompter() {
-        document.getElementById('teleprompter-modal').classList.add('hidden');
-        document.getElementById('teleprompter-modal').classList.remove('flex');
-    }
-
-    function processTeleLine(l) {
-        let clean = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        let u = l.toUpperCase();
-        
-        if(u.startsWith('IL GANCIO:')) {
-            return `<div class="text-purple-400 text-3xl mb-8 p-6 border-l-8 border-purple-500 bg-purple-900/20 rounded-r-2xl shadow-xl font-bold tracking-wide leading-relaxed"><strong>IL GANCIO:</strong> ${clean.substring(10)}</div>`;
-        }
-        if(u.startsWith('FASE')) {
-            return `<div class="text-blue-400 text-5xl mt-16 mb-8 font-black uppercase tracking-widest border-b-4 border-blue-500/50 pb-4">${clean.replace(/[\*🛑\#]/g, '')}</div>`;
-        }
-        if(u.startsWith('PAGINA')) {
-            let match = clean.match(/PAGINA\s*\d+:?/i);
-            let bText = match ? match[0].replace(':', '') : "PAGINA";
-            let rest = match ? clean.substring(match.index + match[0].length).trim() : clean;
-
-            let extra = "", trap = "", nessun = "";
-            let tMatch = rest.match(/(TRAPPOLA|ATTENZIONE):\s*([\s\S]*)$/i);
-            if(tMatch) { trap = `<div class="text-red-400 text-3xl p-6 bg-red-900/20 border-l-8 border-red-500 rounded-r-2xl font-black mb-8 leading-relaxed shadow-xl"><i class="fa-solid fa-triangle-exclamation mr-3"></i> <strong>${tMatch[1].toUpperCase()}:</strong> ${tMatch[2]}</div>`; rest = rest.substring(0, tMatch.index); }
-            
-            let eMatch = rest.match(/(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i);
-            if(eMatch) { extra = `<div class="text-emerald-400 text-2xl p-6 bg-emerald-900/20 border-l-8 border-emerald-500 rounded-r-2xl font-bold mb-8 leading-relaxed"><i class="fa-solid fa-circle-info mr-3"></i> <strong>EXTRA:</strong> ${eMatch[2].replace(/➔|->/g, '&#8594;')}</div>`; rest = rest.substring(0, eMatch.index); }
-            
-            let nMatch = rest.match(/(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i);
-            if(nMatch) { nessun = `<div class="text-slate-400 text-2xl mb-8 font-medium italic"><span class="bg-slate-700 text-white px-3 py-1 rounded text-lg mr-3 not-italic">NESSUN QUIZ</span>${nMatch[2].replace(/^(?:➔|->)/, '')}</div>`; rest = rest.substring(0, nMatch.index); }
-            
-            let rule = rest;
-            if(rule.includes('➔') || rule.includes('->')) {
-                rule = rule.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right text-blue-500 mx-3"></i>');
-            }
-            let ruleHtml = rule.trim() ? `<p class="text-slate-200 text-3xl leading-relaxed mb-8">${rule}</p>` : '';
-
-            return `<div class="mb-10"><span class="bg-blue-600 text-white text-2xl px-4 py-2 rounded-lg mr-4 font-black shadow-lg inline-block mb-4">${bText}</span>${ruleHtml}${nessun}${extra}${trap}</div>`;
-        }
-        return '';
-    }
-
     // --- ALTRE UTILITIES ---
     function exportArchiveDB() {
         if(archiveDB.length === 0) return alert("Database vuoto.");
@@ -1266,10 +1343,10 @@
                         <div class="truncate"><div class="flex items-center gap-2 mb-1"><span class="bg-slate-900 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded border border-slate-700">${index + 1}</span><span class="text-xs text-blue-400 font-bold uppercase truncate">${doc.aula}</span></div><span class="text-white font-bold text-sm block truncate">${doc.argomento}</span></div>
                     </div>
                     <div class="flex gap-1 shrink-0">
-                        <button onclick="moveAdvancedItem(${index}, -${index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-angles-up"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, -1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-chevron-up"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, 1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-chevron-down"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, ${advancedQueue.length - 1 - index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-angles-down"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, -${index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-angles-up text-xs"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, -1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-chevron-up text-xs"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, 1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-chevron-down text-xs"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, ${advancedQueue.length - 1 - index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-angles-down text-xs"></i></button>
                     </div>
                 </div>`;
         }); updateModalTotalTime();
@@ -1309,8 +1386,39 @@
         closeAdvancedPrint(); setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
 
-    // --- ESPOSIZIONE GLOBALE DELLE FUNZIONI PER L'HTML ---
-    window.navTo = navTo; window.toggleMaximize = toggleMaximize; window.processDataFromInput = processDataFromInput; window.saveToArchive = saveToArchive; window.deleteArchivedDocument = deleteArchivedDocument; window.deleteBatch = deleteBatch; window.renderArchiveList = renderArchiveList; window.toggleAllAulas = toggleAllAulas; window.toggleDocSelection = toggleDocSelection; window.toggleChapter = toggleChapter; window.deselectAll = deselectAll; window.printBatch = printBatch; window.printDocument = printDocument; window.printDispensa = printDispensa; window.openArchivedDocument = openArchivedDocument; window.toggleEditMode = toggleEditMode; window.saveEditedDocument = saveEditedDocument; window.exportArchiveDB = exportArchiveDB; window.exportCSV = exportCSV; window.renameEntity = renameEntity; window.openAdvancedPrint = openAdvancedPrint; window.closeAdvancedPrint = closeAdvancedPrint; window.dragStart = dragStart; window.dragOver = dragOver; window.drop = drop; window.moveAdvancedItem = moveAdvancedItem; window.updateModalTotalTime = updateModalTotalTime; window.executeAdvancedPrint = executeAdvancedPrint; window.openTeleprompter = openTeleprompter; window.closeTeleprompter = closeTeleprompter;
+    // --- IMPORTAZIONE E PULIZIA DI EMERGENZA DEL CONTROLLO BROWSER ---
+    function importArchiveDB(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    if(confirm(`Rilevati ${importedData.length} documenti nel backup. Sincronizzarli sul Cloud?`)) {
+                        if (isFirebaseReady) {
+                            for (let d of importedData) {
+                                await setDoc(doc(collectionRef, d.id), d);
+                            }
+                            alert("Sincronizzazione completata con successo!");
+                        } else {
+                            let merged = [...archiveDB];
+                            importedData.forEach(newDoc => { if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc); });
+                            archiveDB = merged;
+                            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                            renderArchiveList();
+                            alert("Ripristino locale completato!");
+                        }
+                    }
+                } else alert("File non valido.");
+            } catch(err) { alert("Errore di importazione: " + err.message); }
+            document.getElementById('import-file').value = ""; 
+        };
+        reader.readAsText(file);
+    }
+
+    // --- EXPOSE GLOBALS ---
+    window.navTo = navTo; window.toggleMaximize = toggleMaximize; window.processDataFromInput = processDataFromInput; window.saveToArchive = saveToArchive; window.deleteArchivedDocument = deleteArchivedDocument; window.deleteBatch = deleteBatch; window.renderArchiveList = renderArchiveList; window.toggleAllAulas = toggleAllAulas; window.toggleDocSelection = toggleDocSelection; window.toggleChapter = toggleChapter; window.deselectAll = deselectAll; window.printBatch = printBatch; window.printDocument = printDocument; window.printDispensa = printDispensa; window.openArchivedDocument = openArchivedDocument; window.toggleEditMode = toggleEditMode; window.saveEditedDocument = saveEditedDocument; window.exportArchiveDB = exportArchiveDB; window.importArchiveDB = importArchiveDB; window.exportCSV = exportCSV; window.renameEntity = renameEntity; window.openAdvancedPrint = openAdvancedPrint; window.closeAdvancedPrint = closeAdvancedPrint; window.dragStart = dragStart; window.dragOver = dragOver; window.drop = drop; window.moveAdvancedItem = moveAdvancedItem; window.updateModalTotalTime = updateModalTotalTime; window.executeAdvancedPrint = executeAdvancedPrint;
 
 </script>
 </body>
