@@ -193,6 +193,11 @@
 
     <div id="maximize-backdrop"></div>
 
+    <div id="hidden-render-temp" style="display:none;">
+        <div id="batch-mappa-render"></div>
+        <div id="batch-matrice-render"></div>
+    </div>
+
     <!-- UI APP PRINCIPALE -->
     <div id="app-ui" class="flex flex-col h-full relative z-10">
         
@@ -364,6 +369,10 @@
 
                     <div class="flex gap-3">
                         <div id="read-dispensa-btn-container"></div>
+                        <!-- NUOVO TASTO GOBBO -->
+                        <button onclick="openTeleprompter()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold text-sm transition shadow-lg flex items-center shrink-0">
+                            <i class="fa-solid fa-person-chalkboard mr-2"></i> Modalità Gobbo
+                        </button>
                         <button onclick="toggleEditMode()" id="btn-toggle-edit" class="text-yellow-400 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-yellow-500/30 hover:border-yellow-400 flex items-center shadow-lg shrink-0">
                             <i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento
                         </button>
@@ -423,14 +432,29 @@
         </div>
     </div> 
 
-    <!-- AREA DI PREVIEW DI STAMPA -->
-    <div id="print-area"></div>
+    <!-- GOBBO / TELEPROMPTER MODAL COMPLETAMENTE INTEGRATO -->
+    <div id="teleprompter-modal" class="hidden fixed inset-0 z-[99999] bg-[#09090b] overflow-y-auto flex-col text-white">
+        <div class="max-w-[1200px] mx-auto w-full flex flex-col min-h-screen">
+            <div class="flex justify-between items-center mb-8 sticky top-0 bg-[#09090b]/90 backdrop-blur-md p-6 border-b border-slate-800 z-50 shadow-2xl">
+                <div class="overflow-hidden pr-4">
+                    <h2 id="tele-aula" class="text-2xl font-bold text-blue-500 uppercase tracking-widest truncate mb-1">AULA</h2>
+                    <h3 id="tele-titolo" class="text-4xl font-black text-slate-100 truncate">Argomento</h3>
+                </div>
+                <button onclick="closeTeleprompter()" class="bg-slate-800 hover:bg-red-600 text-white px-8 py-4 rounded-full text-2xl font-black border border-slate-700 transition shadow-xl shrink-0">
+                    <i class="fa-solid fa-xmark mr-3"></i> Chiudi Gobbo
+                </button>
+            </div>
+            <div id="tele-content" class="px-6 pb-40 font-medium">
+                <!-- Nodi del Gobbo proiettati via JS -->
+            </div>
+        </div>
+    </div>
 
-    <!-- MODAL DI REGIA DI STAMPA AVANZATA -->
+    <!-- MODAL DI REGIA DI STAMPA AVANZATA CON NUOVO TASTO GOBBO -->
     <div id="advanced-print-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
         <div class="bg-slate-900 border border-slate-600 rounded-2xl w-full max-w-2xl p-6 shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-4 shrink-0 border-b border-slate-700 pb-4">
-                <h2 class="text-2xl font-black text-white"><i class="fa-solid fa-sliders text-blue-500 mr-2"></i> Regia di Stampa</h2>
+                <h2 class="text-2xl font-black text-white"><i class="fa-solid fa-sliders text-blue-500 mr-2"></i> Regia di Stampa & Presentazione</h2>
                 <div class="flex items-center gap-4">
                     <div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg border border-slate-600 shadow-inner flex items-center" title="Tempo Totale Calcolato">
                         <i class="fa-regular fa-clock mr-2"></i> <span id="modal-total-time">0 min</span>
@@ -438,29 +462,31 @@
                     <button onclick="closeAdvancedPrint()" class="text-slate-400 hover:text-red-400 text-3xl transition leading-none"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
-            
             <p class="text-slate-400 text-sm mb-4 shrink-0"><i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> <strong>Sposta e Ordina:</strong> Trascina i blocchi col mouse o usa i tasti di ordinamento veloci!</p>
-            
             <div id="advanced-queue-list" class="flex-grow overflow-y-auto space-y-2 mb-6 pr-2"></div>
-
             <div class="shrink-0 border-t border-slate-700 pt-4 space-y-4">
                 <label class="flex items-center gap-3 bg-slate-800 p-3 rounded-lg cursor-pointer border border-slate-600 hover:border-blue-500 transition">
                     <input type="checkbox" id="override-time-cb" onchange="updateModalTotalTime()" class="w-5 h-5 accent-blue-500 rounded cursor-pointer">
                     <div>
                         <span class="text-white font-bold block leading-tight">Forza ricalcolo tempo (2 min/pagina)</span>
-                        <span class="text-xs text-slate-400">Aggiorna istantaneamente il contatore in alto e verrà stampato sul PDF.</span>
+                        <span class="text-xs text-slate-400">Aggiorna istantaneamente il contatore e lo stampa sul PDF finale.</span>
                     </div>
                 </label>
-
-                <button onclick="executeAdvancedPrint()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl shadow-lg shadow-blue-500/20 transition text-lg flex justify-center items-center">
-                    <i class="fa-solid fa-print mr-2"></i> Genera PDF Ordinato
-                </button>
+                <div class="flex gap-3">
+                    <!-- NUOVO TASTO GOBBO ORDINATO -->
+                    <button onclick="openAdvancedTeleprompter()" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-black py-4 rounded-xl shadow-lg shadow-purple-500/20 transition text-lg flex justify-center items-center">
+                        <i class="fa-solid fa-person-chalkboard mr-2"></i> Gobbo Ordinato
+                    </button>
+                    <button onclick="executeAdvancedPrint()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl shadow-lg shadow-blue-500/20 transition text-lg flex justify-center items-center">
+                        <i class="fa-solid fa-print mr-2"></i> Genera PDF Ordinato
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
 <script type="module">
-    // INTEGRAZIONE DI FIREBASE CLOUD (Sincronizzazione automatica ad alta velocità)
+    // INTEGRAZIONE ENTERPRISE FIREBASE CLOUD CON GOOGLE CANVAS PRE-SETUP
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -493,6 +519,13 @@
     let advancedQueue = [];
     let dragStartIndex = -1;
 
+    // --- FUNZIONE DI FALLBACK LOCALE (RIPRISTINATA PER EVITARE CRASH!) ---
+    function loadFallbackLocal() {
+        archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+        renderArchiveList();
+        updateSelectionBar();
+    }
+
     // --- AUTENTICAZIONE E SYNC DI BACKGROUND ---
     const initAuth = async () => {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -521,10 +554,16 @@
 
             // Sync Real-Time Firestore -> UI
             onSnapshot(collectionRef, (snapshot) => {
+                const isFirstLoad = archiveDB.length === 0;
                 archiveDB = [];
                 snapshot.forEach(docSnap => archiveDB.push({ id: docSnap.id, ...docSnap.data() }));
                 renderArchiveList(document.getElementById('search-db')?.value || '');
                 updateSelectionBar();
+
+                // Reindirizzamento intelligente al primo avvio se sono presenti lezioni nel Cloud
+                if (isFirstLoad && archiveDB.length > 0) {
+                    navTo('archive');
+                }
             }, (error) => {
                 console.error("Errore sincro Cloud Firebase:", error);
                 loadFallbackLocal();
@@ -534,18 +573,17 @@
         }
     });
 
-    function loadFallbackLocal() {
-        archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
-        renderArchiveList();
-        updateSelectionBar();
-    }
-
     /* ==========================================================================
        NAVIGAZIONE E FOCUS MODE
     ========================================================================== */
     function navTo(viewId) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
+
+        // Evidenziazione dinamica ed estetica dei bottoni della barra di navigazione
+        document.querySelectorAll('.btn-nav').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.getElementById(`nav-btn-${viewId}`);
+        if (activeBtn) activeBtn.classList.add('active');
 
         if(viewId === 'archive') {
             const searchBar = document.getElementById('search-db');
@@ -816,21 +854,8 @@
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                // Mappa Normale (Docente)
-                html += `
-                    <div class="pagina-row">
-                        <div class="pagina-badge">${badgeText}</div>
-                        <div class="pagina-text">
-                            ${gancioText}
-                            ${mainText} 
-                            ${nessunText}
-                            ${extraText}
-                            ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}
-                        </div>
-                    </div>
-                `;
+                html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText} ${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
 
-                // LOGICA MAPPA ALLIEVI
                 if (!conceptData[currentFase]) conceptData[currentFase] = [];
                 if (argToExtract) conceptData[currentFase].push(`<div class="mindmap-item">${argToExtract}</div>`);
                 if (extraRaw) {
@@ -843,16 +868,10 @@
             }
         });
 
-        // GENERAZIONE HTML MAPPA ALLIEVI
         let cmapHtmlNodes = '';
         Object.keys(conceptData).forEach(fase => {
             if (conceptData[fase].length > 0) {
-                cmapHtmlNodes += `
-                    <div class="mindmap-phase-col">
-                        <div class="mindmap-phase-node">${fase}</div>
-                        ${conceptData[fase].join('')}
-                    </div>
-                `;
+                cmapHtmlNodes += `<div class="mindmap-phase-col"><div class="mindmap-phase-node">${fase}</div>${conceptData[fase].join('')}</div>`;
             }
         });
 
@@ -864,16 +883,7 @@
 
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
-            headerHtml = `
-                <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4">
-                    <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
-                        <h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2>
-                        <h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3>
-                    </div>
-                    ${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}
-                </div>
-            `;
+            headerHtml = `<div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4"><div class="overflow-hidden"><p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p><h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].obiettivo || ''}</h2><h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].argomento || ''}</h3></div>${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}</div>`;
         }
 
         const renderContainer = document.getElementById(`${prefix}-mappa-render`);
@@ -916,7 +926,7 @@
     }
 
     /* ==========================================================================
-       LOGICA ARCHIVIO (Salvataggio, Lettura, Ricerca)
+       LOGICA ARCHIVIO E RICERCA (Con Memoria Accordion & Sync Cloud)
     ========================================================================== */
     async function saveToArchive() {
         const meta = currentDocMeta['gen'];
