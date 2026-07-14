@@ -105,7 +105,7 @@
             .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0; }
 
             .matrice-title { display: block !important; color: black !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 3px solid #fbbf24 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid !important; text-transform: uppercase; }
-            .matrice-row { display: block !important; margin-bottom: 5pt !important; padding-left: 12px; font-size: 10pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; font-style: normal !important; overflow: hidden !important; width: 100% !important;}
+            .matrice-row { display: block !important; margin-bottom: 5pt !important; padding-left: 12px; font-size: 10pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid; break-inside: avoid !important; font-style: normal !important; overflow: hidden !important; width: 100% !important;}
             .matrice-row > i { float: left !important; width: 20px !important; margin-top: 2px !important; }
             .matrice-row > div { display: block !important; overflow: hidden !important; }
             .v-badge { color: #10b981 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
@@ -126,7 +126,7 @@
             .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171 !important; font-size: 8pt; width: 12px !important;}
             .d-quiz-item > div { display: block !important; overflow: hidden !important; }
 
-            /* --- MAPPA CONCETTUALE ALLIEVI --- */
+            /* --- STILE MAPPA CONCETTUALE ALLIEVI (Organigramma) --- */
             .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
             .mindmap-root { background: #0f172a !important; color: white !important; font-weight: 900; font-size: 16pt; padding: 12px 30px; border-radius: 8px; text-transform: uppercase; margin-bottom: 25px; text-align: center; border: 2px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%;}
             .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; align-items: flex-start;}
@@ -146,6 +146,7 @@
         <div id="batch-matrice-render"></div>
     </div>
 
+    <!-- UI APP PRINCIPALE -->
     <div id="app-ui" class="flex flex-col h-full relative z-10">
         
         <div class="bg-slate-900 border-b border-slate-800 px-8 py-5 flex justify-between items-center shrink-0 shadow-lg z-20">
@@ -990,7 +991,7 @@
                                 <button onclick="renameEntity('capitolo', '${escapeQuotes(obName)}', '${escapeQuotes(aulaName)}')" class="ml-3 text-xs text-slate-500 hover:text-yellow-400 transition"><i class="fa-solid fa-pen"></i></button>
                             </div>
                             <div class="flex items-center shrink-0 cursor-pointer pl-4" onclick="document.getElementById('grid-cap-${aulaIndex}-${obIndex}').classList.toggle('hidden'); this.querySelector('i').classList.toggle('fa-chevron-up'); this.querySelector('i').classList.toggle('fa-chevron-down');">
-                                ${totalFolderMinutes > 0 ? `<span class="bg-slate-900 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-600 mr-4"><i class="fa-regular fa-clock"></i> Tot: ${totalFolderMinutes} min</span>` : ''}
+                                ${totalFolderMinutes > 0 ? `<span class="bg-slate-900 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-600 mr-4"><i class="fa-regular fa-clock"></i> Tot: ${totalFolderMinutes}m</span>` : ''}
                                 <i class="fa-solid ${isCapExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-500 transition-transform"></i>
                             </div>
                         </div>
@@ -1263,6 +1264,9 @@
         }
     }
 
+    function escapeQuotes(str) { return str ? str.replace(/'/g, "\\'").replace(/"/g, '&quot;') : ''; }
+    function escapeRegExp(string) { return string ? string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : ''; }
+
     async function renameEntity(type, oldName, parentName = '') {
         let docRef = type === 'paragrafo' ? archiveDB.find(d => d.id === oldName) : null;
         let displayName = type === 'paragrafo' && docRef ? docRef.argomento : oldName;
@@ -1284,7 +1288,7 @@
         if (docsToUpdate.length > 0) {
             docsToUpdate.forEach(uDoc => { let idx = archiveDB.findIndex(d => d.id === uDoc.id); if(idx !== -1) archiveDB[idx] = uDoc; });
             await syncDatabase();
-            renderArchiveList(document.getElementById('search-db').value);
+            renderArchiveList(document.getElementById('search-db') ? document.getElementById('search-db').value : '');
         }
     }
 
