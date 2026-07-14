@@ -1292,9 +1292,98 @@
         }
     }
 
-    /* ==========================================================================
-       MODULO GOBBO / TELEPROMPTER INTERATTIVO (SINGOLO E DA REGIA)
+/* ==========================================================================
+       MODULO GOBBO REVISIONATO (Struttura ad alto contrasto stile PDF)
        ========================================================================== */
+    function processTeleLine(l) {
+        let clean = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        let u = l.toUpperCase().trim();
+        
+        // 1. INTRO: Il Senso Pratico
+        if(u.startsWith('IL SENSO PRATICO:')) {
+            return `<div class="mb-10 p-6 border-l-8 border-amber-500 bg-amber-950/20 rounded-r-2xl shadow-xl leading-relaxed">
+                        <div class="text-sm uppercase tracking-widest text-amber-400 font-black mb-2"><i class="fa-solid fa-lightbulb mr-2"></i>Il Senso Pratico (Introduzione)</div>
+                        <div class="text-slate-200 text-3xl font-medium">${clean.substring(17).trim()}</div>
+                    </div>`;
+        }
+        
+        // 2. DESCRIZIONE: Obiettivo Pratico della Fase
+        if(u.startsWith('OBIETTIVO PRATICO:')) {
+            return `<div class="mb-8 p-5 border-l-4 border-sky-500 bg-sky-950/10 rounded-r-xl italic leading-relaxed">
+                        <div class="text-xs uppercase tracking-widest text-sky-400 font-black mb-1 not-italic"><i class="fa-solid fa-bullseye mr-2"></i>Obiettivo della Fase</div>
+                        <div class="text-slate-300 text-2xl font-medium">${clean.substring(18).trim()}</div>
+                    </div>`;
+        }
+        
+        // 3. TITOLO: Le Fasi Principali della Lavagna
+        if(u.startsWith('FASE')) {
+            return `<div class="text-cyan-400 text-5xl mt-16 mb-8 font-black uppercase tracking-widest border-b-4 border-cyan-500/30 pb-4 shadow-sm">${clean.replace(/[\*🛑\#]/g, '')}</div>`;
+        }
+        
+        // 4. STANDALONE GANCIO (Se l'IA lo genera isolato)
+        if(u.startsWith('IL GANCIO:')) {
+            return `<div class="text-purple-300 text-3xl mb-8 p-6 border-l-8 border-purple-500 bg-purple-900/20 rounded-r-2xl shadow-xl font-bold tracking-wide leading-relaxed">
+                        <div class="text-xs uppercase tracking-widest text-purple-400 font-black mb-1"><i class="fa-solid fa-bullhorn mr-2"></i>Incipit d'Impatto</div>
+                        ${clean.substring(10).trim()}
+                    </div>`;
+        }
+        
+        // 5. STRUTTURA DELLE PAGINE (Regola, Quiz, Errori e Ripete)
+        if(u.startsWith('PAGINA')) {
+            let match = clean.match(/PAGINA\s*\d+:?/i);
+            let bText = match ? match[0].replace(':', '') : "PAGINA";
+            let rest = match ? clean.substring(match.index + match[0].length).trim() : clean;
+
+            let extra = "", trap = "", nessun = "";
+            
+            // TRAPPOLA / ERRORI (Riquadro Rosso)
+            let tMatch = rest.match(/(TRAPPOLA|ATTENZIONE):\s*([\s\S]*)$/i);
+            if(tMatch) { 
+                trap = `<div class="text-red-400 text-3xl p-6 bg-red-950/20 border-l-8 border-red-500 rounded-r-2xl font-semibold mb-4 leading-relaxed shadow-md"><i class="fa-solid fa-triangle-exclamation mr-3 text-red-500"></i><strong>${tMatch[1].toUpperCase()}:</strong> ${tMatch[2]}</div>`; 
+                rest = rest.substring(0, tMatch.index).trim(); 
+            }
+            
+            // EXTRA / RIPETE (Riquadro Verde)
+            let eMatch = rest.match(/(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i);
+            if(eMatch) { 
+                extra = `<div class="text-emerald-400 text-2xl p-6 bg-emerald-950/20 border-l-8 border-emerald-500 rounded-r-2xl font-medium mb-4 leading-relaxed shadow-md"><i class="fa-solid fa-circle-info mr-3 text-emerald-500"></i><strong>EXTRA / QUIZ RIPETE:</strong> ${eMatch[2].replace(/➔|->/g, '&#8594;')}</div>`; 
+                rest = rest.substring(0, eMatch.index).trim(); 
+            }
+            
+            // NESSUN QUIZ (Riquadro Grigio Neutro)
+            let nMatch = rest.match(/(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i);
+            if(nMatch) { 
+                nessun = `<div class="text-slate-400 text-2xl mb-4 p-4 bg-slate-800/40 rounded-xl border border-slate-700/50 italic"><span class="bg-slate-700 text-white font-bold px-3 py-1 rounded text-base mr-3 not-italic uppercase">Nessun Quiz</span>${nMatch[2].replace(/^(?:➔|->)/, '').trim()}</div>`; 
+                rest = rest.substring(0, nMatch.index).trim(); 
+            }
+            
+            // IL GANCIO (Se nidificato nella pagina - Riquadro Viola)
+            let gancioBox = "";
+            let gMatch = rest.match(/IL GANCIO:\s*([\s\S]*?)(?=\s*<strong>|\s*➔|\s*->|$)/i);
+            if(gMatch) {
+                gancioBox = `<div class="text-purple-300 text-3xl mb-4 p-4 border-l-6 border-purple-500 bg-purple-900/10 rounded-r-xl font-bold tracking-wide leading-relaxed"><strong>IL GANCIO:</strong> ${gMatch[1].trim()}</div>`;
+                rest = rest.replace(gMatch[0], '').trim();
+            }
+
+            // REGOLA / PAROLE DEI QUIZ
+            let rule = rest;
+            if(rule.includes('➔') || rule.includes('->')) {
+                rule = rule.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right text-blue-400 mx-4"></i>');
+            }
+            let ruleHtml = rule.trim() ? `<p class="text-slate-100 text-3xl leading-relaxed mb-6 font-semibold tracking-wide">${rule}</p>` : '';
+
+            return `<div class="mb-12 p-6 bg-slate-900/50 rounded-2xl border border-slate-800 shadow-inner">
+                        <span class="bg-blue-600 text-white text-xl px-4 py-1.5 rounded-lg mr-4 font-black shadow-md inline-block mb-4 uppercase tracking-wider">${bText}</span>
+                        ${gancioBox}
+                        ${ruleHtml}
+                        ${nessun}
+                        ${extra}
+                        ${trap}
+                    </div>`;
+        }
+        return '';
+    }
+
     function openTeleprompter() {
         const docObj = archiveDB.find(d => d.id === currentReaderDocId);
         if(!docObj) return;
@@ -1311,7 +1400,8 @@
         let html = '';
         let currentString = '';
         mapLines.forEach(line => {
-            if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA)/)) {
+            // Aggiornato regex per intercettare l'avvio di ogni sezione utile
+            if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA|IL GANCIO)/)) {
                 if(currentString) html += processTeleLine(currentString);
                 currentString = line;
             } else {
@@ -1333,42 +1423,6 @@
         document.getElementById('teleprompter-modal').classList.remove('flex');
     }
 
-    function processTeleLine(l) {
-        let clean = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        let u = l.toUpperCase();
-        
-        if(u.startsWith('IL GANCIO:')) {
-            return `<div class="text-purple-400 text-3xl mb-8 p-6 border-l-8 border-purple-500 bg-purple-900/20 rounded-r-2xl font-bold tracking-wide leading-relaxed"><strong>IL GANCIO:</strong> ${clean.substring(10)}</div>`;
-        }
-        if(u.startsWith('FASE')) {
-            return `<div class="text-blue-400 text-5xl mt-16 mb-8 font-black uppercase tracking-widest border-b-4 border-blue-500/50 pb-4">${clean.replace(/[\*🛑\#]/g, '')}</div>`;
-        }
-        if(u.startsWith('PAGINA')) {
-            let match = clean.match(/PAGINA\s*\d+:?/i);
-            let bText = match ? match[0].replace(':', '') : "PAGINA";
-            let rest = match ? clean.substring(match.index + match[0].length).trim() : clean;
-
-            let extra = "", trap = "", nessun = "";
-            let tMatch = rest.match(/(TRAPPOLA|ATTENZIONE):\s*([\s\S]*)$/i);
-            if(tMatch) { trap = `<div class="text-red-400 text-3xl p-6 bg-red-900/20 border-l-8 border-red-500 rounded-r-2xl font-black mb-8 leading-relaxed shadow-xl"><i class="fa-solid fa-triangle-exclamation mr-3"></i> <strong>${tMatch[1].toUpperCase()}:</strong> ${tMatch[2]}</div>`; rest = rest.substring(0, tMatch.index); }
-            
-            let eMatch = rest.match(/(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i);
-            if(eMatch) { extra = `<div class="text-emerald-400 text-2xl p-6 bg-emerald-900/20 border-l-8 border-emerald-500 rounded-r-2xl font-bold mb-8 leading-relaxed"><i class="fa-solid fa-circle-info mr-3"></i> <strong>EXTRA:</strong> ${eMatch[2].replace(/➔|->/g, '&#8594;')}</div>`; rest = rest.substring(0, eMatch.index); }
-            
-            let nMatch = rest.match(/(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i);
-            if(nMatch) { nessun = `<div class="text-slate-400 text-2xl mb-8 font-medium italic"><span class="bg-slate-700 text-white px-3 py-1 rounded text-lg mr-3 not-italic">NESSUN QUIZ</span>${nMatch[2].replace(/^(?:➔|->)/, '')}</div>`; rest = rest.substring(0, nMatch.index); }
-            
-            let rule = rest;
-            if(rule.includes('➔') || rule.includes('->')) {
-                rule = rule.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right text-blue-500 mx-3"></i>');
-            }
-            let ruleHtml = rule.trim() ? `<p class="text-slate-200 text-3xl leading-relaxed mb-8">${rule}</p>` : '';
-
-            return `<div class="mb-10"><span class="bg-blue-600 text-white text-2xl px-4 py-2 rounded-lg mr-4 font-black shadow-lg inline-block mb-4">${bText}</span>${ruleHtml}${nessun}${extra}${trap}</div>`;
-        }
-        return '';
-    }
-
     function openAdvancedTeleprompter() {
         if(advancedQueue.length === 0) return alert("Nessuna lezione caricata in regia.");
         
@@ -1383,10 +1437,10 @@
                 if(inMappa && l.trim() !== '') mapLines.push(l.trim());
             }
 
-            let html = `<div class="mb-16 border-b-2 border-slate-800 pb-16"><h4 class="text-2xl font-black text-emerald-400 uppercase tracking-widest mb-6">LEZIONE ${index + 1}: ${docObj.argomento}</h4>`;
+            let html = `<div class="mb-20 border-b-4 border-slate-800 pb-16"><h4 class="text-3xl font-black text-emerald-400 uppercase tracking-widest mb-8"><i class="fa-solid fa-layer-group mr-3"></i>LEZIONE ${index + 1}: ${docObj.argomento}</h4>`;
             let currentString = '';
             mapLines.forEach(line => {
-                if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA)/)) {
+                if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA|IL GANCIO)/)) {
                     if(currentString) html += processTeleLine(currentString);
                     currentString = line;
                 } else {
