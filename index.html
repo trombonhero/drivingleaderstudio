@@ -62,16 +62,18 @@
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         /* =======================================================
-           STILI DI STAMPA GLOBALI E FIX FOOTER SCUDO
+           STILI DI STAMPA PROFESSIONALI 
            ======================================================= */
         @media print {
-            html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10.5pt !important; }
-            #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box { display: none !important; }
-            #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
-            
+            html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10.5pt !important; display: block !important; }
+            #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box, #teleprompter-modal, #advanced-print-modal { display: none !important; }
+            #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; color: black !important; background: white !important; }
             @page { margin: 10mm 10mm 15mm 10mm !important; } 
             
-            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; }
+            #print-area * { color: black !important; background-color: transparent !important; box-shadow: none !important; text-shadow: none !important; }
+            
+            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569 !important; background: white !important; z-index: 1000; }
+            .print-footer * { color: #475569 !important; }
             .print-footer img { height: 26px; object-fit: contain; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
 
@@ -83,19 +85,19 @@
             .pagina-text strong, .dispensa-page strong { color: #000 !important; font-weight: 700 !important; }
 
             .print-header-container { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; display: block !important; width: 100%; page-break-after: avoid !important;}
-            .print-header-aula { font-size: 9pt; color: #555; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-            .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000; }
-            .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
+            .print-header-aula { font-size: 9pt; color: #555 !important; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+            .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000 !important; }
+            .print-header-arg { font-size: 12pt; color: #444 !important; margin: 0; font-style: italic; font-weight: normal; }
 
-            .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 11pt !important; line-height: 1.4 !important; page-break-inside: avoid; }
+            .incipit-globale { background-color: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 10pt !important; line-height: 1.3 !important; page-break-inside: avoid; }
+            .incipit-globale * { color: #000 !important; }
             .incipit-titolo { color: #b45309 !important; font-size: 12pt !important; margin-bottom: 4px !important; display: block; font-style: normal; text-transform: uppercase; background: transparent !important; padding: 0;}
             .incipit-globale strong { font-weight: 700 !important; color: inherit !important; display: inline !important; text-transform: none !important; }
             
             .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 14pt !important; margin-top: 18pt !important; padding-bottom: 3pt !important; margin-bottom: 8pt !important; page-break-after: avoid !important; font-weight: 900 !important; text-transform: uppercase; }
-            .incipit-fase { color: #222 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 11pt !important; line-height: 1.3 !important; page-break-after: avoid !important; }
+            .incipit-fase { color: #222 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 10pt !important; line-height: 1.3 !important; page-break-after: avoid !important; }
             .testo-regola { color: #000 !important; font-weight: 500 !important; }
             
-            /* REGOLE DI PROTEZIONE IMPAGINAZIONE RIGHE CHROME */
             .pagina-row { display: block !important; margin-bottom: 10pt !important; font-size: 10.5pt !important; line-height: 1.3 !important; page-break-inside: avoid !important; break-inside: avoid !important; border-bottom: 1px solid #eee; padding-bottom: 6px; overflow: hidden !important; width: 100% !important;}
             .pagina-badge { float: left !important; border: 1px solid black !important; padding: 2px 6px; font-weight: bold; margin-right: 12px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 9pt !important; margin-top: 2px; border-radius: 3px;}
             .pagina-text { display: block !important; color: black !important; overflow: hidden !important;}
@@ -109,32 +111,29 @@
             .v-badge { color: #10b981 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
             .f-badge { color: #ef4444 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
             .matrice-exp { display: block !important; font-size: 9pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.2 !important;}
-            .matrice-row > div > br { display: block !important; }
 
             .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; text-align: left; }
-            .d-header { text-align: left; border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 12px; }
-            .d-meta { font-size: 8.5pt; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; font-weight: bold;}
-            .d-title { font-size: 15pt; font-weight: 900; color: #0f172a; margin: 0; text-transform: uppercase; line-height: 1.2; page-break-after: avoid !important;}
+            .d-title { font-size: 15pt; font-weight: 900; color: #0f172a !important; margin: 0; text-transform: uppercase; line-height: 1.2; page-break-after: avoid !important;}
             .d-section { margin-bottom: 10px; padding: 10px 14px; border-radius: 6px; page-break-inside: avoid !important; text-align: left;}
-            .d-section-title { font-size: 11pt; font-weight: 900; color: #1e3a8a; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
-            .d-sacro { background-color: #f8fafc; border: 1px solid #e2e8f0; }
+            .d-section-title { font-size: 11pt; font-weight: 900; color: #1e3a8a !important; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
+            .d-sacro { background-color: #f8fafc !important; border: 1px solid #e2e8f0 !important; }
             .d-sacro ul { margin: 0; padding-left: 0; list-style-type: none; }
-            .d-sacro li { margin-bottom: 5px; font-size: 10pt; line-height: 1.3; color: #000; }
-            .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 10pt; line-height: 1.3; color: #064e3b; }
+            .d-sacro li { margin-bottom: 5px; font-size: 10pt; line-height: 1.3; color: #000 !important; }
+            .d-pratica { background-color: #f0fdf4 !important; border: 1px solid #bbf7d0 !important; font-size: 10pt; line-height: 1.3; color: #064e3b !important; }
             .d-pratica p { margin: 0 0 5px 0; }
-            .d-quiz { background-color: #fff1f2; border: 1px solid #fecaca; }
+            .d-quiz { background-color: #fff1f2 !important; border: 1px solid #fecaca !important; }
             .d-quiz-item { display: block !important; margin-bottom: 6px; font-size: 10pt; line-height: 1.3; page-break-inside: avoid !important; break-inside: avoid !important; overflow: hidden !important; width: 100% !important;}
-            .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt; width: 12px !important;}
+            .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171 !important; font-size: 8pt; width: 12px !important;}
             .d-quiz-item > div { display: block !important; overflow: hidden !important; }
 
-/* --- STILE MAPPA CONCETTUALE ALLIEVI (Organigramma) --- */
+            /* --- MAPPA CONCETTUALE ALLIEVI --- */
             .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
-            .mindmap-root { background: #0f172a; color: white; font-weight: 900; font-size: 16pt; padding: 12px 30px; border-radius: 8px; text-transform: uppercase; margin-bottom: 25px; text-align: center; border: 2px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%;}
+            .mindmap-root { background: #0f172a !important; color: white !important; font-weight: 900; font-size: 16pt; padding: 12px 30px; border-radius: 8px; text-transform: uppercase; margin-bottom: 25px; text-align: center; border: 2px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%;}
             .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; align-items: flex-start;}
-            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 220px; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; background: #f8fafc;}
-            .mindmap-phase-node { background: #d97706; color: white; font-weight: 900; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 11pt; text-transform: uppercase; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
-            .mindmap-item { background: white; border-left: 5px solid #3b82f6; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; font-size: 10pt; font-weight: 800; color: #1e293b; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center; text-transform: uppercase;}
-            .mindmap-item-extra { border-left-color: #10b981; font-style: normal; color: #065f46; background: #f0fdf4;}
+            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 220px; border: 2px dashed #cbd5e1 !important; border-radius: 12px; padding: 12px; background: #f8fafc !important;}
+            .mindmap-phase-node { background: #d97706 !important; color: white !important; font-weight: 900; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 11pt; text-transform: uppercase; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+            .mindmap-item { background: white !important; border-left: 5px solid #3b82f6 !important; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; font-size: 10pt; font-weight: 800; color: #1e293b !important; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center; text-transform: uppercase;}
+            .mindmap-item-extra { border-left-color: #10b981 !important; font-style: normal; color: #065f46 !important; background: #f0fdf4 !important;}
         }
     </style>
 </head>
@@ -180,8 +179,7 @@
 
                 <div id="gen-results-area" class="hidden flex-col gap-4 flex-grow min-h-0">
                     <div class="flex justify-between items-center shrink-0">
-                        <div id="gen-dispensa-btn-container">
-                            </div>
+                        <div id="gen-dispensa-btn-container"></div>
                         <button onclick="saveToArchive()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-black py-3 px-8 rounded-xl transition shadow-lg shadow-amber-500/20 text-lg flex items-center transform hover:scale-105">
                             <i class="fa-solid fa-download mr-2"></i> SALVA NELL'ARCHIVIO
                         </button>
@@ -229,17 +227,12 @@
                 <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
                     <div>
                         <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-server text-blue-500 mr-3"></i>Database Strumenti</h2>
-                        <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate.</p>
+                        <p class="text-slate-400 text-sm">Memoria locale intelligente. Nessun limite di spazio per mappe e dispense.</p>
                     </div>
-<div class="flex gap-3">
+                    <div class="flex gap-3">
                         <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
                             <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Esporta DB
                         </button>
-                        
-                        <button onclick="forceCloudMigration()" class="btn-action bg-blue-600 hover:bg-blue-500 shadow-blue-600/30">
-                            <i class="fa-solid fa-rocket mr-2"></i> Migra su Cloud
-                        </button>
-
                         <button onclick="document.getElementById('import-file').click()" class="btn-action bg-slate-700 hover:bg-slate-600 text-slate-200">
                             <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Importa DB
                         </button>
@@ -257,7 +250,12 @@
                     </button>
                 </div>
 
-                <div id="archive-container" class="space-y-6 pb-32"></div>
+                <div id="archive-container" class="space-y-6 pb-32">
+                    <div class="text-center py-20 text-slate-500 italic flex flex-col items-center justify-center">
+                        <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-blue-500 block"></i>
+                        Avvio memoria locale...
+                    </div>
+                </div>
             </div>
 
             <div id="batch-action-bar" class="hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 p-4 rounded-full shadow-2xl z-50 flex items-center gap-4 md:gap-6 transition-all duration-300 max-w-[95vw] overflow-x-auto">
@@ -271,7 +269,7 @@
                         <span class="text-yellow-400 font-bold text-sm" id="sel-time">0 min</span>
                     </div>
                 </div>
-<div class="flex gap-4 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
+                <div class="flex gap-4 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
                     <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
                         <input type="checkbox" id="batch-mappe" checked class="w-4 h-4 accent-blue-500 rounded cursor-pointer"> <span class="hidden md:inline">Mappe</span><span class="md:hidden">Map</span>
                     </label>
@@ -285,7 +283,7 @@
                         <input type="checkbox" id="batch-dispense" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer"> <span class="hidden md:inline">Dispense</span><span class="md:hidden">Disp</span>
                     </label>
                 </div>
-<div class="flex gap-2 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
+                <div class="flex gap-2 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
                     <button onclick="deselectAll()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full font-bold transition shadow flex items-center justify-center text-sm border border-slate-500 whitespace-nowrap shrink-0">
                         Annulla
                     </button>
@@ -316,6 +314,9 @@
 
                     <div class="flex gap-3">
                         <div id="read-dispensa-btn-container"></div>
+                        <button onclick="openTeleprompter()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold text-sm transition shadow-lg flex items-center shrink-0">
+                            <i class="fa-solid fa-person-chalkboard mr-2"></i> Modalità Gobbo
+                        </button>
                         <button onclick="toggleEditMode()" id="btn-toggle-edit" class="text-yellow-400 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-yellow-500/30 hover:border-yellow-400 flex items-center shadow-lg shrink-0">
                             <i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento
                         </button>
@@ -361,142 +362,127 @@
                     <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4">
                         <div>
                             <h2 class="text-xl font-bold text-yellow-400"><i class="fa-solid fa-pen-nib mr-2"></i> Editor Sorgente Documento</h2>
-                            <p class="text-xs text-slate-400 mt-1">Modifica il testo sottostante per correggere la lezione. Fai attenzione a non cancellare i delimitatori principali.</p>
+                            <p class="text-xs text-slate-400 mt-1">Modifica il testo sottostante per correggere la lezione.</p>
                         </div>
                         <div class="flex gap-3">
                             <button onclick="toggleEditMode()" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded-lg font-bold text-sm transition border border-slate-600">Annulla</button>
-                            <button onclick="saveEditedDocument()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition shadow-lg flex items-center"><i class="fa-solid fa-save mr-2"></i> Salva Modifiche e Aggiorna</button>
+                            <button onclick="saveEditedDocument()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition shadow-lg flex items-center"><i class="fa-solid fa-save mr-2"></i> Salva Modifiche</button>
                         </div>
                     </div>
                     <textarea id="read-edit-textarea" class="w-full flex-grow bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-xl focus:outline-none focus:border-yellow-500 font-mono text-sm resize-none"></textarea>
                 </div>
-
             </div>
         </div>
-
     </div> 
-    
-<div id="print-area"></div>
+
+    <div id="teleprompter-modal" class="hidden fixed inset-0 z-[99999] bg-[#09090b] overflow-y-auto flex-col text-white">
+        <div class="max-w-[1200px] mx-auto w-full flex flex-col min-h-screen">
+            <div class="flex justify-between items-center mb-8 sticky top-0 bg-[#09090b]/90 backdrop-blur-md p-6 border-b border-slate-800 z-50 shadow-2xl">
+                <div class="overflow-hidden pr-4">
+                    <h2 id="tele-aula" class="text-2xl font-bold text-blue-500 uppercase tracking-widest truncate mb-1">AULA</h2>
+                    <h3 id="tele-titolo" class="text-4xl font-black text-slate-100 truncate">Argomento</h3>
+                </div>
+                <button onclick="closeTeleprompter()" class="bg-slate-800 hover:bg-red-600 text-white px-8 py-4 rounded-full text-2xl font-black border border-slate-700 transition shadow-xl shrink-0">
+                    <i class="fa-solid fa-xmark mr-3"></i> Chiudi Gobbo
+                </button>
+            </div>
+            <div id="tele-content" class="px-6 pb-40 font-medium"></div>
+        </div>
+    </div>
 
     <div id="advanced-print-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
         <div class="bg-slate-900 border border-slate-600 rounded-2xl w-full max-w-2xl p-6 shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-4 shrink-0 border-b border-slate-700 pb-4">
-                <h2 class="text-2xl font-black text-white"><i class="fa-solid fa-sliders text-blue-500 mr-2"></i> Regia di Stampa</h2>
+                <h2 class="text-2xl font-black text-white"><i class="fa-solid fa-sliders text-blue-500 mr-2"></i> Regia di Stampa & Presentazione</h2>
                 <div class="flex items-center gap-4">
-                    <div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg border border-slate-600 shadow-inner flex items-center" title="Tempo Totale Calcolato">
+                    <div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg border border-slate-600 shadow-inner flex items-center">
                         <i class="fa-regular fa-clock mr-2"></i> <span id="modal-total-time">0 min</span>
                     </div>
                     <button onclick="closeAdvancedPrint()" class="text-slate-400 hover:text-red-400 text-3xl transition leading-none"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
-            
-            <p class="text-slate-400 text-sm mb-4 shrink-0"><i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> <strong>Novità:</strong> Ora puoi trascinare le lezioni su e giù col mouse o usare i tasti veloci "Sposta in Cima/Fondo"!</p>
-            
-            <div id="advanced-queue-list" class="flex-grow overflow-y-auto space-y-2 mb-6 pr-2">
-                </div>
-
+            <p class="text-slate-400 text-sm mb-4 shrink-0"><i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> <strong>Sposta e Ordina:</strong> Trascina i blocchi col mouse per definire l'ordine del fascicolo o del gobbo!</p>
+            <div id="advanced-queue-list" class="flex-grow overflow-y-auto space-y-2 mb-6 pr-2"></div>
             <div class="shrink-0 border-t border-slate-700 pt-4 space-y-4">
                 <label class="flex items-center gap-3 bg-slate-800 p-3 rounded-lg cursor-pointer border border-slate-600 hover:border-blue-500 transition">
                     <input type="checkbox" id="override-time-cb" onchange="updateModalTotalTime()" class="w-5 h-5 accent-blue-500 rounded cursor-pointer">
                     <div>
                         <span class="text-white font-bold block leading-tight">Forza ricalcolo tempo (2 min/pagina)</span>
-                        <span class="text-xs text-slate-400">Aggiorna istantaneamente il contatore in alto e verrà stampato sul PDF.</span>
+                        <span class="text-xs text-slate-400">Aggiorna il contatore e lo stampa sul PDF finale.</span>
                     </div>
                 </label>
-
-                <button onclick="executeAdvancedPrint()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl shadow-lg shadow-blue-500/20 transition text-lg flex justify-center items-center">
-                    <i class="fa-solid fa-print mr-2"></i> Genera PDF Ordinato
-                </button>
+                <div class="flex gap-3">
+                    <button onclick="openAdvancedTeleprompter()" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-black py-4 rounded-xl shadow-lg shadow-purple-500/20 transition text-lg flex justify-center items-center">
+                        <i class="fa-solid fa-person-chalkboard mr-2"></i> Gobbo Ordinato
+                    </button>
+                    <button onclick="executeAdvancedPrint()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl shadow-lg shadow-blue-500/20 transition text-lg flex justify-center items-center">
+                        <i class="fa-solid fa-print mr-2"></i> Genera PDF
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
 <script>
     /* ==========================================================================
-       STATO E VARIABILI GLOBALI
-    ========================================================================== */
-    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzx60aEBpbV1LTszWGW4nI5pjlYaNhDnI9Obqh7PagwB3kNwiCq464P4wuQ4xRMlce4/exec";
+       MOTORE DI MEMORIA LOCALE ILLIMITATA (IndexedDB - Supera i 5MB)
+       ========================================================================== */
     let archiveDB = [];
 
-// Carica il database dal cloud all'apertura del programma
-    async function loadFromCloud() {
-        try {
-            // Un trucco per aggirare in modo sicuro la cache e i blocchi del browser in lettura
-            const response = await fetch(CLOUD_URL + "?cacheBust=" + Date.now(), {
-                method: "GET",
-                mode: "cors", // La lettura esige questa modalità
-                cache: "no-cache"
-            });
-            
-            // Attende la risposta in formato testo, poi tenta di capire se è vuota o no
-            const textResponse = await response.text();
-            
-            if (textResponse && textResponse.trim().startsWith("[")) {
-                archiveDB = JSON.parse(textResponse);
-                console.log(`Caricate ${archiveDB.length} lezioni dal Cloud.`);
-            } else {
-                console.log("Il Cloud ha restituito un formato inaspettato o vuoto. Uso il backup locale.");
-                archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
-            }
-            renderArchiveList();
-
-        } catch (e) {
-            console.error("Errore di caricamento dal Cloud, carico il backup locale:", e);
-            archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
-            renderArchiveList();
-        }
-    }
-    
-    // Inizializza subito
-    loadFromCloud();
-
-async function syncDatabase() {
-        // Salva copia locale per sicurezza
-        localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
-        
-        // Spinge l'intero archivio su Google Drive (Travestito da testo per superare il blocco)
-        try {
-            await fetch(CLOUD_URL, {
-                method: "POST",
-                body: JSON.stringify(archiveDB),
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8"
+    function inizializzaIDB() {
+        return new Promise((resolve) => {
+            let req = indexedDB.open("DrivingLeaderDatabase", 1);
+            req.onupgradeneeded = (e) => {
+                let db = e.target.result;
+                if (!db.objectStoreNames.contains("archivio")) {
+                    db.createObjectStore("archivio");
                 }
-            });
-            console.log("Salvataggio su Cloud riuscito!");
-        } catch (e) {
-            console.error("Errore sincronizzazione cloud", e);
-        }
+            };
+            req.onsuccess = (e) => resolve(e.target.result);
+        });
     }
 
-    async function forceCloudMigration() {
-        // 1. Pesca i dati bloccati nella memoria del browser
-        let vecchiDati = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
-        
-        if(vecchiDati.length === 0) {
-            return alert("Non ci sono vecchi dati da migrare nel browser.");
-        }
-        
-        if(!confirm(`Ho trovato ${vecchiDati.length} lezioni salvate nel tuo browser. Vuoi spingerle nel Cloud di Google Drive adesso?`)) return;
-        
-        archiveDB = vecchiDati; // Carica i vecchi dati nella memoria attiva
-        
+    async function salvaInIDB(dati) {
         try {
-            document.body.style.cursor = 'wait'; // Cursore di caricamento
-            await fetch(CLOUD_URL, {
-                method: "POST",
-                body: JSON.stringify(archiveDB),
-                headers: { "Content-Type": "text/plain;charset=utf-8" }
-            });
-            document.body.style.cursor = 'default';
-            alert("MIGRAZIONE COMPLETATA! Ora puoi controllare il tuo Google Drive.");
-            renderArchiveList(); // Aggiorna lo schermo
-        } catch (e) {
-            document.body.style.cursor = 'default';
-            alert("Errore durante la migrazione. La connessione è stata bloccata.");
-        }
+            let db = await inizializzaIDB();
+            let tx = db.transaction("archivio", "readwrite");
+            tx.objectStore("archivio").put(dati, "archiveDB");
+        } catch(e) { console.error("Errore scrittura database locale", e); }
     }
-    
+
+    async function leggiDaIDB() {
+        return new Promise(async (resolve) => {
+            try {
+                let db = await inizializzaIDB();
+                let tx = db.transaction("archivio", "readonly");
+                let req = tx.objectStore("archivio").get("archiveDB");
+                req.onsuccess = () => resolve(req.result || []);
+                req.onerror = () => resolve([]);
+            } catch(e) { resolve([]); }
+        });
+    }
+
+    async function syncDatabase() {
+        await salvaInIDB(archiveDB);
+    }
+
+    async function loadFallbackLocal() {
+        let vecchiDati = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+        if(vecchiDati.length > 0) {
+            archiveDB = vecchiDati;
+            await syncDatabase();
+            localStorage.removeItem('driving_leader_studio_db'); 
+        } else {
+            archiveDB = await leggiDaIDB();
+        }
+        renderArchiveList();
+        if(archiveDB.length === 0) navTo('generator'); 
+        else navTo('archive');
+    }
+
+    /* ==========================================================================
+       STATO E VARIABILI GLOBALI APPLICAZIONE
+       ========================================================================== */
     let currentDocMeta = { gen: {}, read: {}, batch: {} };
     let currentCsvData = { gen: [], read: [], batch: [] };
     let currentDispensaHtml = { gen: "", read: "", batch: "" }; 
@@ -509,8 +495,9 @@ async function syncDatabase() {
     let lastOpenedAula = null;
     let lastOpenedCapitolo = null;
 
-    // LA NUOVA MEMORIA DI FERRO: Ricorda i selezionati anche se fai una ricerca o chiudi la cartella
     let globalSelectedIds = new Set();
+    let advancedQueue = [];
+    let dragStartIndex = -1;
 
     /* ==========================================================================
        NAVIGAZIONE E FOCUS MODE
@@ -518,6 +505,10 @@ async function syncDatabase() {
     function navTo(viewId) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
+
+        document.querySelectorAll('.btn-nav').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.getElementById(`nav-btn-${viewId}`);
+        if (activeBtn) activeBtn.classList.add('active');
 
         if(viewId === 'archive') {
             const searchBar = document.getElementById('search-db');
@@ -560,18 +551,15 @@ async function syncDatabase() {
     });
 
     /* ==========================================================================
-       LOGICA DI ELABORAZIONE TESTO IA (Parser Core con 3 Sezioni)
+       LOGICA DI ELABORAZIONE TESTO IA
     ========================================================================== */
     function processAndRender(rawText, prefix, silent = false) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
-            if(!silent) alert("Attenzione: Il testo non contiene i delimitatori minimi necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
+            if(!silent) alert("Attenzione: Il testo non contiene i delimitatori minimi necessari.");
             return false;
         }
 
-        let mappaRaw = "";
-        let matriceRaw = "";
-        let dispensaRaw = "";
-
+        let mappaRaw = "", matriceRaw = "", dispensaRaw = "";
         try {
             mappaRaw = rawText.split('=== MAPPA TECNICA ===')[1].split('=== MATRICE QUIZ ===')[0].trim();
             let remainder = rawText.split('=== MATRICE QUIZ ===')[1];
@@ -583,7 +571,7 @@ async function syncDatabase() {
                 matriceRaw = remainder.trim();
             }
         } catch(e) {
-            console.error("Errore di split", e);
+            console.error("Errore di split testo", e);
             return false;
         }
 
@@ -621,10 +609,7 @@ async function syncDatabase() {
     function parseDispensa(text) {
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
-        
-        let inSacro = false;
-        let inPratica = false;
-        let inQuiz = false;
+        let inSacro = false, inPratica = false, inQuiz = false;
 
         lines.forEach(line => {
             let l = line.trim();
@@ -632,25 +617,23 @@ async function syncDatabase() {
             let uL = l.toUpperCase();
 
             if (uL.startsWith('TITOLO:')) {
-                return; 
+                let titleText = l.substring(7).trim();
+                html += `<h3 class="d-title text-xl font-bold mb-4 border-b pb-1">${titleText}</h3>`;
             }
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                html += `<div class="d-section d-sacro">
-                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced" style="margin-right:10px;"></i> La Norma (Sintesi)</div><ul>`;
+                html += `<div class="d-section d-sacro mb-4 p-4 rounded bg-slate-800/20 border border-slate-700"><div class="d-section-title font-bold mb-2 text-blue-400"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul class="list-disc pl-5 space-y-1">`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
-                html += `<div class="d-section d-pratica">
-                            <div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div>`;
+                html += `<div class="d-section d-pratica mb-4 p-4 rounded bg-green-950/10 border border-green-800/30 text-green-300"><div class="d-section-title font-bold mb-2 text-green-400"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
                 if(inSacro) html += `</ul></div>`;
                 if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
-                html += `<div class="d-section d-quiz">
-                            <div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb" style="margin-right:10px;"></i> Il Campo Minato (I Quiz)</div>`;
+                html += `<div class="d-section d-quiz mb-4 p-4 rounded bg-red-950/10 border border-red-800/30 text-red-300"><div class="d-section-title font-bold mb-2 text-red-400"><i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)</div>`;
             }
             else {
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -659,15 +642,11 @@ async function syncDatabase() {
                 if (inSacro && cleanLine) {
                     html += `<li>${cleanLine}</li>`;
                 } else if (inPratica && cleanLine) {
-                    html += `<p style="margin-bottom: 8px;">${cleanLine}</p>`;
+                    html += `<p class="mb-2">${cleanLine}</p>`;
                 } else if (inQuiz && cleanLine) {
-                    let qLine = cleanLine;
-                    qLine = qLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:700; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>');
-                    qLine = qLine.replace(/VERO/g, '<span style="color:#16a34a; font-weight:700; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
-                    
-                    qLine = qLine.replace(/\[(.*?)\]/g, '<span class="d-quiz-box">$1</span>');
-                    
-                    html += `<div class="d-quiz-item"><i class="fa-solid fa-caret-right"></i><div>${qLine}</div></div>`;
+                    let qLine = cleanLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:700; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>')
+                                         .replace(/VERO/g, '<span style="color:#16a34a; font-weight:700; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
+                    html += `<div class="d-quiz-item flex items-start gap-2 mb-1"><i class="fa-solid fa-caret-right text-red-400 mt-1"></i><div>${qLine}</div></div>`;
                 }
             }
         });
@@ -676,11 +655,10 @@ async function syncDatabase() {
         if(inPratica) html += `</div>`;
         if(inQuiz) html += `</div>`;
         
-        html += '</div>'; 
-        return html;
+        return html + '</div>';
     }
 
-function renderMappa(text, prefix) {
+    function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let mergedLines = [];
         
@@ -688,27 +666,44 @@ function renderMappa(text, prefix) {
             let l = line.trim();
             if (!l) return;
             let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
-            let isKeyword = cleanStart.startsWith('AULA:') || cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:') || cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:') || cleanStart.startsWith('TEMPO STIMATO:') || cleanStart.startsWith('IL SENSO PRATICO:') || cleanStart.startsWith('FASE') || cleanStart.startsWith('OBIETTIVO PRATICO:') || cleanStart.startsWith('PAGINA');
+            let isKeyword = cleanStart.startsWith('AULA:') || 
+                            cleanStart.startsWith('CAPITOLO:') || 
+                            cleanStart.startsWith('OBIETTIVO:') || 
+                            cleanStart.startsWith('PARAGRAFO:') || 
+                            cleanStart.startsWith('ARGOMENTO:') || 
+                            cleanStart.startsWith('TEMPO STIMATO:') || 
+                            cleanStart.startsWith('IL SENSO PRATICO:') || 
+                            cleanStart.startsWith('FASE') || 
+                            cleanStart.startsWith('OBIETTIVO PRATICO:') || 
+                            cleanStart.startsWith('PAGINA');
 
             if (isKeyword || mergedLines.length === 0) mergedLines.push(l); 
             else mergedLines[mergedLines.length - 1] += " " + l;
         });
 
         let html = '';
-        let conceptData = {}; // Memoria per raggruppare i concetti per FASE
-        let currentFase = "CONCETTI CHIAVE"; // Fase di default se l'IA non ne genera una
+        let conceptData = {}; 
+        let currentFase = "CONCETTI CHIAVE"; 
+
         currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
         
         mergedLines.forEach(line => {
             let l = line.trim();
             if(!l) return;
-
             let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
 
-            if (cleanStart.startsWith('AULA:')) currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
-            else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
-            else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
-            else if (cleanStart.startsWith('TEMPO STIMATO:')) currentDocMeta[prefix].tempo = l.replace(/.*?TEMPO STIMATO:/i, '').replace(/[\*\_]/g, '').trim();
+            if (cleanStart.startsWith('AULA:')) {
+                currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
+            }
+            else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) {
+                currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
+            }
+            else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) {
+                currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
+            }
+            else if (cleanStart.startsWith('TEMPO STIMATO:')) {
+                currentDocMeta[prefix].tempo = l.replace(/.*?TEMPO STIMATO:/i, '').replace(/[\*\_]/g, '').trim();
+            }
             else if (cleanStart.startsWith('IL SENSO PRATICO:')) {
                 let pText = l.replace(/.*?IL SENSO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-globale"><div class="incipit-titolo"><i class="fa-solid fa-lightbulb mr-2"></i>Il Senso Pratico</div>${pText}</div>`;
@@ -716,7 +711,7 @@ function renderMappa(text, prefix) {
             else if (cleanStart.startsWith('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
-                currentFase = title; // Registriamo la fase corrente per la mappa allievi
+                currentFase = title;
             } 
             else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
                 let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -724,7 +719,6 @@ function renderMappa(text, prefix) {
             }
             else if (cleanStart.startsWith('PAGINA')) {
                 l = l.replace(/^\*\s*/, '').replace(/🟢|⚠️|🚨/g, ''); 
-                
                 let pageMatch = l.match(/PAGINA\s*\d+:?/i); 
                 let badgeText = pageMatch ? pageMatch[0].replace(':', '').trim() : "PAGINA";
                 let remaining = pageMatch ? l.substring(l.indexOf(pageMatch[0]) + pageMatch[0].length).trim() : l.trim();
@@ -739,8 +733,7 @@ function renderMappa(text, prefix) {
                     remaining = remaining.substring(0, trapMatch.index).trim(); 
                 }
 
-                let extraText = "", extraRaw = "";
-                let extraRegex = /(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i;
+                let extraText = "", extraRaw = "", extraRegex = /(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i;
                 let extraMatch = remaining.match(extraRegex);
                 if (extraMatch) {
                     extraRaw = extraMatch[2].trim();
@@ -749,8 +742,7 @@ function renderMappa(text, prefix) {
                     extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ${extraText}</div>`;
                 }
 
-                let nessunText = "", nessunRaw = "";
-                let nessunRegex = /(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i;
+                let nessunText = "", nessunRaw = "", nessunRegex = /(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i;
                 let nessunMatch = remaining.match(nessunRegex);
                 if (nessunMatch) {
                     nessunRaw = nessunMatch[2].trim().replace(/^(?:➔|->)/, '').trim();
@@ -758,8 +750,7 @@ function renderMappa(text, prefix) {
                     nessunText = `<div style="display: block; margin-top: 4px; color: #475569;"><span style="background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 6px; border-radius: 4px; font-size: 0.85rem; margin-right: 6px;"><strong>NESSUN QUIZ</strong></span><span style="font-style: italic; font-size: 0.95rem;">${nessunRaw}</span></div>`;
                 }
 
-                let gancioText = "", gancioRaw = "";
-                let gancioRegex = /IL GANCIO:\s*(.*?)(?=\s*\*\*|$)/i; 
+                let gancioText = "", gancioRaw = "", gancioRegex = /IL GANCIO:\s*(.*?)(?=\s*\*\*|$)/i; 
                 let gancioMatch = remaining.match(gancioRegex);
                 if (gancioMatch) {
                     gancioRaw = gancioMatch[1].trim();
@@ -767,13 +758,12 @@ function renderMappa(text, prefix) {
                     gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioRaw}</span></div>`;
                 }
 
-                let mainText = remaining; 
-                let argToExtract = ""; // Parola chiave per gli allievi
+                let mainText = remaining, mainRaw = remaining, argToExtract = ""; 
                 let arrowMatch = mainText.match(/➔|->/);
                 if (arrowMatch) {
                     let idx = mainText.indexOf(arrowMatch[0]);
                     let arg = mainText.substring(0, idx).trim();
-                    argToExtract = arg.replace(/\*\*/g, '').trim(); // Salva per la mappa
+                    argToExtract = arg.replace(/\*\*/g, '').trim(); 
                     let rule = mainText.substring(idx + arrowMatch[0].length).trim();
                     mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="testo-regola">${rule}</span>`;
                 } else if (mainText.length > 0) {
@@ -785,62 +775,32 @@ function renderMappa(text, prefix) {
                 if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                // Mappa Normale (Docente)
-                html += `
-                    <div class="pagina-row">
-                        <div class="pagina-badge">${badgeText}</div>
-                        <div class="pagina-text">
-                            ${gancioText}
-                            ${mainText} 
-                            ${nessunText}
-                            ${extraText}
-                            ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}
-                        </div>
-                    </div>
-                `;
+                html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText} ${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
 
-                // LOGICA MAPPA ALLIEVI
                 if (!conceptData[currentFase]) conceptData[currentFase] = [];
-                
-                if (argToExtract) {
-                    conceptData[currentFase].push(`<div class="mindmap-item">${argToExtract}</div>`);
-                }
+                if (argToExtract) conceptData[currentFase].push(`<div class="mindmap-item">${argToExtract}</div>`);
                 if (extraRaw) {
                     let extArrowMatch = extraRaw.match(/➔|->/);
                     if(extArrowMatch) {
-                        let extIdx = extraRaw.indexOf(extArrowMatch[0]);
-                        let extArg = extraRaw.substring(0, extIdx).replace(/\*\*/g, '').trim();
+                        let extArg = extraRaw.substring(0, extraRaw.indexOf(extArrowMatch[0])).replace(/\*\*/g, '').trim();
                         if(extArg) conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-extra">EXTRA: ${extArg}</div>`);
                     }
                 }
             }
         });
 
-        // GENERAZIONE HTML MAPPA ALLIEVI
         let cmapHtmlNodes = '';
         Object.keys(conceptData).forEach(fase => {
             if (conceptData[fase].length > 0) {
-                cmapHtmlNodes += `
-                    <div class="mindmap-phase-col">
-                        <div class="mindmap-phase-node">${fase}</div>
-                        ${conceptData[fase].join('')}
-                    </div>
-                `;
+                cmapHtmlNodes += `<div class="mindmap-phase-col"><div class="mindmap-phase-node">${fase}</div>${conceptData[fase].join('')}</div>`;
             }
         });
 
-        if (cmapHtmlNodes !== '') {
-            currentConceptMapHtml[prefix] = `
-                <div class="mindmap-container">
-                    <div class="mindmap-root">${currentDocMeta[prefix].argomento || 'Argomento della Lezione'}</div>
-                    <div class="mindmap-phases">
-                        ${cmapHtmlNodes}
-                    </div>
-                </div>
-            `;
-        } else {
-            currentConceptMapHtml[prefix] = "";
-        }
+        currentConceptMapHtml[prefix] = cmapHtmlNodes !== '' ? `
+            <div class="mindmap-container">
+                <div class="mindmap-root">${currentDocMeta[prefix].argomento || 'Argomento della Lezione'}</div>
+                <div class="mindmap-phases">${cmapHtmlNodes}</div>
+            </div>` : "";
 
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
@@ -863,58 +823,31 @@ function renderMappa(text, prefix) {
     function renderMatrice(text, prefix) {
         const lines = text.split('\n');
         let html = '';
-        currentCsvData[prefix] = []; 
-        currentCsvData[prefix].push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]);
-
-        let currentMatriceVisual = ""; 
-        let currentMatriceClean = "";  
+        currentCsvData[prefix] = [["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]];
+        let currentMatriceVisual = "", currentMatriceClean = "";  
 
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
-
             let upperL = l.toUpperCase();
-            
-            let isContinuation = false;
-            if (l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./)) {
-                isContinuation = true; 
-            } else if (l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ')) {
-                isContinuation = true; 
-            }
+            let isContinuation = l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./) || l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ');
 
             if (!isContinuation) {
                 currentMatriceVisual = l.replace(/[\[\]\*\#]/g, '').trim();
                 currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
                 html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
-            } 
-            else {
+            } else {
                 let parts = l.split('|');
                 let rawQuizText = parts[0].trim();
                 let expText = parts[1] ? parts[1].trim() : "Nessuna spiegazione fornita.";
-
                 let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
                 let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
-                
-                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '')
-                                   .replace(/\(V\)/i, '')
-                                   .replace(/\(F\)/i, '')
-                                   .replace(/VERO/i, '')
-                                   .replace(/FALSO/i, '')
-                                   .trim();
-                
+                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '').replace(/\(V\)/i, '').replace(/\(F\)/i, '').replace(/VERO/i, '').replace(/FALSO/i, '').trim();
                 let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
                 let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
                 
-                html += `<div class="matrice-row">
-                            <i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-3 mt-1 text-sm shrink-0"></i> 
-                            <div>
-                                <span class="block">${testoVisual} ${badgeHtml}</span>
-                                <span class="matrice-exp"><i class="fa-solid fa-caret-right mr-1"></i>${expText}</span>
-                            </div>
-                         </div>`;
-                
-                let esitoClean = isVero ? "V" : "F";
-                currentCsvData[prefix].push([currentMatriceClean, testoClean, fraseCompleta, esitoClean, expText]);
+                html += `<div class="matrice-row"><i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-3 mt-1 text-sm shrink-0"></i> <div><span class="block">${testoVisual} ${badgeHtml}</span><span class="matrice-exp"><i class="fa-solid fa-caret-right mr-1"></i>${expText}</span></div></div>`;
+                currentCsvData[prefix].push([currentMatriceClean, testoClean, fraseCompleta, isVero ? "V" : "F", expText]);
             }
         });
 
@@ -923,9 +856,9 @@ function renderMappa(text, prefix) {
     }
 
     /* ==========================================================================
-       LOGICA ARCHIVIO E RICERCA (Con Memoria di Selezione)
+       LOGICA ARCHIVIO E RICERCA 
     ========================================================================== */
-    function saveToArchive() {
+    async function saveToArchive() {
         const meta = currentDocMeta['gen'];
         if(!meta.aula && !meta.obiettivo && !meta.argomento) {
             alert("Impossibile salvare: Manca l'intestazione con i metadati nel testo.");
@@ -944,71 +877,56 @@ function renderMappa(text, prefix) {
 
         const safeTitle = (newItem.argomento || "").toLowerCase().trim();
         const safeCap = (newItem.obiettivo || "").toLowerCase().trim();
-        
-        const exists = archiveDB.find(doc => 
-            (doc.argomento || "").toLowerCase().trim() === safeTitle && 
-            (doc.obiettivo || "").toLowerCase().trim() === safeCap
-        );
+        const exists = archiveDB.find(doc => (doc.argomento || "").toLowerCase().trim() === safeTitle && (doc.obiettivo || "").toLowerCase().trim() === safeCap);
 
         if(exists) {
-            if(!confirm(`Attenzione: Esiste già una lezione intitolata "${newItem.argomento}". Vuoi sostituirla con questa nuova?`)) return;
-            archiveDB = archiveDB.filter(doc => doc.id !== exists.id); 
+            if(!confirm(`Attenzione: Esiste già una lezione intitolata "${newItem.argomento}". Vuoi sostituirla?`)) return;
+            archiveDB = archiveDB.filter(doc => doc.id !== exists.id);
             globalSelectedIds.delete(exists.id);
         }
 
         archiveDB.push(newItem);
-        try {
-            syncDatabase();
-            lastOpenedAula = newItem.aula;
-            lastOpenedCapitolo = newItem.obiettivo;
-            alert("Documento salvato con successo nell'Archivio Didattico!");
-            navTo('archive');
-        } catch (e) {
-            alert("Errore di salvataggio. La memoria del browser potrebbe essere piena.");
-        }
+        await syncDatabase();
+        lastOpenedAula = newItem.aula;
+        lastOpenedCapitolo = newItem.obiettivo;
+        alert("Documento salvato con successo nell'Archivio IDB!");
+        navTo('archive');
     }
 
-    function deleteArchivedDocument(docId) {
+    async function deleteArchivedDocument(docId) {
         if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
-            const doc = archiveDB.find(d => d.id === docId);
-            if(doc) {
-                lastOpenedAula = doc.aula;
-                lastOpenedCapitolo = doc.obiettivo;
+            const docObj = archiveDB.find(d => d.id === docId);
+            if(docObj) {
+                lastOpenedAula = docObj.aula;
+                lastOpenedCapitolo = docObj.obiettivo;
             }
             archiveDB = archiveDB.filter(d => d.id !== docId);
             globalSelectedIds.delete(docId);
-            syncDatabase();
+            await syncDatabase();
             renderArchiveList(document.getElementById('search-db').value);
             updateSelectionBar();
         }
     }
 
-    function deleteBatch() {
+    async function deleteBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         if(selectedIds.length === 0) return;
-        
         if(confirm(`Sei sicuro di voler eliminare in blocco i ${selectedIds.length} documenti selezionati? L'azione è irreversibile.`)) {
-            const firstDoc = archiveDB.find(d => d.id === selectedIds[0]);
-            if(firstDoc) {
-                lastOpenedAula = firstDoc.aula;
-                lastOpenedCapitolo = firstDoc.obiettivo;
-            }
-            
             archiveDB = archiveDB.filter(d => !selectedIds.includes(d.id));
             globalSelectedIds.clear();
-            syncDatabase();
+            await syncDatabase();
             renderArchiveList(document.getElementById('search-db').value);
             updateSelectionBar();
         }
     }
 
-    function deepSearch(doc, query) {
+    function deepSearch(docObj, query) {
         if (!query) return true;
         const q = query.toLowerCase().trim();
-        if (doc.aula.toLowerCase().includes(q)) return true;
-        if (doc.obiettivo.toLowerCase().includes(q)) return true;
-        if (doc.argomento.toLowerCase().includes(q)) return true;
-        if (doc.rawText.toLowerCase().includes(q)) return true;
+        if (docObj.aula.toLowerCase().includes(q)) return true;
+        if (docObj.obiettivo.toLowerCase().includes(q)) return true;
+        if (docObj.argomento.toLowerCase().includes(q)) return true;
+        if (docObj.rawText && docObj.rawText.toLowerCase().includes(q)) return true;
         return false;
     }
 
@@ -1017,7 +935,7 @@ function renderMappa(text, prefix) {
         container.innerHTML = '';
 
         if(archiveDB.length === 0) {
-            container.innerHTML = `<div class="text-center py-20 text-slate-500 italic"><i class="fa-solid fa-folder-open text-4xl mb-4 block text-slate-600"></i>Nessun documento salvato nell'archivio.</div>`;
+            container.innerHTML = `<div class="text-center py-20 text-slate-500 italic"><i class="fa-solid fa-folder-open text-4xl mb-4 block text-slate-600"></i>Nessun documento salvato.</div>`;
             return;
         }
 
@@ -1026,122 +944,77 @@ function renderMappa(text, prefix) {
         let resultsFound = false;
         let grouped = {};
         
-        archiveDB.forEach(doc => {
-            if (!deepSearch(doc, searchQuery)) return;
+        archiveDB.forEach(docObj => {
+            if (!deepSearch(docObj, searchQuery)) return;
             resultsFound = true;
-            let aula = doc.aula || "Varie";
-            let ob = doc.obiettivo || "Generico";
+            let aula = docObj.aula || "Varie";
+            let ob = docObj.obiettivo || "Generico";
             if(!grouped[aula]) grouped[aula] = {};
             if(!grouped[aula][ob]) grouped[aula][ob] = [];
-            grouped[aula][ob].push(doc);
+            grouped[aula][ob].push(docObj);
         });
 
         if (isSearching && !resultsFound) {
-            container.innerHTML = `
-                <div class="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700">
-                    <i class="fa-solid fa-magnifying-glass text-5xl text-slate-500 mb-4"></i>
-                    <h3 class="text-2xl font-bold text-white mb-2">Nessun risultato trovato</h3>
-                    <p class="text-slate-400">La ricerca non ha prodotto risultati.</p>
-                </div>
-            `;
+            container.innerHTML = `<div class="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700"><i class="fa-solid fa-magnifying-glass text-5xl text-slate-500 mb-4"></i><h3 class="text-2xl font-bold text-white mb-2">Nessun risultato trovato</h3></div>`;
             return;
         }
 
         let aulaIndex = 0;
-
         Object.keys(grouped).sort().forEach(aulaName => {
-            let aulaHtml = `<div class="mb-6 glass-panel overflow-hidden transition-all p-0 border border-slate-700">`;
             let isAulaExpanded = forceExpand || (!isSearching && lastOpenedAula === aulaName);
-            const gridClassHidden = isAulaExpanded ? "" : "hidden";
-            const iconClassToggle = isAulaExpanded ? "fa-chevron-up" : "fa-chevron-down";
-            
-            aulaHtml += `
+            let aulaHtml = `<div class="mb-6 glass-panel overflow-hidden transition-all p-0 border border-slate-700">
                 <div class="p-6 flex justify-between items-center hover:bg-slate-800/80 transition-colors">
                     <h3 class="text-2xl font-black text-emerald-400 uppercase tracking-widest flex items-center">
                         <i class="fa-solid fa-school mr-4"></i>${aulaName}
-                        <button onclick="renameEntity('aula', '${escapeQuotes(aulaName)}')" class="ml-4 text-sm text-slate-500 hover:text-yellow-400 transition" title="Modifica titolo Aula"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="renameEntity('aula', '${escapeQuotes(aulaName)}')" class="ml-4 text-sm text-slate-500 hover:text-yellow-400 transition" title="Modifica"><i class="fa-solid fa-pen"></i></button>
                     </h3>
-                    <div class="cursor-pointer px-4 py-2" onclick="document.getElementById('grid-aula-${aulaIndex}').classList.toggle('hidden'); document.getElementById('icon-aula-${aulaIndex}').classList.toggle('fa-chevron-up'); document.getElementById('icon-aula-${aulaIndex}').classList.toggle('fa-chevron-down');">
-                        <i id="icon-aula-${aulaIndex}" class="fa-solid ${iconClassToggle} text-slate-400 text-xl transition-transform"></i>
+                    <div class="cursor-pointer px-4 py-2" onclick="document.getElementById('grid-aula-${aulaIndex}').classList.toggle('hidden'); this.querySelector('i').classList.toggle('fa-chevron-up'); this.querySelector('i').classList.toggle('fa-chevron-down');">
+                        <i class="fa-solid ${isAulaExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-400 text-xl transition-transform"></i>
                     </div>
                 </div>
-                <div id="grid-aula-${aulaIndex}" class="space-y-4 p-6 pt-0 border-t border-slate-700/50 ${gridClassHidden}">
-            `;
+                <div id="grid-aula-${aulaIndex}" class="space-y-4 p-6 pt-0 border-t border-slate-700/50 ${isAulaExpanded ? '' : 'hidden'}">`;
             
             Object.keys(grouped[aulaName]).sort().forEach((obName, obIndex) => {
                 let isCapExpanded = forceExpand || (!isSearching && lastOpenedAula === aulaName && lastOpenedCapitolo === obName);
-                const capGridHidden = isCapExpanded ? "" : "hidden";
-                const capIconToggle = isCapExpanded ? "fa-chevron-up" : "fa-chevron-down";
-
-                grouped[aulaName][obName].sort((a, b) => {
-                    return (a.argomento || "").localeCompare(b.argomento || "", undefined, { numeric: true, sensitivity: 'base' });
-                });
+                grouped[aulaName][obName].sort((a, b) => (a.argomento || "").localeCompare(b.argomento || "", undefined, { numeric: true }));
 
                 let totalFolderMinutes = 0;
-                grouped[aulaName][obName].forEach(doc => {
-                    if (doc.tempo) {
-                        let match = doc.tempo.match(/\d+/);
-                        if (match) totalFolderMinutes += parseInt(match[0], 10);
-                    }
-                });
-
-                let folderTimeBadge = totalFolderMinutes > 0 
-                    ? `<span class="bg-slate-900 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-600 shadow-inner mr-4"><i class="fa-regular fa-clock"></i> Tot: ${totalFolderMinutes} min</span>` 
-                    : '';
+                grouped[aulaName][obName].forEach(d => { if (d.tempo) { let m = d.tempo.match(/\d+/); if(m) totalFolderMinutes += parseInt(m[0],10); }});
 
                 aulaHtml += `
                     <div class="bg-slate-800/40 rounded-xl border border-slate-700 overflow-hidden shadow-inner">
                         <div class="bg-slate-800/80 px-4 py-3 border-b border-slate-700 font-bold text-blue-400 flex justify-between items-center transition-colors">
                             <div class="flex items-center truncate pr-4 flex-grow">
-                                <input type="checkbox" onchange="toggleChapter('${aulaIndex}-${obIndex}', this.checked)" class="mr-3 w-4 h-4 accent-blue-500 rounded cursor-pointer" title="Seleziona tutto il capitolo">
+                                <input type="checkbox" onchange="toggleChapter('${aulaIndex}-${obIndex}', this.checked)" class="mr-3 w-4 h-4 accent-blue-500 rounded cursor-pointer">
                                 <i class="fa-solid fa-folder-open mr-2 text-sm"></i> ${obName}
-                                <button onclick="renameEntity('capitolo', '${escapeQuotes(obName)}', '${escapeQuotes(aulaName)}')" class="ml-3 text-xs text-slate-500 hover:text-yellow-400 transition" title="Modifica titolo Capitolo"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="renameEntity('capitolo', '${escapeQuotes(obName)}', '${escapeQuotes(aulaName)}')" class="ml-3 text-xs text-slate-500 hover:text-yellow-400 transition"><i class="fa-solid fa-pen"></i></button>
                             </div>
-                            <div class="flex items-center shrink-0 cursor-pointer pl-4" onclick="document.getElementById('grid-cap-${aulaIndex}-${obIndex}').classList.toggle('hidden'); document.getElementById('icon-cap-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-up'); document.getElementById('icon-cap-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-down');">
-                                ${folderTimeBadge}
-                                <i id="icon-cap-${aulaIndex}-${obIndex}" class="fa-solid ${capIconToggle} text-slate-500 transition-transform"></i>
+                            <div class="flex items-center shrink-0 cursor-pointer pl-4" onclick="document.getElementById('grid-cap-${aulaIndex}-${obIndex}').classList.toggle('hidden'); this.querySelector('i').classList.toggle('fa-chevron-up'); this.querySelector('i').classList.toggle('fa-chevron-down');">
+                                ${totalFolderMinutes > 0 ? `<span class="bg-slate-900 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono border border-slate-600 mr-4"><i class="fa-regular fa-clock"></i> Tot: ${totalFolderMinutes} min</span>` : ''}
+                                <i class="fa-solid ${isCapExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-500 transition-transform"></i>
                             </div>
                         </div>
-                        <div id="grid-cap-${aulaIndex}-${obIndex}" class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${capGridHidden}">
-                `;
+                        <div id="grid-cap-${aulaIndex}-${obIndex}" class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${isCapExpanded ? '' : 'hidden'}">`;
                 
-                grouped[aulaName][obName].forEach(doc => {
-                    let matchBadge = isSearching ? `<div class="absolute top-2 right-2 text-[9px] uppercase tracking-widest text-emerald-400 font-bold bg-emerald-900/30 px-1.5 py-0.5 rounded border border-emerald-500/30"><i class="fa-solid fa-check mr-1"></i> Trovato</div>` : '';
-                    let timeBadge = doc.tempo ? `<span class="bg-slate-800 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono ml-2 border border-slate-600"><i class="fa-regular fa-clock"></i> ${doc.tempo}</span>` : '';
-                    let dispBadge = doc.rawText.includes('=== DISPENSA ALLIEVI ===') ? `<span class="bg-amber-900/40 text-amber-500 px-2 py-0.5 rounded text-[10px] font-bold ml-2 border border-amber-500/40"><i class="fa-solid fa-file-invoice"></i> Dispensa</span>` : '';
-
-                    // VERIFICA LA MEMORIA: Se il doc era selezionato prima, rimette la spunta
-                    let isChecked = globalSelectedIds.has(doc.id) ? 'checked' : '';
-                    
-                    let checkboxHtml = `<div class="absolute top-4 right-4 z-20">
-                                            <input type="checkbox" class="doc-checkbox chk-cap-${aulaIndex}-${obIndex} w-5 h-5 accent-blue-500 rounded cursor-pointer shadow-lg border border-slate-500" value="${doc.id}" onchange="toggleDocSelection('${doc.id}', this.checked)" ${isChecked}>
-                                        </div>`;
-
+                grouped[aulaName][obName].forEach(docObj => {
+                    let isChecked = globalSelectedIds.has(docObj.id) ? 'checked' : '';
                     aulaHtml += `
                         <div class="bg-slate-900 border border-slate-600 rounded-lg p-4 flex flex-col justify-between shadow hover:border-blue-500 transition group relative pr-8">
-                            ${matchBadge}
-                            ${checkboxHtml}
+                            <div class="absolute top-4 right-4 z-20"><input type="checkbox" class="doc-checkbox chk-cap-${aulaIndex}-${obIndex} w-5 h-5 accent-blue-500 rounded cursor-pointer shadow-lg" value="${docObj.id}" onchange="toggleDocSelection('${docObj.id}', this.checked)" ${isChecked}></div>
                             <div class="flex-grow mb-3">
                                 <h4 class="font-bold text-white text-base leading-snug flex items-start">
-                                    <span class="cursor-pointer group-hover:text-blue-400 transition" onclick="openArchivedDocument('${doc.id}')">${doc.argomento}</span>
-                                    <button onclick="renameEntity('paragrafo', '${doc.id}')" class="ml-2 text-xs text-slate-600 hover:text-yellow-400 transition mt-1"><i class="fa-solid fa-pen"></i></button>
+                                    <span class="cursor-pointer group-hover:text-blue-400 transition" onclick="openArchivedDocument('${docObj.id}')">${docObj.argomento}</span>
+                                    <button onclick="renameEntity('paragrafo', '${docObj.id}')" class="ml-2 text-xs text-slate-600 hover:text-yellow-400 mt-1"><i class="fa-solid fa-pen"></i></button>
                                 </h4>
-                                <div class="flex items-center mt-2 flex-wrap gap-y-1 cursor-pointer" onclick="openArchivedDocument('${doc.id}')">
-                                    <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i> ${doc.date}</p>
-                                    ${timeBadge}
-                                    ${dispBadge}
+                                <div class="flex items-center mt-2 flex-wrap gap-y-1 cursor-pointer" onclick="openArchivedDocument('${docObj.id}')">
+                                    <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i> ${docObj.date}</p>
                                 </div>
                             </div>
                             <div class="flex gap-2 mt-auto border-t border-slate-800 pt-3">
-                                <button onclick="openArchivedDocument('${doc.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition">
-                                    <i class="fa-solid fa-eye mr-1"></i> Apri
-                                </button>
-                                <button onclick="deleteArchivedDocument('${doc.id}')" class="bg-slate-800 hover:bg-red-600 text-slate-400 hover:text-white w-8 h-8 rounded transition flex items-center justify-center shrink-0 border border-slate-700 hover:border-red-500">
-                                    <i class="fa-solid fa-trash text-xs"></i>
-                                </button>
+                                <button onclick="openArchivedDocument('${docObj.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition"><i class="fa-solid fa-eye mr-1"></i> Apri</button>
+                                <button onclick="deleteArchivedDocument('${docObj.id}')" class="bg-slate-800 hover:bg-red-600 text-slate-400 hover:text-white w-8 h-8 rounded flex items-center justify-center shrink-0 border border-slate-700 hover:border-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 aulaHtml += `</div></div>`;
             });
@@ -1149,62 +1022,35 @@ function renderMappa(text, prefix) {
             container.innerHTML += aulaHtml;
             aulaIndex++;
         });
-        updateSelectionBar(); // Aggiorna la barra al caricamento
     }
 
     function toggleAllAulas() {
         allAulasExpanded = !allAulasExpanded;
         const btn = document.getElementById('btn-toggle-aulas');
-        
-        if (allAulasExpanded) {
-            btn.innerHTML = '<i class="fa-solid fa-compress mr-2"></i> <span>Chiudi Tutte</span>';
-        } else {
-            btn.innerHTML = '<i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>';
-            lastOpenedAula = null;
-            lastOpenedCapitolo = null;
-        }
-        
-        const currentQuery = document.getElementById('search-db') ? document.getElementById('search-db').value : '';
-        renderArchiveList(currentQuery);
+        if (allAulasExpanded) btn.innerHTML = '<i class="fa-solid fa-compress mr-2"></i> <span>Chiudi Tutte</span>';
+        else { btn.innerHTML = '<i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>'; lastOpenedAula = null; lastOpenedCapitolo = null; }
+        renderArchiveList(document.getElementById('search-db')?.value || '');
     }
 
-    /* ==========================================================================
-       GESTIONE MEMORIA SELEZIONI
-    ========================================================================== */
     function toggleDocSelection(docId, isChecked) {
-        if(isChecked) globalSelectedIds.add(docId);
-        else globalSelectedIds.delete(docId);
+        if(isChecked) globalSelectedIds.add(docId); else globalSelectedIds.delete(docId);
         updateSelectionBar();
     }
-
     function toggleChapter(capId, isChecked) {
-        document.querySelectorAll(`.chk-cap-${capId}`).forEach(cb => {
-            cb.checked = isChecked;
-            if(isChecked) globalSelectedIds.add(cb.value);
-            else globalSelectedIds.delete(cb.value);
-        });
+        document.querySelectorAll(`.chk-cap-${capId}`).forEach(cb => { cb.checked = isChecked; if(isChecked) globalSelectedIds.add(cb.value); else globalSelectedIds.delete(cb.value); });
         updateSelectionBar();
     }
-
     function updateSelectionBar() {
         const actionBar = document.getElementById('batch-action-bar');
         document.getElementById('sel-count').innerText = globalSelectedIds.size;
-        
         let totalMinutes = 0;
         globalSelectedIds.forEach(docId => {
-            const doc = archiveDB.find(d => d.id === docId);
-            if (doc && doc.tempo) {
-                let match = doc.tempo.match(/\d+/);
-                if (match) totalMinutes += parseInt(match[0], 10);
-            }
+            const docObj = archiveDB.find(d => d.id === docId);
+            if (docObj && docObj.tempo) { let m = docObj.tempo.match(/\d+/); if (m) totalMinutes += parseInt(m[0], 10); }
         });
-        
         document.getElementById('sel-time').innerText = totalMinutes + " min";
-        
-        if(globalSelectedIds.size > 0) actionBar.classList.remove('hidden');
-        else actionBar.classList.add('hidden');
+        if(globalSelectedIds.size > 0) actionBar.classList.remove('hidden'); else actionBar.classList.add('hidden');
     }
-
     function deselectAll() {
         globalSelectedIds.clear();
         document.querySelectorAll('.doc-checkbox').forEach(cb => cb.checked = false);
@@ -1212,7 +1058,43 @@ function renderMappa(text, prefix) {
         updateSelectionBar();
     }
 
-    // --- VARIABILE PIE' DI PAGINA ---
+    /* ==========================================================================
+       ESPORTA E IMPORTA COPIE DI BACKUP (.JSON)
+    ========================================================================== */
+    function exportArchiveDB() {
+        if(archiveDB.length === 0) return alert("Database vuoto.");
+        const dataStr = JSON.stringify(archiveDB, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        let linkElement = document.createElement('a'); linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', `Studio_Database_IDB_${new Date().toISOString().slice(0,10)}.json`); linkElement.click();
+    }
+
+    function importArchiveDB(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    if(confirm(`Rilevati ${importedData.length} documenti nel backup JSON. Vuoi unirli al tuo database?`)) {
+                        let merged = [...archiveDB];
+                        importedData.forEach(newDoc => { if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc); });
+                        archiveDB = merged;
+                        await syncDatabase();
+                        renderArchiveList();
+                        alert("Database caricato con successo!");
+                    }
+                } else alert("File non valido.");
+            } catch(err) { alert("Errore di importazione: " + err.message); }
+            document.getElementById('import-file').value = ""; 
+        };
+        reader.readAsText(file);
+    }
+
+    /* ==========================================================================
+       STAMPA MULTIPLA CON NOMI FILE INTELLIGENTI
+    ========================================================================== */
     const printFooterHtmlBlock = `
         <div class="print-footer">
             <div style="display: flex; align-items: center;">
@@ -1231,7 +1113,6 @@ function renderMappa(text, prefix) {
         return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
     }
 
-    // --- STAMPE BASE ---
     function printBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         const wantMappe = document.getElementById('batch-mappe').checked;
@@ -1243,39 +1124,41 @@ function renderMappa(text, prefix) {
         if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
 
         let combinedHtml = "";
-
         selectedIds.forEach((id) => {
-            const doc = archiveDB.find(d => d.id === id);
-            if(!doc) return;
-
-            const success = processAndRender(doc.rawText, 'batch', true); 
-            if(!success) return;
-
+            const docObj = archiveDB.find(d => d.id === id);
+            if(!docObj || !processAndRender(docObj.rawText, 'batch', true)) return;
             const meta = currentDocMeta['batch'];
 
             if(wantConcept && currentConceptMapHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale (Lavagna)'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${currentConceptMapHtml['batch']}</div>`;
             }
-
             if(wantMappe) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
                 combinedHtml += `<div class="batch-page-fluid">${printHeader}${document.getElementById('batch-mappa-render').innerHTML}</div>`;
             }
             if(wantMatrici) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${document.getElementById('batch-matrice-render').innerHTML}</div>`;
             }
             if(wantDispense && currentDispensaHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${currentDispensaHtml['batch']}</div>`;
             }
         });
 
         document.getElementById('print-area').innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${combinedHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         
+        let baseName = "fascicolo"; 
+        let selCount = [wantMappe, wantMatrici, wantDispense, wantConcept].filter(Boolean).length;
+        if (selCount === 1) {
+            if(wantMappe) baseName = "mappa";
+            if(wantMatrici) baseName = "matrice";
+            if(wantDispense) baseName = "dispensa";
+            if(wantConcept) baseName = "concettuale";
+        }
         const originalTitle = document.title;
-        document.title = `fascicolo_${getFormattedDateString()}_contiautoscuole`;
+        document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
         
         setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
@@ -1284,7 +1167,7 @@ function renderMappa(text, prefix) {
         const printArea = document.getElementById('print-area');
         const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
         const meta = currentDocMeta[prefix];
-        let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || (type==='mappa'?'Mappa':'Matrice')}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
+        let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || (type==='mappa'?'Mappa':'Matrice')}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
         printArea.innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${printHeader}${contentHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         const originalTitle = document.title;
         document.title = `${type}_${getFormattedDateString()}_contiautoscuole`;
@@ -1295,33 +1178,43 @@ function renderMappa(text, prefix) {
         const printArea = document.getElementById('print-area');
         const htmlContent = currentDispensaHtml[prefix];
         const meta = currentDocMeta[prefix];
-        if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
-        let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+        if(!htmlContent) return;
+        let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
         printArea.innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${printHeader}${htmlContent}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         const originalTitle = document.title;
         document.title = `dispensa_${getFormattedDateString()}_contiautoscuole`;
         setTimeout(() => { window.print(); document.title = originalTitle; printArea.innerHTML = ''; }, 300);
     }
 
-    // --- EDITOR INTEGRATO E FUNZIONI FINALI ---
+    function exportCSV(prefix) {
+        const csvArray = currentCsvData[prefix];
+        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato.");
+        let csvContent = "";
+        csvArray.forEach(row => { csvContent += row.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",") + "\r\n"; });
+        const safeName = (currentDocMeta[prefix].argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `Export_${safeName}.csv`);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    /* ==========================================================================
+       MODALITÀ LETTURA INTEGRATA & EDITOR VISTA SINGOLA
+    ========================================================================== */
     function openArchivedDocument(docId) {
-        const doc = archiveDB.find(d => d.id === docId);
-        if(!doc) return;
-
+        const docObj = archiveDB.find(d => d.id === docId);
+        if(!docObj) return;
         currentReaderDocId = docId;
-        lastOpenedAula = doc.aula;
-        lastOpenedCapitolo = doc.obiettivo;
-
-        document.getElementById('reader-aula-title').innerText = doc.aula;
-        document.getElementById('reader-item-title').innerText = doc.argomento;
-
+        lastOpenedAula = docObj.aula;
+        lastOpenedCapitolo = docObj.obiettivo;
+        document.getElementById('reader-aula-title').innerText = docObj.aula;
+        document.getElementById('reader-item-title').innerText = docObj.argomento;
         document.getElementById('read-view-content').classList.remove('hidden');
         document.getElementById('read-view-content').classList.add('grid');
         document.getElementById('read-edit-content').classList.add('hidden');
         document.getElementById('read-edit-content').classList.remove('flex');
         document.getElementById('btn-toggle-edit').innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento';
-
-        processAndRender(doc.rawText, 'read');
+        processAndRender(docObj.rawText, 'read');
         navTo('reader');
     }
 
@@ -1330,275 +1223,254 @@ function renderMappa(text, prefix) {
         const editContent = document.getElementById('read-edit-content');
         const btnToggle = document.getElementById('btn-toggle-edit');
         const textarea = document.getElementById('read-edit-textarea');
-
         if(editContent.classList.contains('hidden')) {
-            const doc = archiveDB.find(d => d.id === currentReaderDocId);
-            if(doc) {
-                textarea.value = doc.rawText;
-                viewContent.classList.add('hidden');
-                viewContent.classList.remove('grid');
-                editContent.classList.remove('hidden');
-                editContent.classList.add('flex');
+            const docObj = archiveDB.find(d => d.id === currentReaderDocId);
+            if(docObj) {
+                textarea.value = docObj.rawText;
+                viewContent.classList.add('hidden'); viewContent.classList.remove('grid');
+                editContent.classList.remove('hidden'); editContent.classList.add('flex');
                 btnToggle.innerHTML = '<i class="fa-solid fa-eye mr-2"></i> Torna alla Vista';
                 document.getElementById('read-dispensa-btn-container').style.display = 'none';
             }
         } else {
-            viewContent.classList.remove('hidden');
-            viewContent.classList.add('grid');
-            editContent.classList.add('hidden');
-            editContent.classList.remove('flex');
+            viewContent.classList.remove('hidden'); viewContent.classList.add('grid');
+            editContent.classList.add('hidden'); editContent.classList.remove('flex');
             btnToggle.innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento';
             document.getElementById('read-dispensa-btn-container').style.display = 'block';
         }
     }
 
-    function saveEditedDocument() {
+    async function saveEditedDocument() {
         const newText = document.getElementById('read-edit-textarea').value;
         const docIndex = archiveDB.findIndex(d => d.id === currentReaderDocId);
-        
         if(docIndex !== -1) {
-            if (!newText.includes('=== MAPPA TECNICA ===') || !newText.includes('=== MATRICE QUIZ ===')) {
-                alert("Attenzione: Il testo deve mantenere i delimitatori obbligatori '=== MAPPA TECNICA ===' e '=== MATRICE QUIZ ===' per funzionare.");
-                return;
-            }
-
-            const success = processAndRender(newText, 'read');
-            
-            if(success) {
-                archiveDB[docIndex].rawText = newText;
+            if (!newText.includes('=== MAPPA TECNICA ===') || !newText.includes('=== MATRICE QUIZ ===')) return alert("Errore: Delimitatori principali obbligatori mancanti.");
+            if(processAndRender(newText, 'read')) {
+                let updatedDoc = { ...archiveDB[docIndex], rawText: newText };
                 const meta = currentDocMeta['read'];
-                if(meta.aula) archiveDB[docIndex].aula = meta.aula;
-                if(meta.obiettivo) archiveDB[docIndex].obiettivo = meta.obiettivo;
-                if(meta.argomento) archiveDB[docIndex].argomento = meta.argomento;
-                if(meta.tempo !== undefined) archiveDB[docIndex].tempo = meta.tempo; 
-
-                document.getElementById('reader-aula-title').innerText = archiveDB[docIndex].aula;
-                document.getElementById('reader-item-title').innerText = archiveDB[docIndex].argomento;
-
-                try {
-                    syncDatabase();
-                    toggleEditMode(); 
-                    alert("Modifiche salvate con successo!");
-                } catch(e) {
-                    alert("Errore di salvataggio nella memoria del browser.");
-                }
+                if(meta.aula) updatedDoc.aula = meta.aula;
+                if(meta.obiettivo) updatedDoc.obiettivo = meta.obiettivo;
+                if(meta.argomento) updatedDoc.argomento = meta.argomento;
+                if(meta.tempo !== undefined) updatedDoc.tempo = meta.tempo; 
+                
+                document.getElementById('reader-aula-title').innerText = updatedDoc.aula;
+                document.getElementById('reader-item-title').innerText = updatedDoc.argomento;
+                
+                archiveDB[docIndex] = updatedDoc;
+                await syncDatabase();
+                toggleEditMode(); alert("Modifiche salvate in IDB con successo!");
             }
         }
     }
 
-    function exportArchiveDB() {
-        if(archiveDB.length === 0) return alert("Il database è vuoto.");
-        const dataStr = JSON.stringify(archiveDB, null, 2);
-        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-        let linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', `Studio_Database_Backup_${new Date().toISOString().slice(0,10)}.json`);
-        linkElement.click();
-    }
-
-    function importArchiveDB(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-                if (Array.isArray(importedData)) {
-                    if(confirm("ATTENZIONE: Sostituzione totale del database. Procedere?")) {
-                        archiveDB = importedData;
-                        globalSelectedIds.clear();
-                        syncDatabase();
-                        lastOpenedAula = null; lastOpenedCapitolo = null;
-                        renderArchiveList();
-                        alert("Database caricato con successo!");
-                    }
-                } else alert("Formato file non valido.");
-            } catch(err) { alert("Errore file: " + err.message); }
-            document.getElementById('import-file').value = ""; 
-        };
-        reader.readAsText(file);
-    }
-
-    function exportCSV(prefix) {
-        const csvArray = currentCsvData[prefix];
-        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato.");
-        let csvContent = "";
-        csvArray.forEach(row => { csvContent += row.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",") + "\r\n"; });
-        const meta = currentDocMeta[prefix];
-        const safeName = (meta.argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url); link.setAttribute("download", `Export_${safeName}.csv`);
-        document.body.appendChild(link); link.click(); document.body.removeChild(link);
-    }
-
-    function renameEntity(type, oldName, parentName = '') {
+    async function renameEntity(type, oldName, parentName = '') {
         let docRef = type === 'paragrafo' ? archiveDB.find(d => d.id === oldName) : null;
         let displayName = type === 'paragrafo' && docRef ? docRef.argomento : oldName;
         let newName = prompt(`Inserisci il nuovo titolo per questo ${type.toUpperCase()}:`, displayName);
         if (!newName || newName.trim() === '' || newName === displayName) return;
         newName = newName.trim();
-        let updatedCount = 0;
-        archiveDB.forEach(doc => {
-            if (type === 'aula' && doc.aula === oldName) {
-                doc.rawText = doc.rawText.replace(new RegExp(`AULA:\\s*${escapeRegExp(oldName)}`, 'i'), `AULA: ${newName}`); doc.aula = newName; updatedCount++;
-            } else if (type === 'capitolo' && doc.obiettivo === oldName && doc.aula === parentName) {
-                doc.rawText = doc.rawText.replace(new RegExp(`CAPITOLO:\\s*${escapeRegExp(oldName)}`, 'i'), `CAPITOLO: ${newName}`); doc.obiettivo = newName; updatedCount++;
-            } else if (type === 'paragrafo' && doc.id === oldName) {
-                doc.rawText = doc.rawText.replace(new RegExp(`PARAGRAFO:\\s*${escapeRegExp(doc.argomento)}`, 'i'), `PARAGRAFO: ${newName}`); doc.argomento = newName; updatedCount++;
+        
+        let docsToUpdate = [];
+        archiveDB.forEach(docObj => {
+            if (type === 'aula' && docObj.aula === oldName) {
+                docsToUpdate.push({...docObj, aula: newName, rawText: docObj.rawText.replace(new RegExp(`AULA:\\s*${escapeRegExp(oldName)}`, 'i'), `AULA: ${newName}`)});
+            } else if (type === 'capitolo' && docObj.obiettivo === oldName && docObj.aula === parentName) {
+                docsToUpdate.push({...docObj, obiettivo: newName, rawText: docObj.rawText.replace(new RegExp(`CAPITOLO:\\s*${escapeRegExp(oldName)}`, 'i'), `CAPITOLO: ${newName}`)});
+            } else if (type === 'paragrafo' && docObj.id === oldName) {
+                docsToUpdate.push({...docObj, argomento: newName, rawText: docObj.rawText.replace(new RegExp(`PARAGRAFO:\\s*${escapeRegExp(docObj.argomento)}`, 'i'), `PARAGRAFO: ${newName}`)});
             }
         });
-        if (updatedCount > 0) { syncDatabase(); renderArchiveList(document.getElementById('search-db').value); }
+        
+        if (docsToUpdate.length > 0) {
+            docsToUpdate.forEach(uDoc => { let idx = archiveDB.findIndex(d => d.id === uDoc.id); if(idx !== -1) archiveDB[idx] = uDoc; });
+            await syncDatabase();
+            renderArchiveList(document.getElementById('search-db').value);
+        }
     }
-    
-    function escapeQuotes(str) { return str.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
-    function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
     /* ==========================================================================
-       MODULO STAMPA AVANZATA E REGIA (Drag & Drop + Tempo Reale)
-    ========================================================================== */
-    let advancedQueue = [];
-    let dragStartIndex = -1;
+       MODULO GOBBO / TELEPROMPTER INTERATTIVO (SINGOLO E DA REGIA)
+       ========================================================================== */
+    function openTeleprompter() {
+        const docObj = archiveDB.find(d => d.id === currentReaderDocId);
+        if(!docObj) return;
 
+        const lines = docObj.rawText.split('\n');
+        let inMappa = false;
+        let mapLines = [];
+        for (let l of lines) {
+            if(l.includes('=== MAPPA TECNICA ===')) { inMappa = true; continue; }
+            if(l.includes('=== MATRICE QUIZ ===')) break;
+            if(inMappa && l.trim() !== '') mapLines.push(l.trim());
+        }
+
+        let html = '';
+        let currentString = '';
+        mapLines.forEach(line => {
+            if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA)/)) {
+                if(currentString) html += processTeleLine(currentString);
+                currentString = line;
+            } else {
+                currentString += ' ' + line;
+            }
+        });
+        if(currentString) html += processTeleLine(currentString);
+
+        document.getElementById('tele-aula').innerText = docObj.aula || "Mappa Tecnica";
+        document.getElementById('tele-titolo').innerText = docObj.argomento || "Argomento";
+        document.getElementById('tele-content').innerHTML = html;
+        
+        document.getElementById('teleprompter-modal').classList.remove('hidden');
+        document.getElementById('teleprompter-modal').classList.add('flex');
+    }
+
+    function closeTeleprompter() {
+        document.getElementById('teleprompter-modal').classList.add('hidden');
+        document.getElementById('teleprompter-modal').classList.remove('flex');
+    }
+
+    function processTeleLine(l) {
+        let clean = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        let u = l.toUpperCase();
+        
+        if(u.startsWith('IL GANCIO:')) {
+            return `<div class="text-purple-400 text-3xl mb-8 p-6 border-l-8 border-purple-500 bg-purple-900/20 rounded-r-2xl font-bold tracking-wide leading-relaxed"><strong>IL GANCIO:</strong> ${clean.substring(10)}</div>`;
+        }
+        if(u.startsWith('FASE')) {
+            return `<div class="text-blue-400 text-5xl mt-16 mb-8 font-black uppercase tracking-widest border-b-4 border-blue-500/50 pb-4">${clean.replace(/[\*🛑\#]/g, '')}</div>`;
+        }
+        if(u.startsWith('PAGINA')) {
+            let match = clean.match(/PAGINA\s*\d+:?/i);
+            let bText = match ? match[0].replace(':', '') : "PAGINA";
+            let rest = match ? clean.substring(match.index + match[0].length).trim() : clean;
+
+            let extra = "", trap = "", nessun = "";
+            let tMatch = rest.match(/(TRAPPOLA|ATTENZIONE):\s*([\s\S]*)$/i);
+            if(tMatch) { trap = `<div class="text-red-400 text-3xl p-6 bg-red-900/20 border-l-8 border-red-500 rounded-r-2xl font-black mb-8 leading-relaxed shadow-xl"><i class="fa-solid fa-triangle-exclamation mr-3"></i> <strong>${tMatch[1].toUpperCase()}:</strong> ${tMatch[2]}</div>`; rest = rest.substring(0, tMatch.index); }
+            
+            let eMatch = rest.match(/(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i);
+            if(eMatch) { extra = `<div class="text-emerald-400 text-2xl p-6 bg-emerald-900/20 border-l-8 border-emerald-500 rounded-r-2xl font-bold mb-8 leading-relaxed"><i class="fa-solid fa-circle-info mr-3"></i> <strong>EXTRA:</strong> ${eMatch[2].replace(/➔|->/g, '&#8594;')}</div>`; rest = rest.substring(0, eMatch.index); }
+            
+            let nMatch = rest.match(/(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i);
+            if(nMatch) { nessun = `<div class="text-slate-400 text-2xl mb-8 font-medium italic"><span class="bg-slate-700 text-white px-3 py-1 rounded text-lg mr-3 not-italic">NESSUN QUIZ</span>${nMatch[2].replace(/^(?:➔|->)/, '')}</div>`; rest = rest.substring(0, nMatch.index); }
+            
+            let rule = rest;
+            if(rule.includes('➔') || rule.includes('->')) {
+                rule = rule.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right text-blue-500 mx-3"></i>');
+            }
+            let ruleHtml = rule.trim() ? `<p class="text-slate-200 text-3xl leading-relaxed mb-8">${rule}</p>` : '';
+
+            return `<div class="mb-10"><span class="bg-blue-600 text-white text-2xl px-4 py-2 rounded-lg mr-4 font-black shadow-lg inline-block mb-4">${bText}</span>${ruleHtml}${nessun}${extra}${trap}</div>`;
+        }
+        return '';
+    }
+
+    function openAdvancedTeleprompter() {
+        if(advancedQueue.length === 0) return alert("Nessuna lezione caricata in regia.");
+        
+        let combinedHtml = "";
+        advancedQueue.forEach((docObj, index) => {
+            const lines = docObj.rawText.split('\n');
+            let inMappa = false;
+            let mapLines = [];
+            for (let l of lines) {
+                if(l.includes('=== MAPPA TECNICA ===')) { inMappa = true; continue; }
+                if(l.includes('=== MATRICE QUIZ ===')) break;
+                if(inMappa && l.trim() !== '') mapLines.push(l.trim());
+            }
+
+            let html = `<div class="mb-16 border-b-2 border-slate-800 pb-16"><h4 class="text-2xl font-black text-emerald-400 uppercase tracking-widest mb-6">LEZIONE ${index + 1}: ${docObj.argomento}</h4>`;
+            let currentString = '';
+            mapLines.forEach(line => {
+                if(line.toUpperCase().match(/^(AULA|CAPITOLO|OBIETTIVO|PARAGRAFO|ARGOMENTO|TEMPO STIMATO|IL SENSO PRATICO|FASE|OBIETTIVO PRATICO|PAGINA)/)) {
+                    if(currentString) html += processTeleLine(currentString);
+                    currentString = line;
+                } else {
+                    currentString += ' ' + line;
+                }
+            });
+            if(currentString) html += processTeleLine(currentString);
+            html += `</div>`;
+            combinedHtml += html;
+        });
+
+        document.getElementById('tele-aula').innerText = "Regia Sequenziale / Gobbo Ordinato";
+        document.getElementById('tele-titolo').innerText = "Fascicolo Presentazione Coordinato";
+        document.getElementById('tele-content').innerHTML = combinedHtml;
+        
+        closeAdvancedPrint(); 
+        document.getElementById('teleprompter-modal').classList.remove('hidden');
+        document.getElementById('teleprompter-modal').classList.add('flex');
+    }
+
+    /* ==========================================================================
+       GESTIONE REGIA DI STAMPA AVANZATA (Drag & Drop)
+    ========================================================================== */
     function openAdvancedPrint() {
         const selectedIds = Array.from(globalSelectedIds);
-        if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
+        if(selectedIds.length === 0) return alert("Seleziona almeno una scheda prima.");
         advancedQueue = selectedIds.map(id => archiveDB.find(d => d.id === id)).filter(Boolean);
-        renderAdvancedQueue();
+        renderAdvancedQueue(); 
         document.getElementById('advanced-print-modal').classList.remove('hidden');
     }
-
-    function closeAdvancedPrint() {
-        document.getElementById('advanced-print-modal').classList.add('hidden');
-    }
-
-    // GESTIONE DRAG & DROP E PULSANTI
+    function closeAdvancedPrint() { document.getElementById('advanced-print-modal').classList.add('hidden'); }
     function renderAdvancedQueue() {
-        const list = document.getElementById('advanced-queue-list');
-        list.innerHTML = '';
-        advancedQueue.forEach((doc, index) => {
-            const isFirst = index === 0;
-            const isLast = index === advancedQueue.length - 1;
-            
-            // Distanze per "Sposta in Cima" e "Sposta in Fondo"
-            const distTop = index; 
-            const distBottom = advancedQueue.length - 1 - index;
-
+        const list = document.getElementById('advanced-queue-list'); list.innerHTML = '';
+        advancedQueue.forEach((docObj, index) => {
             list.innerHTML += `
                 <div draggable="true" ondragstart="dragStart(event, ${index})" ondragover="dragOver(event)" ondrop="drop(event, ${index})" 
-                     class="bg-slate-800 p-3 rounded-lg flex justify-between items-center border border-slate-600 cursor-grab active:cursor-grabbing hover:border-blue-500 transition mb-2">
+                     class="bg-slate-800 p-3 rounded-lg flex justify-between items-center border border-slate-600 cursor-grab hover:border-blue-500 transition mb-2">
                     <div class="truncate pr-4 flex-grow flex items-center gap-4">
-                        <i class="fa-solid fa-grip-vertical text-slate-500 text-lg hover:text-white transition cursor-grab"></i>
-                        <div class="truncate">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="bg-slate-900 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded border border-slate-700">${index + 1}</span>
-                                <span class="text-xs text-blue-400 font-bold uppercase truncate">${doc.aula}</span>
-                            </div>
-                            <span class="text-white font-bold text-sm block truncate">${doc.argomento}</span>
-                        </div>
+                        <i class="fa-solid fa-grip-vertical text-slate-500 text-lg"></i>
+                        <div class="truncate"><div class="flex items-center gap-2 mb-1"><span class="bg-slate-900 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded border border-slate-700">${index + 1}</span><span class="text-xs text-blue-400 font-bold uppercase truncate">${docObj.aula}</span></div><span class="text-white font-bold text-sm block truncate">${docObj.argomento}</span></div>
                     </div>
                     <div class="flex gap-1 shrink-0">
-                        <button onclick="moveAdvancedItem(${index}, -${distTop})" title="Sposta in cima" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isFirst ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isFirst ? 'disabled' : ''}><i class="fa-solid fa-angles-up"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, -1)" title="Su di uno" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isFirst ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isFirst ? 'disabled' : ''}><i class="fa-solid fa-chevron-up"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, 1)" title="Giù di uno" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isLast ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isLast ? 'disabled' : ''}><i class="fa-solid fa-chevron-down"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, ${distBottom})" title="Sposta in fondo" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isLast ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isLast ? 'disabled' : ''}><i class="fa-solid fa-angles-down"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, -${index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-angles-up text-xs"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, -1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-chevron-up text-xs"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, 1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-chevron-down text-xs"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, ${advancedQueue.length - 1 - index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white"><i class="fa-solid fa-angles-down text-xs"></i></button>
                     </div>
-                </div>
-            `;
-        });
-        updateModalTotalTime(); // Aggiorna orologio interno
+                </div>`;
+        }); updateModalTotalTime();
     }
-
     function dragStart(event, index) { dragStartIndex = index; event.dataTransfer.effectAllowed = "move"; }
     function dragOver(event) { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }
-    function drop(event, dropIndex) {
-        event.preventDefault();
-        if(dragStartIndex === dropIndex || dragStartIndex === -1) return;
-        const item = advancedQueue.splice(dragStartIndex, 1)[0];
-        advancedQueue.splice(dropIndex, 0, item);
-        dragStartIndex = -1;
-        renderAdvancedQueue();
-    }
-
-    function moveAdvancedItem(index, direction) {
-        if (index + direction < 0 || index + direction >= advancedQueue.length) return;
-        const temp = advancedQueue[index];
-        advancedQueue[index] = advancedQueue[index + direction];
-        advancedQueue[index + direction] = temp;
-        renderAdvancedQueue();
-    }
-
-    // AGGIORNAMENTO OROLOGIO INTERNO IN TEMPO REALE
+    function drop(event, dropIndex) { event.preventDefault(); if(dragStartIndex === dropIndex || dragStartIndex === -1) return; const item = advancedQueue.splice(dragStartIndex, 1)[0]; advancedQueue.splice(dropIndex, 0, item); dragStartIndex = -1; renderAdvancedQueue(); }
+    function moveAdvancedItem(index, direction) { if (index + direction < 0 || index + direction >= advancedQueue.length) return; const temp = advancedQueue[index]; advancedQueue[index] = advancedQueue[index + direction]; advancedQueue[index + direction] = temp; renderAdvancedQueue(); }
     function updateModalTotalTime() {
         const overrideTime = document.getElementById('override-time-cb').checked;
         let total = 0;
         advancedQueue.forEach(doc => {
-            if (overrideTime) {
-                const pageMatches = doc.rawText.match(/PAGINA\s*\d+:/gi);
-                const pageCount = pageMatches ? pageMatches.length : 0;
-                total += (pageCount * 2);
-            } else {
-                if (doc.tempo) {
-                    let match = doc.tempo.match(/\d+/);
-                    if (match) total += parseInt(match[0], 10);
-                }
-            }
+            if (overrideTime) { let m = doc.rawText.match(/PAGINA\s*\d+:/gi); if(m) total += (m.length * 2); } 
+            else { if(doc.tempo){ let m = doc.tempo.match(/\d+/); if (m) total += parseInt(m[0], 10); } }
         });
         document.getElementById('modal-total-time').innerText = total + " min";
     }
-
     function executeAdvancedPrint() {
-        const wantMappe = document.getElementById('batch-mappe').checked;
-        const wantMatrici = document.getElementById('batch-matrici').checked;
-        const wantDispense = document.getElementById('batch-dispense').checked;
-        const wantConcept = document.getElementById('batch-concept').checked;
+        const wantMappe = document.getElementById('batch-mappe').checked, wantMatrici = document.getElementById('batch-matrici').checked, wantDispense = document.getElementById('batch-dispense').checked, wantConcept = document.getElementById('batch-concept').checked;
         const overrideTime = document.getElementById('override-time-cb').checked;
-
-if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept) return alert("Seleziona almeno un tipo di documento dalla barra prima di stampare.");
+        if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept) return alert("Seleziona almeno un tipo di documento dalla barra prima di stampare.");
         let combinedHtml = "";
-
         advancedQueue.forEach((doc) => {
-            const success = processAndRender(doc.rawText, 'batch', true); 
-            if(!success) return;
-
+            if(!processAndRender(doc.rawText, 'batch', true)) return;
             const meta = currentDocMeta['batch'];
-            
-            if (overrideTime) {
-                const pageMatches = doc.rawText.match(/PAGINA\s*\d+:/gi);
-                const pageCount = pageMatches ? pageMatches.length : 0;
-                meta.tempo = pageCount > 0 ? (pageCount * 2) + " min" : "Tempo non stimabile";
-            }
-
-            if(wantConcept && currentConceptMapHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale (Lavagna)'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
-                combinedHtml += `<div class="batch-page">${printHeader}${currentConceptMapHtml['batch']}</div>`;
-            }
-
-            if(wantMappe) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
-                combinedHtml += `<div class="batch-page-fluid">${printHeader}${document.getElementById('batch-mappa-render').innerHTML}</div>`;
-            }
-            if(wantMatrici) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
-                combinedHtml += `<div class="batch-page">${printHeader}${document.getElementById('batch-matrice-render').innerHTML}</div>`;
-            }
-            if(wantDispense && currentDispensaHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
-                combinedHtml += `<div class="batch-page">${printHeader}${currentDispensaHtml['batch']}</div>`;
-            }
+            if (overrideTime) { let m = doc.rawText.match(/PAGINA\s*\d+:/gi); meta.tempo = m ? (m.length * 2) + " min" : "Tempo non stimabile"; }
+            if(wantConcept && currentConceptMapHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${currentConceptMapHtml['batch']}</div>`;
+            if(wantMappe) combinedHtml += `<div class="batch-page-fluid"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>${document.getElementById('batch-mappa-render').innerHTML}</div>`;
+            if(wantMatrici) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
+            if(wantDispense && currentDispensaHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${currentDispensaHtml['batch']}</div>`;
         });
-
         document.getElementById('print-area').innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${combinedHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         
-        const originalTitle = document.title;
-        document.title = `regia_avanzata_${getFormattedDateString()}_contiautoscuole`;
-        
-        closeAdvancedPrint();
-        setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
+        let baseName = "regia_avanzata", selCount = [wantMappe, wantMatrici, wantDispense, wantConcept].filter(Boolean).length;
+        if (selCount === 1) { if(wantMappe) baseName = "mappa"; if(wantMatrici) baseName = "matrice"; if(wantDispense) baseName = "dispensa"; if(wantConcept) baseName = "concettuale"; }
+        const originalTitle = document.title; document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
+        closeAdvancedPrint(); setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
-    
-    if(archiveDB.length === 0) navTo('generator'); else navTo('archive');
+
+    // Auto-avvio all'apertura del programma
+    loadFallbackLocal();
+
 </script>
 </body>
 </html>
