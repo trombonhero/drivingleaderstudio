@@ -165,6 +165,7 @@
             </div>
         </div>
 
+        <!-- VISTA 1: GENERATORE -->
         <div id="view-generator" class="view-section active p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full flex flex-col h-full">
                 <div class="glass-panel mb-6 shadow-xl shrink-0">
@@ -224,7 +225,8 @@
             </div>
         </div>
 
-        <div id="view-archive" class="view-section p-4 md:p-8 relative">
+        <!-- VISTA 2: ARCHIVIO (DATABASE) -->
+        <div id="view-archive" class="view-section p-4 md:p-8">
             <div class="max-w-5xl mx-auto w-full">
                 <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
                     <div>
@@ -234,10 +236,6 @@
                     <div class="flex gap-3">
                         <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
                             <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Esporta DB
-                        </button>
-                        
-                        <button onclick="forceCloudMigration()" class="btn-action bg-blue-600 hover:bg-blue-500 shadow-blue-600/30">
-                            <i class="fa-solid fa-rocket mr-2"></i> Migra su Cloud
                         </button>
 
                         <button onclick="document.getElementById('import-file').click()" class="btn-action bg-slate-700 hover:bg-slate-600 text-slate-200">
@@ -260,6 +258,7 @@
                 <div id="archive-container" class="space-y-6 pb-32"></div>
             </div>
 
+            <!-- BARRA DELLE AZIONI IN BLOCCO -->
             <div id="batch-action-bar" class="hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 p-4 rounded-full shadow-2xl z-50 flex items-center gap-4 md:gap-6 transition-all duration-300 max-w-[95vw] overflow-x-auto">
                 <div class="flex items-center gap-4 shrink-0">
                     <div class="flex items-center gap-2">
@@ -417,6 +416,12 @@
         </div>
     </div>
 
+    <!-- LIGHTBOX OVERLAY -->
+    <div id="lightbox" onclick="closeLightbox()">
+        <i class="fa-solid fa-xmark lightbox-close"></i>
+        <img id="lightbox-img" src="" alt="Zoom Immagine" onclick="event.stopPropagation()">
+    </div>
+
 <script>
     /* ==========================================================================
        MOTORE DI MEMORIA LOCALE ILLIMITATA (IndexedDB - Supera i 5MB)
@@ -460,13 +465,11 @@
     /* ==========================================================================
        STATO E VARIABILI GLOBALI
     ========================================================================== */
-    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzx60aEBpbV1LTszWGW4nI5pjlYaNhDnI9Obqh7PagwB3kNwiCq464P4wuQ4xRMlce4/exec";
-    
     let currentDocMeta = { gen: {}, read: {}, batch: {} };
     let currentCsvData = { gen: [], read: [], batch: [] };
     let currentDispensaHtml = { gen: "", read: "", batch: "" }; 
     let currentConceptMapHtml = { gen: "", read: "", batch: "" };
-    
+
     let rawInputBuffer = "";
     let currentReaderDocId = null;
     let allAulasExpanded = false;
@@ -479,32 +482,19 @@
     let advancedQueue = [];
     let dragStartIndex = -1;
 
-    // Sincronizzazione centralizzata IndexedDB e Cloud (opzionale)
+    // Sincronizzazione centralizzata IndexedDB (100% Offline)
     async function syncDatabase() {
         // Salva in IndexedDB (senza limiti di spazio, sul disco fisso)
         await salvaInIDB(archiveDB);
-        
-        // Spinge l'intero archivio su Google Drive in sottofondo per continuità cross-device
-        try {
-            await fetch(CLOUD_URL, {
-                method: "POST",
-                body: JSON.stringify(archiveDB),
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8"
-                }
-            });
-            console.log("Salvataggio e backup su Cloud riuscito!");
-        } catch (e) {
-            console.warn("Sincronizzazione cloud saltata. Dati al sicuro in locale su IndexedDB.", e);
-        }
+        console.log("Database salvato localmente su IndexedDB (Infinita)!");
     }
 
-    // Carica il database all'apertura
+    // Carica il database all'apertura da IndexedDB con migrazione da localStorage
     async function loadFallbackLocal() {
         // Migrazione automatica se rileva vecchi dati rimasti nel limitato localStorage
         let vecchiDati = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
         if(vecchiDati.length > 0) {
-            console.log("Rilevati vecchi dati: migrazione automatica nel database IndexedDB...");
+            console.log("Rilevati vecchi dati: migrazione automatica nel database locale IndexedDB...");
             archiveDB = vecchiDati;
             await syncDatabase();
             localStorage.removeItem('driving_leader_studio_db'); 
@@ -515,70 +505,7 @@
         if(archiveDB.length === 0) navTo('generator'); 
         else navTo('archive');
     }
-
-    // Carica il database dal cloud all'apertura del programma
-    async function loadFromCloud() {
-        try {
-            // Un trucco per aggirare in modo sicuro la cache e i blocchi del browser in lettura
-            const response = await fetch(CLOUD_URL + "?cacheBust=" + Date.now(), {
-                method: "GET",
-                mode: "cors", // La lettura esige questa modalità
-                cache: "no-cache"
-            });
-            
-            // Attende la risposta in formato testo, poi tenta di capire se è vuota o no
-            const textResponse = await response.text();
-            
-            if (textResponse && textResponse.trim().startsWith("[")) {
-                archiveDB = JSON.parse(textResponse);
-                console.log(`Caricate ${archiveDB.length} lezioni dal Cloud.`);
-                await salvaInIDB(archiveDB); // Salva copia locale aggiornata
-            } else {
-                console.log("Il Cloud ha restituito un formato vuoto o inaspettato. Carico IndexedDB locale.");
-                await loadFallbackLocal();
-            }
-            renderArchiveList();
-        } catch (e) {
-            console.error("Errore di caricamento dal Cloud, carico il database locale:", e);
-            await loadFallbackLocal();
-        }
-    }
     
-    // Inizializza subito
-    loadFromCloud();
-
-    async function forceCloudMigration() {
-        // 1. Pesca i dati bloccati nella memoria del browser
-        let vecchiDati = await leggiDaIDB();
-        if(vecchiDati.length === 0) {
-            vecchiDati = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
-        }
-        
-        if(vecchiDati.length === 0) {
-            return alert("Non ci sono dati da migrare nel browser.");
-        }
-        
-        if(!confirm(`Ho trovato ${vecchiDati.length} lezioni salvate in locale. Vuoi caricarle nel Cloud di Google Drive adesso?`)) return;
-        
-        archiveDB = vecchiDati; // Carica i vecchi dati nella memoria attiva
-        
-        try {
-            document.body.style.cursor = 'wait'; // Cursore di caricamento
-            await fetch(CLOUD_URL, {
-                method: "POST",
-                body: JSON.stringify(archiveDB),
-                headers: { "Content-Type": "text/plain;charset=utf-8" }
-            });
-            document.body.style.cursor = 'default';
-            alert("MIGRAZIONE COMPLETATA! Ora puoi controllare il tuo Google Drive.");
-            await syncDatabase(); // Allinea IndexedDB
-            renderArchiveList(); // Aggiorna lo schermo
-        } catch (e) {
-            document.body.style.cursor = 'default';
-            alert("Errore durante la migrazione. La connessione è stata bloccata.");
-        }
-    }
-
     /* ==========================================================================
        NAVIGAZIONE E FOCUS MODE
     ========================================================================== */
@@ -650,7 +577,7 @@
                 matriceRaw = remainder.trim();
             }
         } catch(e) {
-            console.error("Errore di split", e);
+            console.error("Errore di split testo", e);
             return false;
         }
 
@@ -1045,7 +972,7 @@
                                 <input type="checkbox" onchange="toggleChapter('${aulaIndex}-${obIndex}', this.checked); event.stopPropagation();" class="mr-3 w-4 h-4 accent-blue-500 rounded cursor-pointer">
                                 <i class="fa-solid fa-folder-open mr-2 text-sm"></i> ${obName}
                             </div>
-                            <i id="icon-cap-${aulaIndex}-${obIndex}" class="fa-solid ${capIconToggle} text-slate-500 transition-transform"></i>
+                            <i id="icon-cap-${aulaIndex}-${obIndex}" class="fa-solid ${isCapExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-500 transition-transform"></i>
                         </div>
                         <div id="grid-cap-${aulaIndex}-${obIndex}" class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${capGridHidden}">
                 `;
@@ -1262,6 +1189,9 @@
         }
     }
 
+    function escapeQuotes(str) { return str ? str.replace(/'/g, "\\'").replace(/"/g, '&quot;') : ''; }
+    function escapeRegExp(string) { return string ? string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : ''; }
+
     async function renameEntity(type, oldName, parentName = '') {
         let docRef = type === 'paragrafo' ? archiveDB.find(d => d.id === oldName) : null;
         let displayName = type === 'paragrafo' && docRef ? docRef.argomento : oldName;
@@ -1283,7 +1213,7 @@
         if (docsToUpdate.length > 0) {
             docsToUpdate.forEach(uDoc => { let idx = archiveDB.findIndex(d => d.id === uDoc.id); if(idx !== -1) archiveDB[idx] = uDoc; });
             await syncDatabase();
-            renderArchiveList(document.getElementById('search-db').value);
+            renderArchiveList(document.getElementById('search-db') ? document.getElementById('search-db').value : '');
         }
     }
 
@@ -1569,11 +1499,11 @@
             }
             if(wantMatrici) {
                 let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>`;
-                combinedHtml += `<div class="batch-page">${printHeader}${document.getElementById('batch-matrice-render').innerHTML}</div>`;
+                combinedHtml += `<div class="batch-page">${document.getElementById('batch-matrice-render').innerHTML}</div>`;
             }
             if(wantDispense && currentDispensaHtml['batch']) {
                 let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>`;
-                combinedHtml += `<div class="batch-page">${printHeader}${currentDispensaHtml['batch']}</div>`;
+                combinedHtml += `<div class="batch-page">${currentDispensaHtml['batch']}</div>`;
             }
         });
 
@@ -1593,7 +1523,7 @@
         setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
 
-    // Avvio e Migrazione Automatica
+    // Avvio e Migrazione Automatica locale da IndexedDB
     loadFallbackLocal();
 
 </script>
