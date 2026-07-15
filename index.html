@@ -227,10 +227,10 @@
         <!-- VISTA 2: ARCHIVIO (DATABASE) -->
         <div id="view-archive" class="view-section p-4 md:p-8">
             <div class="max-w-5xl mx-auto w-full">
-                <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
+                <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner shadow-black/20">
                     <div>
                         <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-server text-blue-500 mr-3"></i>Database Strumenti</h2>
-                        <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate.</p>
+                        <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate in locale senza limiti.</p>
                     </div>
                     <div class="flex gap-3">
                         <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
@@ -253,9 +253,14 @@
                     </button>
                 </div>
 
-                <div id="archive-container" class="space-y-6 pb-20"></div>
+                <div id="archive-container" class="space-y-6 pb-32">
+                    <div class="text-center py-20 text-slate-500 italic flex flex-col items-center justify-center">
+                        <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-blue-500 block"></i>
+                        Caricamento database in corso...
+                    </div>
+                </div>
             </div>
-            
+
             <!-- BARRA DELLE AZIONI IN BLOCCO -->
             <div id="batch-action-bar" class="hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 p-4 rounded-full shadow-2xl z-50 flex items-center gap-4 md:gap-6 transition-all duration-300 max-w-[95vw] overflow-x-auto">
                 <div class="flex items-center gap-4 shrink-0">
@@ -419,9 +424,61 @@
 
 <script>
     /* ==========================================================================
-       STATO E VARIABILI GLOBALI
+       STATO E VARIABILI GLOBALI E MOTORE IDB (INDEXEDDB)
     ========================================================================== */
-    let archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+    let archiveDB = [];
+
+    function inizializzaIDB() {
+        return new Promise((resolve, reject) => {
+            let req = indexedDB.open("DrivingLeaderDatabase", 1);
+            req.onupgradeneeded = (e) => {
+                let db = e.target.result;
+                if (!db.objectStoreNames.contains("archivio")) {
+                    db.createObjectStore("archivio");
+                }
+            };
+            req.onsuccess = (e) => resolve(e.target.result);
+            req.onerror = (e) => reject(e);
+        });
+    }
+
+    async function salvaInIDB(dati) {
+        try {
+            let db = await inizializzaIDB();
+            let tx = db.transaction("archivio", "readwrite");
+            tx.objectStore("archivio").put(dati, "archiveDB");
+        } catch(e) { console.error("Errore scrittura database locale", e); }
+    }
+
+    async function leggiDaIDB() {
+        return new Promise(async (resolve) => {
+            try {
+                let db = await inizializzaIDB();
+                let tx = db.transaction("archivio", "readonly");
+                let req = tx.objectStore("archivio").get("archiveDB");
+                req.onsuccess = () => resolve(req.result || []);
+                req.onerror = () => resolve([]);
+            } catch(e) { resolve([]); }
+        });
+    }
+
+    async function syncDatabase() {
+        await salvaInIDB(archiveDB);
+    }
+
+    async function loadFallbackLocal() {
+        let vecchiDati = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+        if(vecchiDati.length > 0) {
+            archiveDB = vecchiDati;
+            await syncDatabase();
+            localStorage.removeItem('driving_leader_studio_db'); 
+        } else {
+            archiveDB = await leggiDaIDB();
+        }
+        renderArchiveList();
+        if(archiveDB.length === 0) navTo('generator'); 
+        else navTo('archive');
+    }
     
     let currentDocMeta = { gen: {}, read: {}, batch: {} };
     let currentCsvData = { gen: [], read: [], batch: [] };
@@ -431,6 +488,7 @@
     let currentReaderDocId = null;
     let allAulasExpanded = false;
 
+    // --- NUOVE VARIABILI PER MEMORIA ACCORDION ---
     let lastOpenedAula = null;
     let lastOpenedCapitolo = null;
 
@@ -486,7 +544,7 @@
     });
 
     /* ==========================================================================
-       LOGICA DI ELABORAZIONE TESTO IA
+       LOGICA DI ELABORAZIONE TESTO IA (Parser Core con 3 Sezioni)
     ========================================================================== */
     function processAndRender(rawText, prefix) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
@@ -520,16 +578,14 @@
         const btnContainer = document.getElementById(`${prefix}-dispensa-btn-container`);
         if(dispensaRaw) {
             currentDispensaHtml[prefix] = parseDispensa(dispensaRaw);
-            if(btnContainer) {
-                btnContainer.innerHTML = `
-                    <button onclick="printDispensa('${prefix}')" class="btn-dispensa mr-4">
-                        <i class="fa-solid fa-file-invoice mr-2"></i> Stampa Dispensa Allievi
-                    </button>
-                `;
-            }
+            btnContainer.innerHTML = `
+                <button onclick="printDispensa('${prefix}')" class="btn-dispensa mr-4">
+                    <i class="fa-solid fa-file-invoice mr-2"></i> Stampa Dispensa Allievi
+                </button>
+            `;
         } else {
             currentDispensaHtml[prefix] = "";
-            if(btnContainer) btnContainer.innerHTML = ""; 
+            btnContainer.innerHTML = ""; 
         }
 
         return true;
@@ -559,6 +615,7 @@
             if(!l) return;
             let uL = l.toUpperCase();
 
+            // Rileva il TITOLO e lo inserisce come titolo di sezione
             if (uL.startsWith('TITOLO:')) {
                 let titleText = l.substring(7).trim();
                 html += `<h3 class="d-title">${titleText}</h3>`;
@@ -582,7 +639,9 @@
                             <div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb" style="margin-right:10px;"></i> Il Campo Minato (I Quiz)</div>`;
             }
             else {
+                // Rende grassetto le parti con ** **
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Toglie qualsiasi trattino o asterisco iniziale di formattazione
                 let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
                 
                 if (inSacro && cleanLine) {
@@ -640,6 +699,7 @@
                 let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
+            // PARSER MODIFICATO: Argomento MAIUSCOLO e Freccia Design
             else if (l.replace(/^\*\s*/, '').toUpperCase().startsWith('PAGINA')) {
                 l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
                 
@@ -659,6 +719,7 @@
                     let afterTrap = remaining.substring(trapIndex + 8).replace(/^[:\s]+/, '').trim();
                     trapText = "TRAPPOLA: " + afterTrap;
                 } else {
+                    // Fallback di emergenza
                     let parts = remaining.split(/⚠️|(?=\sTRAPPOLA)/i); 
                     if(parts.length > 1) {
                        mainText = parts[0].trim();
@@ -666,11 +727,13 @@
                     }
                 }
 
+                // --- NUOVA LOGICA FRECCE E MAIUSCOLE ---
                 let arrowMatch = mainText.match(/➔|->/);
                 if (arrowMatch) {
                     let idx = mainText.indexOf(arrowMatch[0]);
                     let arg = mainText.substring(0, idx).trim();
                     let rule = mainText.substring(idx + arrowMatch[0].length).trim();
+                    // Il primo span rende l'Argomento MAIUSCOLO e con font spesso. L'icona è la nuova freccia.
                     mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="text-slate-300 print:text-black">${rule}</span>`;
                 }
 
@@ -700,8 +763,7 @@
             `;
         }
 
-        const renderContainer = document.getElementById(`${prefix}-mappa-render`);
-        if (renderContainer) renderContainer.innerHTML = headerHtml + html;
+        document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
     }
 
     // --- RENDER MATRICE ---
@@ -763,14 +825,13 @@
             }
         });
 
-        const renderContainer = document.getElementById(`${prefix}-matrice-render`);
-        if (renderContainer) renderContainer.innerHTML = html;
+        document.getElementById(`${prefix}-matrice-render`).innerHTML = html;
     }
 
     /* ==========================================================================
        LOGICA ARCHIVIO (Salvataggio, Lettura, Ricerca Profonda)
     ========================================================================== */
-    function saveToArchive() {
+    async function saveToArchive() {
         const meta = currentDocMeta['gen'];
         if(!meta.aula && !meta.obiettivo && !meta.argomento) {
             alert("Impossibile salvare: Manca l'intestazione con i metadati (AULA, CAPITOLO, PARAGRAFO) nel testo fornito dall'IA.");
@@ -791,13 +852,17 @@
         if(exists) {
             if(!confirm("Esiste già un documento con questo Argomento. Vuoi sovrascriverlo?")) return;
             archiveDB = archiveDB.filter(doc => doc.id !== exists.id); 
+            globalSelectedIds.delete(exists.id);
         }
 
         archiveDB.push(newItem);
         try {
-            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            await syncDatabase();
+            
+            // Memorizza l'Aula e il Capitolo appena salvati per tenerli aperti nell'archivio
             lastOpenedAula = newItem.aula;
             lastOpenedCapitolo = newItem.obiettivo;
+            
             alert("Documento salvato con successo nell'Archivio Didattico!");
             navTo('archive');
         } catch (e) {
@@ -858,6 +923,7 @@
         Object.keys(grouped).sort().forEach(aulaName => {
             let aulaHtml = `<div class="mb-6 glass-panel overflow-hidden transition-all p-0 border border-slate-700">`;
             
+            // Controlla se è l'ultima aula aperta o se stiamo cercando
             let isAulaExpanded = forceExpand || (!isSearching && lastOpenedAula === aulaName);
             const gridClassHidden = isAulaExpanded ? "" : "hidden";
             const iconClassToggle = isAulaExpanded ? "fa-chevron-up" : "fa-chevron-down";
@@ -876,6 +942,8 @@
             `;
             
             Object.keys(grouped[aulaName]).sort().forEach((obName, obIndex) => {
+                
+                // Controlla se è l'ultimo capitolo aperto
                 let isCapExpanded = forceExpand || (!isSearching && lastOpenedAula === aulaName && lastOpenedCapitolo === obName);
                 const capGridHidden = isCapExpanded ? "" : "hidden";
                 const capIconToggle = isCapExpanded ? "fa-chevron-up" : "fa-chevron-down";
@@ -886,10 +954,7 @@
                              onclick="document.getElementById('grid-cap-${aulaIndex}-${obIndex}').classList.toggle('hidden'); 
                                       document.getElementById('icon-cap-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-up'); 
                                       document.getElementById('icon-cap-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-down');">
-                            <div class="flex items-center">
-                                <input type="checkbox" onchange="toggleChapter('${aulaIndex}-${obIndex}', this.checked); event.stopPropagation();" class="mr-3 w-4 h-4 accent-blue-500 rounded cursor-pointer" title="Seleziona tutto">
-                                <i class="fa-solid fa-folder-open mr-2 text-sm text-blue-500"></i> ${obName}
-                            </div>
+                            <div><i class="fa-solid fa-folder-open mr-2 text-sm"></i> ${obName}</div>
                             <i id="icon-cap-${aulaIndex}-${obIndex}" class="fa-solid ${capIconToggle} text-slate-500 transition-transform"></i>
                         </div>
                         <div id="grid-cap-${aulaIndex}-${obIndex}" class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${capGridHidden}">
@@ -947,6 +1012,7 @@
             btn.innerHTML = '<i class="fa-solid fa-compress mr-2"></i> <span>Chiudi Tutte</span>';
         } else {
             btn.innerHTML = '<i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>';
+            // Azzera la memoria quando forzi la chiusura di tutto
             lastOpenedAula = null;
             lastOpenedCapitolo = null;
         }
@@ -999,13 +1065,13 @@
         updateSelectionBar();
     }
 
-    function deleteBatch() {
+    async function deleteBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         if(selectedIds.length === 0) return;
         
         if(confirm(`Sei sicuro di voler eliminare in blocco i ${selectedIds.length} documenti selezionati?`)) {
             archiveDB = archiveDB.filter(d => !selectedIds.includes(d.id));
-            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            await syncDatabase();
             globalSelectedIds.clear();
             renderArchiveList(document.getElementById('search-db').value);
         }
@@ -1017,12 +1083,15 @@
         if(!doc) return;
 
         currentReaderDocId = docId;
+        
+        // Memorizza l'apertura per la navigazione di ritorno
         lastOpenedAula = doc.aula;
         lastOpenedCapitolo = doc.obiettivo;
 
         document.getElementById('reader-aula-title').innerText = doc.aula;
         document.getElementById('reader-item-title').innerText = doc.argomento;
 
+        // Reset vista lettura
         document.getElementById('read-view-content').classList.remove('hidden');
         document.getElementById('read-view-content').classList.add('grid');
         document.getElementById('read-edit-content').classList.add('hidden');
@@ -1040,6 +1109,7 @@
         const textarea = document.getElementById('read-edit-textarea');
 
         if(editContent.classList.contains('hidden')) {
+            // Entra in Modalità Modifica
             const doc = archiveDB.find(d => d.id === currentReaderDocId);
             if(doc) {
                 textarea.value = doc.rawText;
@@ -1048,9 +1118,10 @@
                 editContent.classList.remove('hidden');
                 editContent.classList.add('flex');
                 btnToggle.innerHTML = '<i class="fa-solid fa-eye mr-2"></i> Torna alla Vista';
-                document.getElementById('read-dispensa-btn-container').style.display = 'none'; 
+                document.getElementById('read-dispensa-btn-container').style.display = 'none'; // Nasconde stampa
             }
         } else {
+            // Esci dalla Modalità Modifica (Annulla)
             viewContent.classList.remove('hidden');
             viewContent.classList.add('grid');
             editContent.classList.add('hidden');
@@ -1060,33 +1131,39 @@
         }
     }
 
-    function saveEditedDocument() {
+    async function saveEditedDocument() {
         const newText = document.getElementById('read-edit-textarea').value;
         const docIndex = archiveDB.findIndex(d => d.id === currentReaderDocId);
         
         if(docIndex !== -1) {
+            // Basic validation
             if (!newText.includes('=== MAPPA TECNICA ===') || !newText.includes('=== MATRICE QUIZ ===')) {
                 alert("Attenzione: Il testo deve mantenere i delimitatori obbligatori '=== MAPPA TECNICA ===' e '=== MATRICE QUIZ ===' per funzionare.");
                 return;
             }
 
+            // Prova a renderizzare per capire se ci sono errori nel parser e aggiornare i metadati
             const success = processAndRender(newText, 'read');
             
             if(success) {
+                // Aggiorna Raw Text
                 archiveDB[docIndex].rawText = newText;
                 
+                // Aggiorna Metadati nel DB
                 const meta = currentDocMeta['read'];
                 if(meta.aula) archiveDB[docIndex].aula = meta.aula;
                 if(meta.obiettivo) archiveDB[docIndex].obiettivo = meta.obiettivo;
                 if(meta.argomento) archiveDB[docIndex].argomento = meta.argomento;
                 if(meta.tempo !== undefined) archiveDB[docIndex].tempo = meta.tempo; 
 
+                // Aggiorna intestazione Viewer
                 document.getElementById('reader-aula-title').innerText = archiveDB[docIndex].aula;
                 document.getElementById('reader-item-title').innerText = archiveDB[docIndex].argomento;
 
+                // Salva
                 try {
-                    localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
-                    toggleEditMode(); 
+                    await syncDatabase();
+                    toggleEditMode(); // Chiude l'editor
                     alert("Modifiche salvate con successo!");
                 } catch(e) {
                     alert("Errore di salvataggio nella memoria del browser.");
@@ -1095,10 +1172,42 @@
         }
     }
 
-    function deleteArchivedDocument(docId) {
+    async function deleteArchivedDocument(docId) {
         if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
+            const docObj = archiveDB.find(d => d.id === docId);
+            if(docObj) {
+                lastOpenedAula = docObj.aula;
+                lastOpenedCapitolo = docObj.obiettivo;
+            }
             archiveDB = archiveDB.filter(d => d.id !== docId);
-            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            globalSelectedIds.delete(docId);
+            await syncDatabase();
+            renderArchiveList(document.getElementById('search-db').value);
+            updateSelectionBar();
+        }
+    }
+
+    async function renameEntity(type, oldName, parentName = '') {
+        let docRef = type === 'paragrafo' ? archiveDB.find(d => d.id === oldName) : null;
+        let displayName = type === 'paragrafo' && docRef ? docRef.argomento : oldName;
+        let newName = prompt(`Inserisci il nuovo titolo per questo ${type.toUpperCase()}:`, displayName);
+        if (!newName || newName.trim() === '' || newName === displayName) return;
+        newName = newName.trim();
+        
+        let docsToUpdate = [];
+        archiveDB.forEach(docObj => {
+            if (type === 'aula' && docObj.aula === oldName) {
+                docsToUpdate.push({...docObj, aula: newName, rawText: docObj.rawText.replace(new RegExp(`AULA:\\s*${escapeRegExp(oldName)}`, 'i'), `AULA: ${newName}`)});
+            } else if (type === 'capitolo' && docObj.obiettivo === oldName && docObj.aula === parentName) {
+                docsToUpdate.push({...docObj, obiettivo: newName, rawText: docObj.rawText.replace(new RegExp(`CAPITOLO:\\s*${escapeRegExp(oldName)}`, 'i'), `CAPITOLO: ${newName}`)});
+            } else if (type === 'paragrafo' && docObj.id === oldName) {
+                docsToUpdate.push({...docObj, argomento: newName, rawText: docObj.rawText.replace(new RegExp(`PARAGRAFO:\\s*${escapeRegExp(docObj.argomento)}`, 'i'), `PARAGRAFO: ${newName}`)});
+            }
+        });
+        
+        if (docsToUpdate.length > 0) {
+            docsToUpdate.forEach(uDoc => { let idx = archiveDB.findIndex(d => d.id === uDoc.id); if(idx !== -1) archiveDB[idx] = uDoc; });
+            await syncDatabase();
             renderArchiveList(document.getElementById('search-db').value);
         }
     }
@@ -1124,7 +1233,7 @@
         if (!file) return;
         
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = async function(e) {
             try {
                 const importedData = JSON.parse(e.target.result);
                 if (Array.isArray(importedData)) {
@@ -1134,7 +1243,7 @@
                             if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc);
                         });
                         archiveDB = merged;
-                        localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                        await syncDatabase();
                         renderArchiveList();
                         alert("Database importato con successo!");
                     }
@@ -1152,6 +1261,78 @@
     /* ==========================================================================
        STAMPA PDF ED ESPORTAZIONE CSV E REGIA STAMPA
     ========================================================================== */
+    function printDocument(type, prefix) {
+        const printArea = document.getElementById('print-area');
+        const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
+        const meta = currentDocMeta[prefix];
+        
+        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
+
+        let printHeader = `
+            <div class="print-header-container">
+                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula">${meta.aula || docTitle}</p>
+                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
+                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
+                    ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
+                </div>
+            </div>
+        `;
+        
+        printArea.innerHTML = printHeader + contentHtml;
+        window.print();
+    }
+
+    function printDispensa(prefix) {
+        const printArea = document.getElementById('print-area');
+        const htmlContent = currentDispensaHtml[prefix];
+        const meta = currentDocMeta[prefix];
+
+        if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
+        
+        // Intestazione super-compattata per salvare ulteriore spazio nel foglio A4
+        let printHeader = `
+            <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
+                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
+                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
+                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.argomento || ''}</h2>
+                </div>
+            </div>
+        `;
+        
+        printArea.innerHTML = printHeader + htmlContent;
+        window.print();
+    }
+
+    function exportCSV(prefix) {
+        const csvArray = currentCsvData[prefix];
+        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato matrice disponibile per l'esportazione.");
+
+        let csvContent = "";
+        csvArray.forEach(row => {
+            let rowStr = row.map(item => {
+                let str = String(item).replace(/"/g, '""');
+                return `"${str}"`;
+            }).join(",");
+            csvContent += rowStr + "\r\n";
+        });
+
+        const meta = currentDocMeta[prefix];
+        const safeName = (meta.argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Export_${safeName}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     const printFooterHtmlBlock = `
         <div class="print-footer">
             <div style="display: flex; align-items: center;">
@@ -1355,87 +1536,8 @@
         setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
 
-    function printDocument(type, prefix) {
-        const printArea = document.getElementById('print-area');
-        const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
-        const meta = currentDocMeta[prefix];
-        
-        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
-
-        let printHeader = `
-            <div class="print-header-container">
-                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
-                <p class="print-header-aula">${meta.aula || docTitle}</p>
-                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
-                <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
-                    ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
-                </div>
-            </div>
-        `;
-        
-        printArea.innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${printHeader}${contentHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
-        
-        const originalTitle = document.title;
-        document.title = `${type}_${getFormattedDateString()}_contiautoscuole`;
-        
-        setTimeout(() => { window.print(); document.title = originalTitle; printArea.innerHTML = ''; }, 300);
-    }
-
-    function printDispensa(prefix) {
-        const printArea = document.getElementById('print-area');
-        const htmlContent = currentDispensaHtml[prefix];
-        const meta = currentDocMeta[prefix];
-
-        if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
-        
-        let printHeader = `
-            <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
-                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
-                <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
-                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
-                <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.argomento || ''}</h2>
-                </div>
-            </div>
-        `;
-        
-        printArea.innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${printHeader}${htmlContent}</td></tr></tbody></table>${printFooterHtmlBlock}`;
-        
-        const originalTitle = document.title;
-        document.title = `dispensa_${getFormattedDateString()}_contiautoscuole`;
-        
-        setTimeout(() => { window.print(); document.title = originalTitle; printArea.innerHTML = ''; }, 300);
-    }
-
-    function exportCSV(prefix) {
-        const csvArray = currentCsvData[prefix];
-        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato matrice disponibile per l'esportazione.");
-
-        let csvContent = "";
-        csvArray.forEach(row => {
-            let rowStr = row.map(item => {
-                let str = String(item).replace(/"/g, '""');
-                return `"${str}"`;
-            }).join(",");
-            csvContent += rowStr + "\r\n";
-        });
-
-        const meta = currentDocMeta[prefix];
-        const safeName = (meta.argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
-
-        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Export_${safeName}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // Avvio
-    if(archiveDB.length === 0) navTo('generator'); else navTo('archive');
+    // Avvio - La chiamata originale if(archiveDB.length === 0)... viene sostituita da loadFallbackLocal per inizializzare IDB
+    loadFallbackLocal();
 
 </script>
 </body>
