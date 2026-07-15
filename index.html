@@ -83,11 +83,11 @@
             .pagina-trap { display: block; margin-top: 8px; font-weight: bold !important; color: #b91c1c !important; padding-left: 10px; border-left: 3px solid #b91c1c; font-size: 11pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
             
             /* Matrici */
-            .matrice-title { color: black !important; font-weight: 900 !important; font-size: 13pt !important; margin-top: 20pt !important; margin-bottom: 6pt !important; line-height: 1.3 !important; border-left: 4px solid #fbbf24 !important; padding-left: 10px; background: transparent !important; page-break-after: avoid; text-transform: uppercase; }
+            .matrice-title { display: block !important; color: black !important; font-weight: 900 !important; font-size: 13pt !important; margin-top: 20pt !important; margin-bottom: 6pt !important; line-height: 1.3 !important; border-left: 4px solid #fbbf24 !important; padding-left: 10px; background: transparent !important; page-break-after: avoid; text-transform: uppercase; }
             .matrice-row { display: flex; align-items: flex-start; margin-bottom: 8pt !important; padding-left: 15px; font-size: 11pt !important; color: black !important; line-height: 1.3 !important; page-break-inside: avoid; font-style: normal !important; }
             .v-badge { color: #10b981 !important; font-weight: 900; margin-left: 8px; font-style: normal; font-size: 10pt !important;}
             .f-badge { color: #ef4444 !important; font-weight: 900; margin-left: 8px; font-style: normal; font-size: 10pt !important;}
-            .matrice-exp { display: block; font-size: 10pt !important; color: #555 !important; margin-top: 3px; font-style: italic; line-height: 1.3 !important;}
+            .matrice-exp { display: block; font-size: 10pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.3 !important;}
 
             /* Dispensa Allievi */
             .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; }
@@ -105,6 +105,15 @@
             .d-quiz-item { margin-bottom: 8px; font-size: 10.5pt; line-height: 1.3; display: flex; align-items: flex-start;}
             .d-quiz-item i { margin-top: 3px; margin-right: 8px; color: #f87171; font-size: 9pt;}
             .d-quiz-item strong { color: #991b1b; }
+
+            /* --- STILE MAPPA CONCETTUALE ALLIEVI (Organigramma) --- */
+            .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
+            .mindmap-root { background: #0f172a !important; color: white !important; font-weight: 900; font-size: 16pt; padding: 12px 30px; border-radius: 8px; text-transform: uppercase; margin-bottom: 25px; text-align: center; border: 2px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%;}
+            .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; align-items: flex-start;}
+            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 220px; border: 2px dashed #cbd5e1 !important; border-radius: 12px; padding: 12px; background: #f8fafc !important;}
+            .mindmap-phase-node { background: #d97706 !important; color: white !important; font-weight: 900; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 11pt; text-transform: uppercase; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+            .mindmap-item { background: white !important; border-left: 5px solid #3b82f6 !important; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; font-size: 10pt; font-weight: 800; color: #1e293b !important; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center; text-transform: uppercase;}
+            .mindmap-item-extra { border-left-color: #10b981 !important; font-style: normal; color: #065f46 !important; background: #f0fdf4 !important;}
         }
 
         /* -------------------------------------------
@@ -144,7 +153,6 @@
 
     <div id="app-ui" class="flex flex-col h-full relative z-10">
         
-        <!-- NAVBAR -->
         <div class="bg-slate-900 border-b border-slate-800 px-8 py-5 flex justify-between items-center shrink-0 shadow-lg z-20">
             <div class="flex items-center gap-5">
                 <div class="bg-blue-600 p-3 rounded-xl shadow-lg shadow-blue-500/20">
@@ -157,14 +165,12 @@
             </div>
             <div class="flex gap-4">
                 <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore Mappe</button>
-                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> Archivio Lezioni</button>
+                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> Archivio Didattico</button>
             </div>
         </div>
 
-        <!-- VISTA 1: GENERATORE -->
         <div id="view-generator" class="view-section active p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full flex flex-col h-full">
-                <!-- AREA INPUT -->
                 <div class="glass-panel mb-6 shadow-xl shrink-0">
                     <div class="flex justify-between items-center mb-3">
                         <h2 class="text-xl font-bold flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla Output IA (Mappa, Matrice e Dispensa)</h2>
@@ -176,12 +182,10 @@
                     </button>
                 </div>
 
-                <!-- AREA RISULTATI GENERATORE -->
                 <div id="gen-results-area" class="hidden flex-col gap-4 flex-grow min-h-0">
                     <div class="flex justify-between items-center shrink-0">
                         <div id="gen-dispensa-btn-container">
-                            <!-- Bottone Dispensa iniettato qui se presente -->
-                        </div>
+                            </div>
                         <button onclick="saveToArchive()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-black py-3 px-8 rounded-xl transition shadow-lg shadow-amber-500/20 text-lg flex items-center transform hover:scale-105">
                             <i class="fa-solid fa-download mr-2"></i> SALVA NELL'ARCHIVIO
                         </button>
@@ -224,13 +228,12 @@
             </div>
         </div>
 
-        <!-- VISTA 2: ARCHIVIO (DATABASE) -->
-        <div id="view-archive" class="view-section p-4 md:p-8">
+        <div id="view-archive" class="view-section p-4 md:p-8 relative">
             <div class="max-w-5xl mx-auto w-full">
-                <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner shadow-black/20">
+                <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
                     <div>
                         <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-server text-blue-500 mr-3"></i>Database Strumenti</h2>
-                        <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate in locale senza limiti.</p>
+                        <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate in locale senza limiti (IndexedDB).</p>
                     </div>
                     <div class="flex gap-3">
                         <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
@@ -261,7 +264,6 @@
                 </div>
             </div>
 
-            <!-- BARRA DELLE AZIONI IN BLOCCO -->
             <div id="batch-action-bar" class="hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 border border-slate-600 p-4 rounded-full shadow-2xl z-50 flex items-center gap-4 md:gap-6 transition-all duration-300 max-w-[95vw] overflow-x-auto">
                 <div class="flex items-center gap-4 shrink-0">
                     <div class="flex items-center gap-2">
@@ -276,6 +278,9 @@
                 <div class="flex gap-4 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
                     <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
                         <input type="checkbox" id="batch-mappe" checked class="w-4 h-4 accent-blue-500 rounded cursor-pointer"> <span class="hidden md:inline">Mappe</span><span class="md:hidden">Map</span>
+                    </label>
+                    <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
+                        <input type="checkbox" id="batch-concept" class="w-4 h-4 accent-purple-500 rounded cursor-pointer"> <span class="hidden md:inline">M. Concettuale</span><span class="md:hidden">M.C.</span>
                     </label>
                     <label class="text-slate-300 hover:text-white cursor-pointer text-sm flex items-center gap-2 font-semibold">
                         <input type="checkbox" id="batch-matrici" checked class="w-4 h-4 accent-emerald-500 rounded cursor-pointer"> <span class="hidden md:inline">Matrici</span><span class="md:hidden">Mat</span>
@@ -303,7 +308,6 @@
             </div>
         </div>
 
-        <!-- VISTA 3: LETTORE ARCHIVIO (Reader & Editor) -->
         <div id="view-reader" class="view-section p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
@@ -322,7 +326,6 @@
                     </div>
                 </div>
 
-                <!-- CONTENITORE VISTA LETTURA (GRID) -->
                 <div id="read-view-content" class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
                     <div id="read-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-blue-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
@@ -358,7 +361,6 @@
                     </div>
                 </div>
 
-                <!-- CONTENITORE VISTA MODIFICA (TEXTAREA) -->
                 <div id="read-edit-content" class="hidden flex-col flex-grow min-h-[500px] pb-4 glass-panel border-t-4 border-t-yellow-500">
                     <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4">
                         <div>
@@ -376,14 +378,8 @@
             </div>
         </div>
 
-    </div> <!-- Fine #app-ui -->
+    </div> <div id="print-area"></div>
 
-    <!-- AREA STAMPA -->
-    <div id="print-area">
-        <!-- Riempito via JS durante la stampa -->
-    </div>
-
-    <!-- MODAL DI REGIA DI STAMPA AVANZATA -->
     <div id="advanced-print-modal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity">
         <div class="bg-slate-900 border border-slate-600 rounded-2xl w-full max-w-2xl p-6 shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-4 shrink-0 border-b border-slate-700 pb-4">
@@ -416,7 +412,6 @@
         </div>
     </div>
 
-    <!-- LIGHTBOX OVERLAY -->
     <div id="lightbox" onclick="closeLightbox()">
         <i class="fa-solid fa-xmark lightbox-close"></i>
         <img id="lightbox-img" src="" alt="Zoom Immagine" onclick="event.stopPropagation()">
@@ -424,7 +419,7 @@
 
 <script>
     /* ==========================================================================
-       STATO E VARIABILI GLOBALI E MOTORE IDB (INDEXEDDB)
+       MOTORE DI MEMORIA LOCALE ILLIMITATA (IndexedDB - Supera i 5MB)
     ========================================================================== */
     let archiveDB = [];
 
@@ -480,15 +475,18 @@
         else navTo('archive');
     }
     
+    /* ==========================================================================
+       STATO E VARIABILI GLOBALI APPLICAZIONE
+    ========================================================================== */
     let currentDocMeta = { gen: {}, read: {}, batch: {} };
     let currentCsvData = { gen: [], read: [], batch: [] };
     let currentDispensaHtml = { gen: "", read: "", batch: "" }; 
+    let currentConceptMapHtml = { gen: "", read: "", batch: "" };
     
     let rawInputBuffer = "";
     let currentReaderDocId = null;
     let allAulasExpanded = false;
 
-    // --- NUOVE VARIABILI PER MEMORIA ACCORDION ---
     let lastOpenedAula = null;
     let lastOpenedCapitolo = null;
 
@@ -546,9 +544,9 @@
     /* ==========================================================================
        LOGICA DI ELABORAZIONE TESTO IA (Parser Core con 3 Sezioni)
     ========================================================================== */
-    function processAndRender(rawText, prefix) {
+    function processAndRender(rawText, prefix, silent = false) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
-            alert("Attenzione: Il testo non contiene i delimitatori minimi necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
+            if(!silent) alert("Attenzione: Il testo non contiene i delimitatori minimi necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
             return false;
         }
 
@@ -567,25 +565,26 @@
                 matriceRaw = remainder.trim();
             }
         } catch(e) {
-            console.error("Errore di split", e);
+            console.error("Errore di split testo", e);
             return false;
         }
 
         renderMappa(mappaRaw, prefix);
         renderMatrice(matriceRaw, prefix);
         
-        // Gestione Bottone Dispensa
         const btnContainer = document.getElementById(`${prefix}-dispensa-btn-container`);
         if(dispensaRaw) {
             currentDispensaHtml[prefix] = parseDispensa(dispensaRaw);
-            btnContainer.innerHTML = `
-                <button onclick="printDispensa('${prefix}')" class="btn-dispensa mr-4">
-                    <i class="fa-solid fa-file-invoice mr-2"></i> Stampa Dispensa Allievi
-                </button>
-            `;
+            if(btnContainer) {
+                btnContainer.innerHTML = `
+                    <button onclick="printDispensa('${prefix}')" class="btn-dispensa mr-4">
+                        <i class="fa-solid fa-file-invoice mr-2"></i> Stampa Dispensa Allievi
+                    </button>
+                `;
+            }
         } else {
             currentDispensaHtml[prefix] = "";
-            btnContainer.innerHTML = ""; 
+            if(btnContainer) btnContainer.innerHTML = ""; 
         }
 
         return true;
@@ -601,227 +600,217 @@
         }
     }
 
-    // --- PARSER DISPENSA ALLIEVI ---
     function parseDispensa(text) {
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
-        
-        let inSacro = false;
-        let inPratica = false;
-        let inQuiz = false;
+        let inSacro = false, inPratica = false, inQuiz = false;
 
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
             let uL = l.toUpperCase();
 
-            // Rileva il TITOLO e lo inserisce come titolo di sezione
             if (uL.startsWith('TITOLO:')) {
                 let titleText = l.substring(7).trim();
                 html += `<h3 class="d-title">${titleText}</h3>`;
             }
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                html += `<div class="d-section d-sacro">
-                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced" style="margin-right:10px;"></i> La Norma (Sintesi)</div><ul>`;
+                html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
-                html += `<div class="d-section d-pratica">
-                            <div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div>`;
+                html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
-                if(inSacro) html += `</ul></div>`;
-                if(inPratica) html += `</div>`;
+                if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
-                html += `<div class="d-section d-quiz">
-                            <div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb" style="margin-right:10px;"></i> Il Campo Minato (I Quiz)</div>`;
+                html += `<div class="d-section d-quiz"><div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)</div>`;
             }
             else {
-                // Rende grassetto le parti con ** **
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                // Toglie qualsiasi trattino o asterisco iniziale di formattazione
                 let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
                 
                 if (inSacro && cleanLine) {
                     html += `<li>${cleanLine}</li>`;
                 } else if (inPratica && cleanLine) {
-                    html += `<p style="margin-bottom: 8px;">${cleanLine}</p>`;
+                    html += `<p class="mb-2">${cleanLine}</p>`;
                 } else if (inQuiz && cleanLine) {
-                    let qLine = cleanLine;
-                    qLine = qLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:900; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>');
-                    qLine = qLine.replace(/VERO/g, '<span style="color:#16a34a; font-weight:900; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
+                    let qLine = cleanLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:900; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>').replace(/VERO/g, '<span style="color:#16a34a; font-weight:900; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
+                    qLine = qLine.replace(/\[(.*?)\]/g, '<span class="d-quiz-box">$1</span>');
                     html += `<div class="d-quiz-item"><i class="fa-solid fa-caret-right"></i><div>${qLine}</div></div>`;
                 }
             }
         });
 
-        if(inSacro) html += `</ul></div>`;
-        if(inPratica) html += `</div>`;
-        if(inQuiz) html += `</div>`;
-        
-        html += '</div>'; 
-        return html;
+        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`; if(inQuiz) html += `</div>`;
+        return html + '</div>';
     }
 
-    // --- RENDER MAPPA TECNICA ---
     function renderMappa(text, prefix) {
         const lines = text.split('\n');
-        let html = '';
-        currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
+        let mergedLines = [];
         
         lines.forEach(line => {
             let l = line.trim();
-            if(!l) return;
+            if (!l) return;
+            let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
+            let isKeyword = cleanStart.startsWith('AULA:') || cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:') || cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:') || cleanStart.startsWith('TEMPO STIMATO:') || cleanStart.startsWith('IL SENSO PRATICO:') || cleanStart.startsWith('FASE') || cleanStart.startsWith('OBIETTIVO PRATICO:') || cleanStart.startsWith('PAGINA');
 
-            if (l.toUpperCase().startsWith('AULA:')) {
-                currentDocMeta[prefix].aula = l.substring(5).replace(/[\*\_]/g, '').trim();
+            if (isKeyword || mergedLines.length === 0) mergedLines.push(l); 
+            else mergedLines[mergedLines.length - 1] += " " + l;
+        });
+
+        let html = '';
+        let conceptData = {}; 
+        let currentFase = "CONCETTI CHIAVE"; 
+        currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
+        
+        mergedLines.forEach(line => {
+            let l = line.trim();
+            if(!l) return;
+            let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
+
+            if (cleanStart.startsWith('AULA:')) currentDocMeta[prefix].aula = l.replace(/.*?AULA:/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('CAPITOLO:') || cleanStart.startsWith('OBIETTIVO:')) currentDocMeta[prefix].obiettivo = l.replace(/.*?(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('PARAGRAFO:') || cleanStart.startsWith('ARGOMENTO:')) currentDocMeta[prefix].argomento = l.replace(/.*?(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('TEMPO STIMATO:')) currentDocMeta[prefix].tempo = l.replace(/.*?TEMPO STIMATO:/i, '').replace(/[\*\_]/g, '').trim();
+            else if (cleanStart.startsWith('IL SENSO PRATICO:')) {
+                let pText = l.replace(/.*?IL SENSO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                html += `<div class="incipit-globale"><div class="incipit-titolo"><i class="fa-solid fa-lightbulb mr-2"></i>Il Senso Pratico</div>${pText}</div>`;
             }
-            else if (l.toUpperCase().startsWith('CAPITOLO:') || l.toUpperCase().startsWith('OBIETTIVO:')) {
-                currentDocMeta[prefix].obiettivo = l.replace(/^(CAPITOLO|OBIETTIVO):/i, '').replace(/[\*\_]/g, '').trim();
-            }
-            else if (l.toUpperCase().startsWith('PARAGRAFO:') || l.toUpperCase().startsWith('ARGOMENTO:')) {
-                currentDocMeta[prefix].argomento = l.replace(/^(PARAGRAFO|ARGOMENTO):/i, '').replace(/[\*\_]/g, '').trim();
-            }
-            else if (l.toUpperCase().startsWith('TEMPO STIMATO:')) {
-                currentDocMeta[prefix].tempo = l.substring(14).replace(/[\*\_]/g, '').trim();
-            }
-            else if (l.toUpperCase().includes('IL SENSO PRATICO:')) {
-                let pText = l.replace(/.*IL SENSO PRATICO:/i, '').trim();
-                html += `<div class="incipit-globale"><i class="fa-solid fa-lightbulb mr-2"></i><strong>Il Senso Pratico</strong>${pText}</div>`;
-            }
-            else if (l.toUpperCase().includes('FASE')) {
+            else if (cleanStart.startsWith('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
+                currentFase = title; 
             } 
-            else if (l.toUpperCase().includes('OBIETTIVO PRATICO:')) {
-                let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
+            else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
+                let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
-            // PARSER MODIFICATO: Argomento MAIUSCOLO e Freccia Design
-            else if (l.replace(/^\*\s*/, '').toUpperCase().startsWith('PAGINA')) {
-                l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
+            else if (cleanStart.startsWith('PAGINA')) {
+                l = l.replace(/^\*\s*/, '').replace(/🟢|⚠️|🚨/g, ''); 
+                let pageMatch = l.match(/PAGINA\s*\d+:?/i); 
+                let badgeText = pageMatch ? pageMatch[0].replace(':', '').trim() : "PAGINA";
+                let remaining = pageMatch ? l.substring(l.indexOf(pageMatch[0]) + pageMatch[0].length).trim() : l.trim();
                 
-                let pageMatch = l.match(/PAGINA\s*\d+:/i);
-                let badgeText = pageMatch ? pageMatch[0].replace(':', '') : "PAGINA";
-                
-                let remaining = pageMatch ? l.substring(l.indexOf(':') + 1).trim() : l.trim();
-                
-                let upperRemaining = remaining.toUpperCase();
-                let trapIndex = upperRemaining.indexOf('TRAPPOLA');
-                
-                let mainText = remaining;
-                let trapText = "";
-
-                if(trapIndex !== -1) {
-                    mainText = remaining.substring(0, trapIndex).trim();
-                    let afterTrap = remaining.substring(trapIndex + 8).replace(/^[:\s]+/, '').trim();
-                    trapText = "TRAPPOLA: " + afterTrap;
-                } else {
-                    // Fallback di emergenza
-                    let parts = remaining.split(/⚠️|(?=\sTRAPPOLA)/i); 
-                    if(parts.length > 1) {
-                       mainText = parts[0].trim();
-                       trapText = "TRAPPOLA: " + parts[1].replace(/⚠️/g, '').replace(/^[:\s]+/, '').trim();
-                    }
+                let trapText = "", trapRaw = "", trapKeyword = "ATTENZIONE";
+                let trapRegex = /(TRAPPOLA|ATTENZIONE):\s*([\s\S]*)$/i;
+                let trapMatch = remaining.match(trapRegex);
+                if (trapMatch) {
+                    trapKeyword = trapMatch[1].toUpperCase();
+                    trapRaw = trapMatch[2].trim();
+                    trapText = `${trapKeyword}: ` + trapRaw;
+                    remaining = remaining.substring(0, trapMatch.index).trim(); 
                 }
 
-                // --- NUOVA LOGICA FRECCE E MAIUSCOLE ---
+                let extraText = "", extraRaw = "", extraRegex = /(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i;
+                let extraMatch = remaining.match(extraRegex);
+                if (extraMatch) {
+                    extraRaw = extraMatch[2].trim();
+                    extraText = extraRaw.replace(/➔|->/g, '<i class="fa-solid fa-arrow-right-long text-emerald-500 mx-1"></i>');
+                    remaining = remaining.substring(0, extraMatch.index).trim(); 
+                    extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ${extraText}</div>`;
+                }
+
+                let nessunText = "", nessunRaw = "", nessunRegex = /(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i;
+                let nessunMatch = remaining.match(nessunRegex);
+                if (nessunMatch) {
+                    nessunRaw = nessunMatch[2].trim().replace(/^(?:➔|->)/, '').trim();
+                    remaining = remaining.substring(0, nessunMatch.index).trim(); 
+                    nessunText = `<div style="display: block; margin-top: 4px; color: #475569;"><span style="background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 6px; border-radius: 4px; font-size: 0.85rem; margin-right: 6px;"><strong>NESSUN QUIZ</strong></span><span style="font-style: italic; font-size: 0.95rem;">${nessunRaw}</span></div>`;
+                }
+
+                let gancioText = "", gancioRaw = "", gancioRegex = /IL GANCIO:\s*(.*?)(?=\s*\approx|$)/i; 
+                let gancioMatch = remaining.match(gancioRegex);
+                if (gancioMatch) {
+                    gancioRaw = gancioMatch[1].trim();
+                    remaining = remaining.replace(gancioMatch[0], '').trim(); 
+                    gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioRaw}</span></div>`;
+                }
+
+                let mainText = remaining; 
+                let argToExtract = ""; 
                 let arrowMatch = mainText.match(/➔|->/);
                 if (arrowMatch) {
                     let idx = mainText.indexOf(arrowMatch[0]);
                     let arg = mainText.substring(0, idx).trim();
+                    argToExtract = arg.replace(/\*\*/g, '').trim(); 
                     let rule = mainText.substring(idx + arrowMatch[0].length).trim();
-                    // Il primo span rende l'Argomento MAIUSCOLO e con font spesso. L'icona è la nuova freccia.
-                    mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="text-slate-300 print:text-black">${rule}</span>`;
+                    mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="testo-regola">${rule}</span>`;
+                } else if (mainText.length > 0) {
+                    mainText = `<span class="testo-regola">${mainText}</span>`;
                 }
 
-                mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if (mainText) mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if (gancioText) gancioText = gancioText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if (extraText) extraText = extraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                html += `
-                    <div class="pagina-row">
-                        <div class="pagina-badge">${badgeText}</div>
-                        <div class="pagina-text">${mainText} ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div>
-                    </div>
-                `;
+                html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText} ${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
+
+                if (!conceptData[currentFase]) conceptData[currentFase] = [];
+                if (argToExtract) conceptData[currentFase].push(`<div class="mindmap-item">${argToExtract}</div>`);
+                if (extraRaw) {
+                    let extArrowMatch = extraRaw.match(/➔|->/);
+                    if(extArrowMatch) {
+                        let extArg = extraRaw.substring(0, extraRaw.indexOf(extArrowMatch[0])).replace(/\*\*/g, '').trim();
+                        if(extArg) conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-extra">EXTRA: ${extArg}</div>`);
+                    }
+                }
             }
         });
 
+        let cmapHtmlNodes = '';
+        Object.keys(conceptData).forEach(fase => {
+            if (conceptData[fase].length > 0) {
+                cmapHtmlNodes += `<div class="mindmap-phase-col"><div class="mindmap-phase-node">${fase}</div>${conceptData[fase].join('')}</div>`;
+            }
+        });
+
+        currentConceptMapHtml[prefix] = cmapHtmlNodes !== '' ? `
+            <div class="mindmap-container">
+                <div class="mindmap-root">${currentDocMeta[prefix].argomento || 'Argomento della Lezione'}</div>
+                <div class="mindmap-phases">${cmapHtmlNodes}</div>
+            </div>` : "";
+
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
-            headerHtml = `
-                <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4">
-                    <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
-                        <h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].obiettivo || ''}</h2>
-                        <h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].argomento || ''}</h3>
-                    </div>
-                    ${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}
-                </div>
-            `;
+            headerHtml = `<div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4"><div class="overflow-hidden"><p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p><h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2><h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3></div>${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}</div>`;
         }
 
         document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
     }
 
-    // --- RENDER MATRICE ---
     function renderMatrice(text, prefix) {
         const lines = text.split('\n');
         let html = '';
-        currentCsvData[prefix] = []; 
-        currentCsvData[prefix].push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]);
-
-        let currentMatriceVisual = ""; 
-        let currentMatriceClean = "";  
+        currentCsvData[prefix] = [["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]];
+        let currentMatriceVisual = "", currentMatriceClean = "";  
 
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
-
             let upperL = l.toUpperCase();
-            
-            let isContinuation = false;
-            if (l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./)) {
-                isContinuation = true; 
-            } else if (l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ')) {
-                isContinuation = true; 
-            }
+            let isContinuation = l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./) || l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ');
 
             if (!isContinuation) {
                 currentMatriceVisual = l.replace(/[\[\]\*\#]/g, '').trim();
                 currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
                 html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
-            } 
-            else {
+            } else {
                 let parts = l.split('|');
                 let rawQuizText = parts[0].trim();
                 let expText = parts[1] ? parts[1].trim() : "Nessuna spiegazione fornita.";
-
                 let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
                 let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
-                
-                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '')
-                                   .replace(/\(V\)/i, '')
-                                   .replace(/\(F\)/i, '')
-                                   .replace(/VERO/i, '')
-                                   .replace(/FALSO/i, '')
-                                   .trim();
-                
+                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '').replace(/\(V\)/i, '').replace(/\(F\)/i, '').replace(/VERO/i, '').replace(/FALSO/i, '').trim();
                 let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
                 let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
                 
-                html += `<div class="matrice-row">
-                            <i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-3 mt-1 text-sm shrink-0"></i> 
-                            <div>
-                                <span class="block">${testoVisual} ${badgeHtml}</span>
-                                <span class="matrice-exp"><i class="fa-solid fa-caret-right mr-1"></i>${expText}</span>
-                            </div>
-                         </div>`;
-                
-                let esitoClean = isVero ? "V" : "F";
-                currentCsvData[prefix].push([currentMatriceClean, testoClean, fraseCompleta, esitoClean, expText]);
+                html += `<div class="matrice-row"><i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-3 mt-1 text-sm shrink-0"></i> <div><span class="block">${testoVisual} ${badgeHtml}</span><span class="matrice-exp"><i class="fa-solid fa-caret-right mr-1"></i>${expText}</span></div></div>`;
+                currentCsvData[prefix].push([currentMatriceClean, testoClean, fraseCompleta, isVero ? "V" : "F", expText]);
             }
         });
 
@@ -829,12 +818,12 @@
     }
 
     /* ==========================================================================
-       LOGICA ARCHIVIO (Salvataggio, Lettura, Ricerca Profonda)
+       LOGICA ARCHIVIO (Salvataggio, Rimozione, Ricerca Asincrona)
     ========================================================================== */
     async function saveToArchive() {
         const meta = currentDocMeta['gen'];
         if(!meta.aula && !meta.obiettivo && !meta.argomento) {
-            alert("Impossibile salvare: Manca l'intestazione con i metadati (AULA, CAPITOLO, PARAGRAFO) nel testo fornito dall'IA.");
+            alert("Impossibile salvare: Manca l'intestazione con i metadati nel testo.");
             return;
         }
 
@@ -848,35 +837,58 @@
             date: new Date().toLocaleDateString('it-IT')
         };
 
-        const exists = archiveDB.find(doc => doc.argomento === newItem.argomento && doc.obiettivo === newItem.obiettivo);
+        const safeTitle = (newItem.argomento || "").toLowerCase().trim();
+        const safeCap = (newItem.obiettivo || "").toLowerCase().trim();
+        const exists = archiveDB.find(doc => (doc.argomento || "").toLowerCase().trim() === safeTitle && (doc.obiettivo || "").toLowerCase().trim() === safeCap);
+
         if(exists) {
-            if(!confirm("Esiste già un documento con questo Argomento. Vuoi sovrascriverlo?")) return;
-            archiveDB = archiveDB.filter(doc => doc.id !== exists.id); 
+            if(!confirm(`Attenzione: Esiste già una lezione intitolata "${newItem.argomento}". Vuoi sostituirla?`)) return;
+            archiveDB = archiveDB.filter(doc => doc.id !== exists.id);
             globalSelectedIds.delete(exists.id);
         }
 
         archiveDB.push(newItem);
-        try {
+        await syncDatabase();
+        lastOpenedAula = newItem.aula;
+        lastOpenedCapitolo = newItem.obiettivo;
+        alert("Documento salvato con successo nell'Archivio IDB!");
+        navTo('archive');
+    }
+
+    async function deleteArchivedDocument(docId) {
+        if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
+            const docObj = archiveDB.find(d => d.id === docId);
+            if(docObj) {
+                lastOpenedAula = docObj.aula;
+                lastOpenedCapitolo = docObj.obiettivo;
+            }
+            archiveDB = archiveDB.filter(d => d.id !== docId);
+            globalSelectedIds.delete(docId);
             await syncDatabase();
-            
-            // Memorizza l'Aula e il Capitolo appena salvati per tenerli aperti nell'archivio
-            lastOpenedAula = newItem.aula;
-            lastOpenedCapitolo = newItem.obiettivo;
-            
-            alert("Documento salvato con successo nell'Archivio Didattico!");
-            navTo('archive');
-        } catch (e) {
-            alert("Errore di salvataggio. La memoria del browser potrebbe essere piena.");
+            renderArchiveList(document.getElementById('search-db')?.value || '');
+            updateSelectionBar();
         }
     }
 
-    function deepSearch(doc, query) {
+    async function deleteBatch() {
+        const selectedIds = Array.from(globalSelectedIds);
+        if(selectedIds.length === 0) return;
+        if(confirm(`Sei sicuro di voler eliminare in blocco i ${selectedIds.length} documenti selezionati?`)) {
+            archiveDB = archiveDB.filter(d => !selectedIds.includes(d.id));
+            globalSelectedIds.clear();
+            await syncDatabase();
+            renderArchiveList(document.getElementById('search-db')?.value || '');
+            updateSelectionBar();
+        }
+    }
+
+    function deepSearch(docObj, query) {
         if (!query) return true;
         const q = query.toLowerCase().trim();
-        if (doc.aula.toLowerCase().includes(q)) return true;
-        if (doc.obiettivo.toLowerCase().includes(q)) return true;
-        if (doc.argomento.toLowerCase().includes(q)) return true;
-        if (doc.rawText.toLowerCase().includes(q)) return true;
+        if (docObj.aula.toLowerCase().includes(q)) return true;
+        if (docObj.obiettivo.toLowerCase().includes(q)) return true;
+        if (docObj.argomento.toLowerCase().includes(q)) return true;
+        if (docObj.rawText && docObj.rawText.toLowerCase().includes(q)) return true;
         return false;
     }
 
@@ -892,43 +904,27 @@
         const isSearching = searchQuery.trim().length > 0;
         const forceExpand = isSearching ? true : allAulasExpanded;
         let resultsFound = false;
-
         let grouped = {};
         
-        archiveDB.forEach(doc => {
-            if (!deepSearch(doc, searchQuery)) return;
-            
+        archiveDB.forEach(docObj => {
+            if (!deepSearch(docObj, searchQuery)) return;
             resultsFound = true;
-            let aula = doc.aula || "Varie";
-            let ob = doc.obiettivo || "Generico";
-            
+            let aula = docObj.aula || "Varie";
+            let ob = docObj.obiettivo || "Generico";
             if(!grouped[aula]) grouped[aula] = {};
             if(!grouped[aula][ob]) grouped[aula][ob] = [];
-            grouped[aula][ob].push(doc);
+            grouped[aula][ob].push(docObj);
         });
 
         if (isSearching && !resultsFound) {
-            container.innerHTML = `
-                <div class="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700">
-                    <i class="fa-solid fa-magnifying-glass text-5xl text-slate-500 mb-4"></i>
-                    <h3 class="text-2xl font-bold text-white mb-2">Nessun risultato trovato</h3>
-                    <p class="text-slate-400">La ricerca non ha prodotto risultati in nessun titolo, testo o quiz del database.</p>
-                </div>
-            `;
+            container.innerHTML = `<div class="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700"><i class="fa-solid fa-magnifying-glass text-5xl text-slate-500 mb-4"></i><h3 class="text-2xl font-bold text-white mb-2">Nessun risultato trovato</h3></div>`;
             return;
         }
 
         let aulaIndex = 0;
-
         Object.keys(grouped).sort().forEach(aulaName => {
-            let aulaHtml = `<div class="mb-6 glass-panel overflow-hidden transition-all p-0 border border-slate-700">`;
-            
-            // Controlla se è l'ultima aula aperta o se stiamo cercando
             let isAulaExpanded = forceExpand || (!isSearching && lastOpenedAula === aulaName);
-            const gridClassHidden = isAulaExpanded ? "" : "hidden";
-            const iconClassToggle = isAulaExpanded ? "fa-chevron-up" : "fa-chevron-down";
-            
-            aulaHtml += `
+            let aulaHtml = `<div class="mb-6 glass-panel overflow-hidden transition-all p-0 border border-slate-700">
                 <div class="p-6 cursor-pointer flex justify-between items-center hover:bg-slate-800/80 transition-colors"
                      onclick="document.getElementById('grid-aula-${aulaIndex}').classList.toggle('hidden'); 
                               document.getElementById('icon-aula-${aulaIndex}').classList.toggle('fa-chevron-up'); 
@@ -936,17 +932,16 @@
                     <h3 class="text-2xl font-black text-emerald-400 uppercase tracking-widest flex items-center">
                         <i class="fa-solid fa-school mr-4"></i>${aulaName}
                     </h3>
-                    <i id="icon-aula-${aulaIndex}" class="fa-solid ${iconClassToggle} text-slate-400 text-xl transition-transform"></i>
+                    <i id="icon-aula-${aulaIndex}" class="fa-solid ${isAulaExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-400 text-xl transition-transform"></i>
                 </div>
-                <div id="grid-aula-${aulaIndex}" class="space-y-4 p-6 pt-0 border-t border-slate-700/50 ${gridClassHidden}">
-            `;
+                <div id="grid-aula-${aulaIndex}" class="space-y-4 p-6 pt-0 border-t border-slate-700/50 ${isAulaExpanded ? '' : 'hidden'}">`;
             
             Object.keys(grouped[aulaName]).sort().forEach((obName, obIndex) => {
-                
-                // Controlla se è l'ultimo capitolo aperto
                 let isCapExpanded = forceExpand || (!isSearching && lastOpenedAula === aulaName && lastOpenedCapitolo === obName);
-                const capGridHidden = isCapExpanded ? "" : "hidden";
-                const capIconToggle = isCapExpanded ? "fa-chevron-up" : "fa-chevron-down";
+                grouped[aulaName][obName].sort((a, b) => (a.argomento || "").localeCompare(b.argomento || "", undefined, { numeric: true }));
+
+                let totalFolderMinutes = 0;
+                grouped[aulaName][obName].forEach(d => { if (d.tempo) { let m = d.tempo.match(/\d+/); if(m) totalFolderMinutes += parseInt(m[0],10); }});
 
                 aulaHtml += `
                     <div class="bg-slate-800/40 rounded-xl border border-slate-700 overflow-hidden shadow-inner">
@@ -954,45 +949,35 @@
                              onclick="document.getElementById('grid-cap-${aulaIndex}-${obIndex}').classList.toggle('hidden'); 
                                       document.getElementById('icon-cap-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-up'); 
                                       document.getElementById('icon-cap-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-down');">
-                            <div><i class="fa-solid fa-folder-open mr-2 text-sm"></i> ${obName}</div>
-                            <i id="icon-cap-${aulaIndex}-${obIndex}" class="fa-solid ${capIconToggle} text-slate-500 transition-transform"></i>
+                            <div class="flex items-center">
+                                <input type="checkbox" onchange="toggleChapter('${aulaIndex}-${obIndex}', this.checked); event.stopPropagation();" class="mr-3 w-4 h-4 accent-blue-500 rounded cursor-pointer">
+                                <i class="fa-solid fa-folder-open mr-2 text-sm"></i> ${obName}
+                            </div>
+                            <i id="icon-cap-${aulaIndex}-${obIndex}" class="fa-solid ${isCapExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-500 transition-transform"></i>
                         </div>
-                        <div id="grid-cap-${aulaIndex}-${obIndex}" class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${capGridHidden}">
-                `;
+                        <div id="grid-cap-${aulaIndex}-${obIndex}" class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${isCapExpanded ? '' : 'hidden'}">`;
                 
-                grouped[aulaName][obName].forEach(doc => {
-                    let matchBadge = isSearching ? `<div class="absolute top-2 right-2 text-[9px] uppercase tracking-widest text-emerald-400 font-bold bg-emerald-900/30 px-1.5 py-0.5 rounded border border-emerald-500/30"><i class="fa-solid fa-check mr-1"></i> Trovato</div>` : '';
-                    let timeBadge = doc.tempo ? `<span class="bg-slate-800 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono ml-2 border border-slate-600"><i class="fa-regular fa-clock"></i> ${doc.tempo}</span>` : '';
-                    let dispBadge = doc.rawText.includes('=== DISPENSA ALLIEVI ===') ? `<span class="bg-amber-900/40 text-amber-500 px-2 py-0.5 rounded text-[10px] font-bold ml-2 border border-amber-500/40"><i class="fa-solid fa-file-invoice"></i> Dispensa</span>` : '';
-
-                    let isChecked = globalSelectedIds.has(doc.id) ? 'checked' : '';
-
-                    let checkboxHtml = `<div class="absolute top-4 right-4 z-20">
-                                            <input type="checkbox" class="doc-checkbox chk-cap-${aulaIndex}-${obIndex} w-5 h-5 accent-blue-500 rounded cursor-pointer shadow-lg border border-slate-500" value="${doc.id}" onchange="toggleDocSelection('${doc.id}', this.checked)" ${isChecked}>
-                                        </div>`;
+                grouped[aulaName][obName].forEach(docObj => {
+                    let isChecked = globalSelectedIds.has(docObj.id) ? 'checked' : '';
+                    let timeBadge = docObj.tempo ? `<span class="bg-slate-800 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono ml-2 border border-slate-600"><i class="fa-regular fa-clock"></i> ${docObj.tempo}</span>` : '';
+                    let dispBadge = docObj.rawText.includes('=== DISPENSA ALLIEVI ===') ? `<span class="bg-amber-900/40 text-amber-500 px-2 py-0.5 rounded text-[10px] font-bold ml-2 border border-amber-500/40"><i class="fa-solid fa-file-invoice"></i> Dispensa</span>` : '';
 
                     aulaHtml += `
                         <div class="bg-slate-900 border border-slate-600 rounded-lg p-4 flex flex-col justify-between shadow hover:border-blue-500 transition group relative">
-                            ${matchBadge}
-                            ${checkboxHtml}
-                            <div class="cursor-pointer flex-grow mb-3 pr-10" onclick="openArchivedDocument('${doc.id}')">
-                                <h4 class="font-bold text-white text-base group-hover:text-blue-400 transition leading-snug">${doc.argomento}</h4>
+                            <div class="absolute top-4 right-4 z-20"><input type="checkbox" class="doc-checkbox chk-cap-${aulaIndex}-${obIndex} w-5 h-5 accent-blue-500 rounded cursor-pointer shadow-lg" value="${docObj.id}" onchange="toggleDocSelection('${docObj.id}', this.checked)" ${isChecked}></div>
+                            <div class="cursor-pointer flex-grow mb-3 pr-10" onclick="openArchivedDocument('${docObj.id}')">
+                                <h4 class="font-bold text-white text-base group-hover:text-blue-400 transition leading-snug">${docObj.argomento}</h4>
                                 <div class="flex items-center mt-2 flex-wrap gap-y-1">
-                                    <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i> ${doc.date}</p>
+                                    <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i> ${docObj.date}</p>
                                     ${timeBadge}
                                     ${dispBadge}
                                 </div>
                             </div>
                             <div class="flex gap-2 mt-auto border-t border-slate-800 pt-3">
-                                <button onclick="openArchivedDocument('${doc.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition">
-                                    <i class="fa-solid fa-eye mr-1"></i> Apri
-                                </button>
-                                <button onclick="deleteArchivedDocument('${doc.id}')" class="bg-slate-800 hover:bg-red-600 text-slate-400 hover:text-white w-8 h-8 rounded transition flex items-center justify-center shrink-0 border border-slate-700 hover:border-red-500">
-                                    <i class="fa-solid fa-trash text-xs"></i>
-                                </button>
+                                <button onclick="openArchivedDocument('${docObj.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition"><i class="fa-solid fa-eye mr-1"></i> Apri</button>
+                                <button onclick="deleteArchivedDocument('${docObj.id}')" class="bg-slate-800 hover:bg-red-600 text-slate-400 hover:text-white w-8 h-8 rounded flex items-center justify-center shrink-0 border border-slate-700 hover:border-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 aulaHtml += `</div></div>`;
             });
@@ -1000,64 +985,37 @@
             container.innerHTML += aulaHtml;
             aulaIndex++;
         });
-
         updateSelectionBar();
     }
 
     function toggleAllAulas() {
         allAulasExpanded = !allAulasExpanded;
         const btn = document.getElementById('btn-toggle-aulas');
-        
-        if (allAulasExpanded) {
-            btn.innerHTML = '<i class="fa-solid fa-compress mr-2"></i> <span>Chiudi Tutte</span>';
-        } else {
-            btn.innerHTML = '<i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>';
-            // Azzera la memoria quando forzi la chiusura di tutto
-            lastOpenedAula = null;
-            lastOpenedCapitolo = null;
-        }
-        
-        const currentQuery = document.getElementById('search-db') ? document.getElementById('search-db').value : '';
-        renderArchiveList(currentQuery);
+        if (allAulasExpanded) btn.innerHTML = '<i class="fa-solid fa-compress mr-2"></i> <span>Chiudi Tutte</span>';
+        else { btn.innerHTML = '<i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>'; lastOpenedAula = null; lastOpenedCapitolo = null; }
+        renderArchiveList(document.getElementById('search-db')?.value || '');
     }
 
-    // --- GESTIONE SELEZIONE IN BLOCCO ---
     function toggleDocSelection(docId, isChecked) {
-        if(isChecked) globalSelectedIds.add(docId);
-        else globalSelectedIds.delete(docId);
+        if(isChecked) globalSelectedIds.add(docId); else globalSelectedIds.delete(docId);
         updateSelectionBar();
     }
-
     function toggleChapter(capId, isChecked) {
-        document.querySelectorAll(`.chk-cap-${capId}`).forEach(cb => {
-            cb.checked = isChecked;
-            if(isChecked) globalSelectedIds.add(cb.value);
-            else globalSelectedIds.delete(cb.value);
-        });
+        document.querySelectorAll(`.chk-cap-${capId}`).forEach(cb => { cb.checked = isChecked; if(isChecked) globalSelectedIds.add(cb.value); else globalSelectedIds.delete(cb.value); });
         updateSelectionBar();
     }
-
     function updateSelectionBar() {
         const actionBar = document.getElementById('batch-action-bar');
         if(!actionBar) return;
-
         document.getElementById('sel-count').innerText = globalSelectedIds.size;
-        
         let totalMinutes = 0;
         globalSelectedIds.forEach(docId => {
-            const doc = archiveDB.find(d => d.id === docId);
-            if (doc && doc.tempo) {
-                let match = doc.tempo.match(/\d+/);
-                if (match) totalMinutes += parseInt(match[0], 10);
-            }
+            const docObj = archiveDB.find(d => d.id === docId);
+            if (docObj && docObj.tempo) { let m = docObj.tempo.match(/\d+/); if (m) totalMinutes += parseInt(m[0], 10); }
         });
-        
         document.getElementById('sel-time').innerText = totalMinutes + " min";
-        
-        if(globalSelectedIds.size > 0) actionBar.classList.remove('hidden');
-        else actionBar.classList.add('hidden');
+        if(globalSelectedIds.size > 0) actionBar.classList.remove('hidden'); else actionBar.classList.add('hidden');
     }
-
     function deselectAll() {
         globalSelectedIds.clear();
         document.querySelectorAll('.doc-checkbox').forEach(cb => cb.checked = false);
@@ -1065,194 +1023,37 @@
         updateSelectionBar();
     }
 
-    async function deleteBatch() {
-        const selectedIds = Array.from(globalSelectedIds);
-        if(selectedIds.length === 0) return;
-        
-        if(confirm(`Sei sicuro di voler eliminare in blocco i ${selectedIds.length} documenti selezionati?`)) {
-            archiveDB = archiveDB.filter(d => !selectedIds.includes(d.id));
-            await syncDatabase();
-            globalSelectedIds.clear();
-            renderArchiveList(document.getElementById('search-db').value);
-        }
-    }
-
-    // --- EDITOR INTEGRATO ---
-    function openArchivedDocument(docId) {
-        const doc = archiveDB.find(d => d.id === docId);
-        if(!doc) return;
-
-        currentReaderDocId = docId;
-        
-        // Memorizza l'apertura per la navigazione di ritorno
-        lastOpenedAula = doc.aula;
-        lastOpenedCapitolo = doc.obiettivo;
-
-        document.getElementById('reader-aula-title').innerText = doc.aula;
-        document.getElementById('reader-item-title').innerText = doc.argomento;
-
-        // Reset vista lettura
-        document.getElementById('read-view-content').classList.remove('hidden');
-        document.getElementById('read-view-content').classList.add('grid');
-        document.getElementById('read-edit-content').classList.add('hidden');
-        document.getElementById('read-edit-content').classList.remove('flex');
-        document.getElementById('btn-toggle-edit').innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento';
-
-        processAndRender(doc.rawText, 'read');
-        navTo('reader');
-    }
-
-    function toggleEditMode() {
-        const viewContent = document.getElementById('read-view-content');
-        const editContent = document.getElementById('read-edit-content');
-        const btnToggle = document.getElementById('btn-toggle-edit');
-        const textarea = document.getElementById('read-edit-textarea');
-
-        if(editContent.classList.contains('hidden')) {
-            // Entra in Modalità Modifica
-            const doc = archiveDB.find(d => d.id === currentReaderDocId);
-            if(doc) {
-                textarea.value = doc.rawText;
-                viewContent.classList.add('hidden');
-                viewContent.classList.remove('grid');
-                editContent.classList.remove('hidden');
-                editContent.classList.add('flex');
-                btnToggle.innerHTML = '<i class="fa-solid fa-eye mr-2"></i> Torna alla Vista';
-                document.getElementById('read-dispensa-btn-container').style.display = 'none'; // Nasconde stampa
-            }
-        } else {
-            // Esci dalla Modalità Modifica (Annulla)
-            viewContent.classList.remove('hidden');
-            viewContent.classList.add('grid');
-            editContent.classList.add('hidden');
-            editContent.classList.remove('flex');
-            btnToggle.innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento';
-            document.getElementById('read-dispensa-btn-container').style.display = 'block';
-        }
-    }
-
-    async function saveEditedDocument() {
-        const newText = document.getElementById('read-edit-textarea').value;
-        const docIndex = archiveDB.findIndex(d => d.id === currentReaderDocId);
-        
-        if(docIndex !== -1) {
-            // Basic validation
-            if (!newText.includes('=== MAPPA TECNICA ===') || !newText.includes('=== MATRICE QUIZ ===')) {
-                alert("Attenzione: Il testo deve mantenere i delimitatori obbligatori '=== MAPPA TECNICA ===' e '=== MATRICE QUIZ ===' per funzionare.");
-                return;
-            }
-
-            // Prova a renderizzare per capire se ci sono errori nel parser e aggiornare i metadati
-            const success = processAndRender(newText, 'read');
-            
-            if(success) {
-                // Aggiorna Raw Text
-                archiveDB[docIndex].rawText = newText;
-                
-                // Aggiorna Metadati nel DB
-                const meta = currentDocMeta['read'];
-                if(meta.aula) archiveDB[docIndex].aula = meta.aula;
-                if(meta.obiettivo) archiveDB[docIndex].obiettivo = meta.obiettivo;
-                if(meta.argomento) archiveDB[docIndex].argomento = meta.argomento;
-                if(meta.tempo !== undefined) archiveDB[docIndex].tempo = meta.tempo; 
-
-                // Aggiorna intestazione Viewer
-                document.getElementById('reader-aula-title').innerText = archiveDB[docIndex].aula;
-                document.getElementById('reader-item-title').innerText = archiveDB[docIndex].argomento;
-
-                // Salva
-                try {
-                    await syncDatabase();
-                    toggleEditMode(); // Chiude l'editor
-                    alert("Modifiche salvate con successo!");
-                } catch(e) {
-                    alert("Errore di salvataggio nella memoria del browser.");
-                }
-            }
-        }
-    }
-
-    async function deleteArchivedDocument(docId) {
-        if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
-            const docObj = archiveDB.find(d => d.id === docId);
-            if(docObj) {
-                lastOpenedAula = docObj.aula;
-                lastOpenedCapitolo = docObj.obiettivo;
-            }
-            archiveDB = archiveDB.filter(d => d.id !== docId);
-            globalSelectedIds.delete(docId);
-            await syncDatabase();
-            renderArchiveList(document.getElementById('search-db').value);
-            updateSelectionBar();
-        }
-    }
-
-    async function renameEntity(type, oldName, parentName = '') {
-        let docRef = type === 'paragrafo' ? archiveDB.find(d => d.id === oldName) : null;
-        let displayName = type === 'paragrafo' && docRef ? docRef.argomento : oldName;
-        let newName = prompt(`Inserisci il nuovo titolo per questo ${type.toUpperCase()}:`, displayName);
-        if (!newName || newName.trim() === '' || newName === displayName) return;
-        newName = newName.trim();
-        
-        let docsToUpdate = [];
-        archiveDB.forEach(docObj => {
-            if (type === 'aula' && docObj.aula === oldName) {
-                docsToUpdate.push({...docObj, aula: newName, rawText: docObj.rawText.replace(new RegExp(`AULA:\\s*${escapeRegExp(oldName)}`, 'i'), `AULA: ${newName}`)});
-            } else if (type === 'capitolo' && docObj.obiettivo === oldName && docObj.aula === parentName) {
-                docsToUpdate.push({...docObj, obiettivo: newName, rawText: docObj.rawText.replace(new RegExp(`CAPITOLO:\\s*${escapeRegExp(oldName)}`, 'i'), `CAPITOLO: ${newName}`)});
-            } else if (type === 'paragrafo' && docObj.id === oldName) {
-                docsToUpdate.push({...docObj, argomento: newName, rawText: docObj.rawText.replace(new RegExp(`PARAGRAFO:\\s*${escapeRegExp(docObj.argomento)}`, 'i'), `PARAGRAFO: ${newName}`)});
-            }
-        });
-        
-        if (docsToUpdate.length > 0) {
-            docsToUpdate.forEach(uDoc => { let idx = archiveDB.findIndex(d => d.id === uDoc.id); if(idx !== -1) archiveDB[idx] = uDoc; });
-            await syncDatabase();
-            renderArchiveList(document.getElementById('search-db').value);
-        }
-    }
-
     /* ==========================================================================
-       ESPORTA / IMPORTA DATABASE (JSON)
+       ESPORTA E IMPORTA COPIE DI BACKUP (.JSON SU INTERFACCIA IDB)
     ========================================================================== */
     function exportArchiveDB() {
         if(archiveDB.length === 0) return alert("Il database è vuoto. Niente da esportare!");
-        
         const dataStr = JSON.stringify(archiveDB, null, 2);
         const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-        const exportFileDefaultName = `Studio_Database_Backup_${new Date().toISOString().slice(0,10)}.json`;
-        
         let linkElement = document.createElement('a');
         linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.setAttribute('download', `Studio_Database_Backup_${new Date().toISOString().slice(0,10)}.json`);
         linkElement.click();
     }
 
     function importArchiveDB(event) {
         const file = event.target.files[0];
         if (!file) return;
-        
         const reader = new FileReader();
         reader.onload = async function(e) {
             try {
                 const importedData = JSON.parse(e.target.result);
                 if (Array.isArray(importedData)) {
-                    if(confirm(`Trovati ${importedData.length} documenti nel backup. Vuoi unirli al database esistente?`)) {
+                    if(confirm(`Trovati ${importedData.length} documenti nel backup JSON. Caricarli e unirli ora nel database infinito?`)) {
                         let merged = [...archiveDB];
-                        importedData.forEach(newDoc => {
-                            if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc);
-                        });
+                        importedData.forEach(newDoc => { if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc); });
                         archiveDB = merged;
                         await syncDatabase();
                         renderArchiveList();
-                        alert("Database importato con successo!");
+                        alert("Database importato e aggiornato con successo!");
                     }
-                } else {
-                    alert("Formato file non valido. Richiesto array JSON.");
-                }
-            } catch(err) {
-                alert("Errore durante la lettura del file: " + err.message);
-            }
+                } else alert("File non valido.");
+            } catch(err) { alert("Errore di importazione: " + err.message); }
             document.getElementById('import-file').value = ""; 
         };
         reader.readAsText(file);
@@ -1261,231 +1062,6 @@
     /* ==========================================================================
        STAMPA PDF ED ESPORTAZIONE CSV E REGIA STAMPA
     ========================================================================== */
-    function printDocument(type, prefix) {
-        const printArea = document.getElementById('print-area');
-        const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
-        const meta = currentDocMeta[prefix];
-        
-        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
-
-        let printHeader = `
-            <div class="print-header-container">
-                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
-                <p class="print-header-aula">${meta.aula || docTitle}</p>
-                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
-                <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
-                    ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
-                </div>
-            </div>
-        `;
-        
-        printArea.innerHTML = printHeader + contentHtml;
-        window.print();
-    }
-
-    function printDispensa(prefix) {
-        const printArea = document.getElementById('print-area');
-        const htmlContent = currentDispensaHtml[prefix];
-        const meta = currentDocMeta[prefix];
-
-        if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
-        
-        // Intestazione super-compattata per salvare ulteriore spazio nel foglio A4
-        let printHeader = `
-            <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
-                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
-                <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
-                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
-                <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.argomento || ''}</h2>
-                </div>
-            </div>
-        `;
-        
-        printArea.innerHTML = printHeader + htmlContent;
-        window.print();
-    }
-
-    function exportCSV(prefix) {
-        const csvArray = currentCsvData[prefix];
-        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato matrice disponibile per l'esportazione.");
-
-        let csvContent = "";
-        csvArray.forEach(row => {
-            let rowStr = row.map(item => {
-                let str = String(item).replace(/"/g, '""');
-                return `"${str}"`;
-            }).join(",");
-            csvContent += rowStr + "\r\n";
-        });
-
-        const meta = currentDocMeta[prefix];
-        const safeName = (meta.argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
-
-        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Export_${safeName}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    const printFooterHtmlBlock = `
-        <div class="print-footer">
-            <div style="display: flex; align-items: center;">
-                <img src="logo-conti.jpg" alt="Logo Conti" onerror="this.style.display='none'">
-                <span class="print-footer-text" style="margin-left: 12px; font-size: 7.5pt;">MATERIALE DIDATTICO RISERVATO</span>
-            </div>
-            <div style="font-style: italic; font-size: 7.5pt; text-align: right; line-height: 1.2; white-space: nowrap;">
-                A cura di M. Fortunato<br>
-                Copyright &copy; ${new Date().getFullYear()}
-            </div>
-        </div>
-    `;
-
-    function getFormattedDateString() {
-        const d = new Date();
-        return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
-    }
-
-    function openAdvancedPrint() {
-        const selectedIds = Array.from(globalSelectedIds);
-        if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
-        advancedQueue = selectedIds.map(id => archiveDB.find(d => d.id === id)).filter(Boolean);
-        renderAdvancedQueue();
-        document.getElementById('advanced-print-modal').classList.remove('hidden');
-    }
-
-    function closeAdvancedPrint() {
-        document.getElementById('advanced-print-modal').classList.add('hidden');
-    }
-
-    function renderAdvancedQueue() {
-        const list = document.getElementById('advanced-queue-list');
-        list.innerHTML = '';
-        advancedQueue.forEach((doc, index) => {
-            const isFirst = index === 0;
-            const isLast = index === advancedQueue.length - 1;
-            const distTop = index; 
-            const distBottom = advancedQueue.length - 1 - index;
-
-            list.innerHTML += `
-                <div draggable="true" ondragstart="dragStart(event, ${index})" ondragover="dragOver(event)" ondrop="drop(event, ${index})" 
-                     class="bg-slate-800 p-3 rounded-lg flex justify-between items-center border border-slate-600 cursor-grab active:cursor-grabbing hover:border-blue-500 transition mb-2">
-                    <div class="truncate pr-4 flex-grow flex items-center gap-4">
-                        <i class="fa-solid fa-grip-vertical text-slate-500 text-lg hover:text-white transition cursor-grab"></i>
-                        <div class="truncate">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="bg-slate-900 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded border border-slate-700">${index + 1}</span>
-                                <span class="text-xs text-blue-400 font-bold uppercase truncate">${doc.aula}</span>
-                            </div>
-                            <span class="text-white font-bold text-sm block truncate">${doc.argomento}</span>
-                        </div>
-                    </div>
-                    <div class="flex gap-1 shrink-0">
-                        <button onclick="moveAdvancedItem(${index}, -${distTop})" title="Sposta in cima" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isFirst ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isFirst ? 'disabled' : ''}><i class="fa-solid fa-angles-up"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, -1)" title="Su di uno" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isFirst ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isFirst ? 'disabled' : ''}><i class="fa-solid fa-chevron-up"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, 1)" title="Giù di uno" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isLast ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isLast ? 'disabled' : ''}><i class="fa-solid fa-chevron-down"></i></button>
-                        <button onclick="moveAdvancedItem(${index}, ${distBottom})" title="Sposta in fondo" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded flex items-center justify-center text-white transition ${isLast ? 'opacity-30 cursor-not-allowed hover:bg-slate-700' : ''}" ${isLast ? 'disabled' : ''}><i class="fa-solid fa-angles-down"></i></button>
-                    </div>
-                </div>
-            `;
-        });
-        updateModalTotalTime();
-    }
-
-    function dragStart(event, index) { dragStartIndex = index; event.dataTransfer.effectAllowed = "move"; }
-    function dragOver(event) { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }
-    function drop(event, dropIndex) {
-        event.preventDefault();
-        if(dragStartIndex === dropIndex || dragStartIndex === -1) return;
-        const item = advancedQueue.splice(dragStartIndex, 1)[0];
-        advancedQueue.splice(dropIndex, 0, item);
-        dragStartIndex = -1;
-        renderAdvancedQueue();
-    }
-
-    function moveAdvancedItem(index, direction) {
-        if (index + direction < 0 || index + direction >= advancedQueue.length) return;
-        const temp = advancedQueue[index];
-        advancedQueue[index] = advancedQueue[index + direction];
-        advancedQueue[index + direction] = temp;
-        renderAdvancedQueue();
-    }
-
-    function updateModalTotalTime() {
-        const overrideTime = document.getElementById('override-time-cb').checked;
-        let total = 0;
-        advancedQueue.forEach(doc => {
-            if (overrideTime) {
-                const pageMatches = doc.rawText.match(/PAGINA\s*\d+:/gi);
-                const pageCount = pageMatches ? pageMatches.length : 0;
-                total += (pageCount * 2);
-            } else {
-                if (doc.tempo) {
-                    let match = doc.tempo.match(/\d+/);
-                    if (match) total += parseInt(match[0], 10);
-                }
-            }
-        });
-        document.getElementById('modal-total-time').innerText = total + " min";
-    }
-
-    function executeAdvancedPrint() {
-        const wantMappe = document.getElementById('batch-mappe').checked;
-        const wantMatrici = document.getElementById('batch-matrici').checked;
-        const wantDispense = document.getElementById('batch-dispense').checked;
-        const overrideTime = document.getElementById('override-time-cb').checked;
-
-        if(!wantMappe && !wantMatrici && !wantDispense) return alert("Seleziona almeno un tipo di documento dalla barra prima di stampare.");
-        let combinedHtml = "";
-
-        advancedQueue.forEach((doc) => {
-            const success = processAndRender(doc.rawText, 'batch'); 
-            if(!success) return;
-
-            const meta = currentDocMeta['batch'];
-            
-            if (overrideTime) {
-                const pageMatches = doc.rawText.match(/PAGINA\s*\d+:/gi);
-                const pageCount = pageMatches ? pageMatches.length : 0;
-                meta.tempo = pageCount > 0 ? (pageCount * 2) + " min" : "Tempo non stimabile";
-            }
-
-            if(wantMappe) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
-                combinedHtml += `<div class="batch-page-fluid">${printHeader}${document.getElementById('batch-mappa-render').innerHTML}</div>`;
-            }
-            if(wantMatrici) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>`;
-                combinedHtml += `<div class="batch-page">${printHeader}${document.getElementById('batch-matrice-render').innerHTML}</div>`;
-            }
-            if(wantDispense && currentDispensaHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>`;
-                combinedHtml += `<div class="batch-page">${printHeader}${currentDispensaHtml['batch']}</div>`;
-            }
-        });
-
-        document.getElementById('print-area').innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${combinedHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
-        
-        let baseName = "regia_avanzata"; 
-        let selCount = [wantMappe, wantMatrici, wantDispense].filter(Boolean).length;
-        if (selCount === 1) {
-            if(wantMappe) baseName = "mappa";
-            if(wantMatrici) baseName = "matrice";
-            if(wantDispense) baseName = "dispensa";
-        }
-        
-        const originalTitle = document.title;
-        document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
-        
-        closeAdvancedPrint();
-        setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
-    }
-
     function printBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         const wantMappe = document.getElementById('batch-mappe').checked;
@@ -1496,26 +1072,21 @@
         if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
 
         let combinedHtml = "";
-
         selectedIds.forEach((id) => {
             const doc = archiveDB.find(d => d.id === id);
-            if(!doc) return;
-
-            const success = processAndRender(doc.rawText, 'batch'); 
-            if(!success) return;
-
+            if(!doc || !processAndRender(doc.rawText, 'batch', true)) return;
             const meta = currentDocMeta['batch'];
 
             if(wantMappe) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Lezione senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
                 combinedHtml += `<div class="batch-page-fluid">${printHeader}${document.getElementById('batch-mappa-render').innerHTML}</div>`;
             }
             if(wantMatrici) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Lezione senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${document.getElementById('batch-matrice-render').innerHTML}</div>`;
             }
             if(wantDispense && currentDispensaHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.obiettivo || 'Lezione senza titolo'}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${currentDispensaHtml['batch']}</div>`;
             }
         });
@@ -1529,14 +1100,133 @@
             if(wantMatrici) baseName = "matrice";
             if(wantDispense) baseName = "dispensa";
         }
-        
         const originalTitle = document.title;
         document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
-        
         setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
 
-    // Avvio - La chiamata originale if(archiveDB.length === 0)... viene sostituita da loadFallbackLocal per inizializzare IDB
+    function printDocument(type, prefix) {
+        const printArea = document.getElementById('print-area');
+        const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
+        const meta = currentDocMeta[prefix];
+        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
+
+        let printHeader = `
+            <div class="print-header-container">
+                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula">${meta.aula || docTitle}</p>
+                <h1 class="print-header-ob">${meta.obiettivo || 'Lezione senza titolo'}</h1>
+                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
+                    ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
+                </div>
+            </div>
+        `;
+        printArea.innerHTML = printHeader + contentHtml;
+        window.print();
+    }
+
+    function printDispensa(prefix) {
+        const printArea = document.getElementById('print-area');
+        const htmlContent = currentDispensaHtml[prefix];
+        const meta = currentDocMeta[prefix];
+        if(!htmlContent) return alert("Errore: Dispensa non trovata.");
+        
+        let printHeader = `
+            <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
+                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
+                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Lezione senza titolo'}</h1>
+                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.argomento || ''}</h2>
+                </div>
+            </div>
+        `;
+        printArea.innerHTML = printHeader + htmlContent;
+        window.print();
+    }
+
+    function exportCSV(prefix) {
+        const csvArray = currentCsvData[prefix];
+        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato.");
+        let csvContent = "";
+        csvArray.forEach(row => { csvContent += row.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",") + "\r\n"; });
+        const safeName = (currentDocMeta[prefix].argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `Export_${safeName}.csv`);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    /* ==========================================================================
+       REGIA DI PRESENTAZIONE AVANZATA (ORDINAMENTO CON STRUTTURE STAMPA)
+    ========================================================================== */
+    function openAdvancedPrint() {
+        const selectedIds = Array.from(globalSelectedIds);
+        if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
+        advancedQueue = selectedIds.map(id => archiveDB.find(d => d.id === id)).filter(Boolean);
+        renderAdvancedQueue();
+        document.getElementById('advanced-print-modal').classList.remove('hidden');
+    }
+    function closeAdvancedPrint() { document.getElementById('advanced-print-modal').classList.add('hidden'); }
+    function renderAdvancedQueue() {
+        const list = document.getElementById('advanced-queue-list'); list.innerHTML = '';
+        advancedQueue.forEach((doc, index) => {
+            const isFirst = index === 0; const isLast = index === advancedQueue.length - 1;
+            list.innerHTML += `
+                <div draggable="true" ondragstart="dragStart(event, ${index})" ondragover="dragOver(event)" ondrop="drop(event, ${index})" 
+                     class="bg-slate-800 p-3 rounded-lg flex justify-between items-center border border-slate-600 cursor-grab active:cursor-grabbing hover:border-blue-500 transition mb-2">
+                    <div class="truncate pr-4 flex-grow flex items-center gap-4">
+                        <i class="fa-solid fa-grip-vertical text-slate-500 text-lg"></i>
+                        <div class="truncate"><div class="flex items-center gap-2 mb-1"><span class="bg-slate-900 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded border border-slate-700">${index + 1}</span><span class="text-xs text-blue-400 font-bold uppercase truncate">${doc.aula}</span></div><span class="text-white font-bold text-sm block truncate">${doc.argomento}</span></div>
+                    </div>
+                    <div class="flex gap-1 shrink-0">
+                        <button onclick="moveAdvancedItem(${index}, -${index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center"><i class="fa-solid fa-angles-up"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, -1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center"><i class="fa-solid fa-chevron-up"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, 1)" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center"><i class="fa-solid fa-chevron-down"></i></button>
+                        <button onclick="moveAdvancedItem(${index}, ${advancedQueue.length - 1 - index})" class="bg-slate-700 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center"><i class="fa-solid fa-angles-down"></i></button>
+                    </div>
+                </div>`;
+        }); updateModalTotalTime();
+    }
+    function dragStart(event, index) { dragStartIndex = index; event.dataTransfer.effectAllowed = "move"; }
+    function dragOver(event) { event.preventDefault(); event.dataTransfer.dropEffect = "move"; }
+    function drop(event, dropIndex) { event.preventDefault(); if(dragStartIndex === dropIndex || dragStartIndex === -1) return; const item = advancedQueue.splice(dragStartIndex, 1)[0]; advancedQueue.splice(dropIndex, 0, item); dragStartIndex = -1; renderAdvancedQueue(); }
+    function moveAdvancedItem(index, direction) { if (index + direction < 0 || index + direction >= advancedQueue.length) return; const temp = advancedQueue[index]; advancedQueue[index] = advancedQueue[index + direction]; advancedQueue[index + direction] = temp; renderAdvancedQueue(); }
+    function updateModalTotalTime() {
+        const overrideTime = document.getElementById('override-time-cb').checked;
+        let total = 0;
+        advancedQueue.forEach(doc => {
+            if (overrideTime) { let m = doc.rawText.match(/PAGINA\s*\d+:/gi); if(m) total += (m.length * 2); } 
+            else { if(doc.tempo){ let m = doc.tempo.match(/\d+/); if (m) total += parseInt(m[0], 10); } }
+        });
+        document.getElementById('modal-total-time').innerText = total + " min";
+    }
+    function executeAdvancedPrint() {
+        const wantMappe = document.getElementById('batch-mappe').checked, wantMatrici = document.getElementById('batch-matrici').checked, wantDispense = document.getElementById('batch-dispense').checked;
+        const overrideTime = document.getElementById('override-time-cb').checked;
+        if(!wantMappe && !wantMatrici && !wantDispense) return alert("Seleziona almeno un tipo di documento.");
+        let combinedHtml = "";
+        advancedQueue.forEach((doc) => {
+            if(!processAndRender(doc.rawText, 'batch', true)) return;
+            const meta = currentDocMeta['batch'];
+            if (overrideTime) { let m = doc.rawText.match(/PAGINA\s*\d+:/gi); meta.tempo = m ? (m.length * 2) + " min" : "Tempo non stimabile"; }
+            if(wantMappe) combinedHtml += `<div class="batch-page-fluid"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>${document.getElementById('batch-mappa-render').innerHTML}</div>`;
+            if(wantMatrici) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
+            if(wantDispense && currentDispensaHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>${currentDispensaHtml['batch']}</div>`;
+        });
+        document.getElementById('print-area').innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${combinedHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
+        let baseName = "regia_avanzata"; let selCount = [wantMappe, wantMatrici, wantDispense].filter(Boolean).length;
+        if (selCount === 1) { if(wantMappe) baseName = "mappa"; if(wantMatrici) baseName = "matrice"; if(wantDispense) baseName = "dispensa"; }
+        const originalTitle = document.title; document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
+        closeAdvancedPrint(); setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
+    }
+
+    // --- IMMAGINI INTERNE ---
+    function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('active'); }
+    function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
+
+    // Avvio e inizializzazione IndexedDB
     loadFallbackLocal();
 
 </script>
