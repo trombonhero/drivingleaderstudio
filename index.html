@@ -127,7 +127,7 @@
             .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt; width: 12px !important;}
             .d-quiz-item > div { display: block !important; overflow: hidden !important; }
 
-/* --- NUOVI STILI POTENZIATI MAPPA CONCETTUALE PER SCHEMI ALLIEVI --- */
+            /* --- NUOVI STILI POTENZIATI MAPPA CONCETTUALE PER SCHEMI ALLIEVI --- */
             .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
             .mindmap-root { background: #1e3a8a !important; color: white !important; font-weight: 900; font-size: 15pt; padding: 10px 24px; border-radius: 6px; text-transform: uppercase; margin-bottom: 20px; text-align: center; width: 85%; border: 2px solid #1e3a8a;}
             .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; align-items: flex-start;}
@@ -540,19 +540,29 @@
             return false;
         }
 
-        let mappaRaw = "";
-        let matriceRaw = "";
-        let dispensaRaw = "";
+        let mappaRaw = "", conceptRaw = "", matriceRaw = "", dispensaRaw = "";
 
         try {
-            mappaRaw = rawText.split('=== MAPPA TECNICA ===')[1].split('=== MATRICE QUIZ ===')[0].trim();
-            let remainder = rawText.split('=== MATRICE QUIZ ===')[1];
+            let textToSplit = rawText;
+            mappaRaw = textToSplit.split('=== MAPPA TECNICA ===')[1];
             
-            if (remainder.includes('=== DISPENSA ALLIEVI ===')) {
-                matriceRaw = remainder.split('=== DISPENSA ALLIEVI ===')[0].trim();
-                dispensaRaw = remainder.split('=== DISPENSA ALLIEVI ===')[1].trim();
+            if(mappaRaw.includes('=== MAPPA CONCETTUALE VISIVA ===')) {
+                let parts = mappaRaw.split('=== MAPPA CONCETTUALE VISIVA ===');
+                mappaRaw = parts[0].trim();
+                let remainder = parts[1];
+                conceptRaw = remainder.split('=== MATRICE QUIZ ===')[0].trim();
+                textToSplit = '=== MATRICE QUIZ ===' + remainder.split('=== MATRICE QUIZ ===')[1];
             } else {
-                matriceRaw = remainder.trim();
+                mappaRaw = mappaRaw.split('=== MATRICE QUIZ ===')[0].trim();
+                currentConceptMapHtml[prefix] = "";
+            }
+
+            let remainderMatrice = textToSplit.split('=== MATRICE QUIZ ===')[1];
+            if (remainderMatrice.includes('=== DISPENSA ALLIEVI ===')) {
+                matriceRaw = remainderMatrice.split('=== DISPENSA ALLIEVI ===')[0].trim();
+                dispensaRaw = remainderMatrice.split('=== DISPENSA ALLIEVI ===')[1].trim();
+            } else {
+                matriceRaw = remainderMatrice.trim();
             }
         } catch(e) {
             console.error("Errore di split testo", e);
@@ -560,6 +570,7 @@
         }
 
         renderMappa(mappaRaw, prefix);
+        if(conceptRaw) renderMappaConcettuale(conceptRaw, prefix);
         renderMatrice(matriceRaw, prefix);
         
         const btnContainer = document.getElementById(`${prefix}-dispensa-btn-container`);
@@ -655,8 +666,6 @@
         });
 
         let html = '';
-        let conceptData = {}; 
-        let currentFase = "CONCETTI CHIAVE"; 
         currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
         
         mergedLines.forEach(line => {
@@ -675,7 +684,6 @@
             else if (cleanStart.startsWith('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
-                currentFase = title; 
             } 
             else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
                 let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -697,7 +705,8 @@
                     remaining = remaining.substring(0, trapMatch.index).trim(); 
                 }
 
-                let extraText = "", extraRaw = "", extraRegex = /(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i;
+                let extraText = "", extraRaw = "";
+                let extraRegex = /(EXTRA QUIZ|EXTRA):\s*([\s\S]*)$/i;
                 let extraMatch = remaining.match(extraRegex);
                 if (extraMatch) {
                     extraRaw = extraMatch[2].trim();
@@ -706,7 +715,8 @@
                     extraText = `<div class="pagina-extra"><i class="fa-solid fa-circle-info mr-1"></i> <strong style="color: inherit;">EXTRA:</strong> ${extraText}</div>`;
                 }
 
-                let nessunText = "", nessunRaw = "", nessunRegex = /(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i;
+                let nessunText = "", nessunRaw = "";
+                let nessunRegex = /(NESSUN QUIZ(?: MINISTERIALE)?):?\s*([\s\S]*)$/i;
                 let nessunMatch = remaining.match(nessunRegex);
                 if (nessunMatch) {
                     nessunRaw = nessunMatch[2].trim().replace(/^(?:➔|->)/, '').trim();
@@ -714,7 +724,8 @@
                     nessunText = `<div style="display: block; margin-top: 4px; color: #475569;"><span style="background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 6px; border-radius: 4px; font-size: 0.85rem; margin-right: 6px;"><strong>NESSUN QUIZ</strong></span><span style="font-style: italic; font-size: 0.95rem;">${nessunRaw}</span></div>`;
                 }
 
-                let gancioText = "", gancioRaw = "", gancioRegex = /IL GANCIO:\s*(.*?)(?=\s*\*\*|$)/i; 
+                let gancioText = "", gancioRaw = "";
+                let gancioRegex = /IL GANCIO:\s*(.*?)(?=\s*\*\*|$)/i; 
                 let gancioMatch = remaining.match(gancioRegex);
                 if (gancioMatch) {
                     gancioRaw = gancioMatch[1].trim();
@@ -722,12 +733,11 @@
                     gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioRaw}</span></div>`;
                 }
 
-                let mainText = remaining, mainRaw = remaining, argToExtract = ""; 
+                let mainText = remaining; 
                 let arrowMatch = mainText.match(/➔|->/);
                 if (arrowMatch) {
                     let idx = mainText.indexOf(arrowMatch[0]);
                     let arg = mainText.substring(0, idx).trim();
-                    argToExtract = arg.replace(/\*\*/g, '').trim(); 
                     let rule = mainText.substring(idx + arrowMatch[0].length).trim();
                     mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="testo-regola">${rule}</span>`;
                 } else if (mainText.length > 0) {
@@ -740,45 +750,8 @@
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
                 html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText} ${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
-
-// --- NUOVA LOGICA: MAPPA CONCETTUALE SCHEMATICA A PAROLE CHIAVE ---
-                if (!conceptData[currentFase]) conceptData[currentFase] = [];
-                
-                // Elemento 1: NODO PRINCIPALE - Parola Chiave del Quiz
-                if (argToExtract) {
-                    conceptData[currentFase].push(`<div class="mindmap-item"><i class="fa-solid fa-key text-blue-500 mr-2"></i>${argToExtract}</div>`);
-                }
-                
-                // Elemento 2: NODO EXTRA - Aggiunte Sostanziali (Brevi)
-                if (extraRaw) {
-                    let extArrowMatch = extraRaw.match(/➔|->/);
-                    if(extArrowMatch) {
-                        let extArg = extraRaw.substring(0, extraRaw.indexOf(extArrowMatch[0])).replace(/\*\*/g, '').trim();
-                        if(extArg) conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-extra"><i class="fa-solid fa-circle-plus text-emerald-500 mr-2"></i>${extArg}</div>`);
-                    }
-                }
-                
-                // Elemento 3: NODO TRAPPOLA - Evidenza dell'inganno ministeriale
-                if (trapRaw) {
-                    let shortTrap = trapRaw.split('.')[0].replace(/TRAPPOLA:|ATTENZIONE:/i, '').trim();
-                    if(shortTrap.length > 45) shortTrap = shortTrap.substring(0, 42) + "...";
-                    conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-trap"><i class="fa-solid fa-ban text-red-500 mr-2"></i>TRAP: ${shortTrap}</div>`);
-                }
             }
         });
-
-        let cmapHtmlNodes = '';
-        Object.keys(conceptData).forEach(fase => {
-            if (conceptData[fase].length > 0) {
-                cmapHtmlNodes += `<div class="mindmap-phase-col"><div class="mindmap-phase-node">${fase}</div>${conceptData[fase].join('')}</div>`;
-            }
-        });
-
-        currentConceptMapHtml[prefix] = cmapHtmlNodes !== '' ? `
-            <div class="mindmap-container">
-                <div class="mindmap-root">${currentDocMeta[prefix].argomento || 'Argomento della Lezione'}</div>
-                <div class="mindmap-phases">${cmapHtmlNodes}</div>
-            </div>` : "";
 
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
@@ -786,8 +759,8 @@
                 <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4">
                     <div class="overflow-hidden">
                         <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 truncate"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
-                        <h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].obiettivo || ''}</h2>
-                        <h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].argomento || ''}</h3>
+                        <h2 class="text-xl font-black text-white mb-1 leading-tight truncate">${currentDocMeta[prefix].argomento || ''}</h2>
+                        <h3 class="text-base text-blue-400 font-medium italic truncate">${currentDocMeta[prefix].obiettivo || ''}</h3>
                     </div>
                     ${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}
                 </div>
@@ -795,6 +768,71 @@
         }
 
         document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
+    }
+
+    function renderMappaConcettuale(text, prefix) {
+        if(!text) {
+            currentConceptMapHtml[prefix] = "";
+            return;
+        }
+        const lines = text.split('\n');
+        let rootTitle = currentDocMeta[prefix].argomento || "MAPPA CONCETTUALE";
+        let phases = [];
+        let currentPhase = null;
+
+        lines.forEach(line => {
+            let l = line.trim();
+            if(!l) return;
+
+            if (l.startsWith('**') && l.endsWith('**') && !l.includes('├──') && !l.includes('└──')) {
+                rootTitle = l.replace(/\*\*/g, '').trim();
+            } 
+            else if (line.startsWith('├──') || line.startsWith('└──')) {
+                let catTitle = l.replace(/^[├└]──\s*/, '').trim();
+                currentPhase = { title: catTitle, items: [] };
+                phases.push(currentPhase);
+            } 
+            else if (line.includes('├──') || line.includes('└──')) {
+                if(currentPhase) {
+                    let itemText = l.replace(/^.*?[├└]──\s*/, '').trim();
+                    currentPhase.items.push(itemText);
+                }
+            }
+        });
+
+        let cmapHtmlNodes = '';
+        phases.forEach(phase => {
+            let itemsHtml = '';
+            let isTrapPhase = phase.title.toUpperCase().includes('TRAPPOL') || phase.title.toUpperCase().includes('MINATO');
+            let isExceptionPhase = phase.title.toUpperCase().includes('ECCEZION') || phase.title.toUpperCase().includes('DIVIET');
+
+            phase.items.forEach(item => {
+                let formattedItem = item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                if (isTrapPhase || item.includes('➔ IN REALTÀ:')) {
+                    formattedItem = formattedItem.replace(/➔ IN REALTÀ:/i, '<br><i class="fa-solid fa-arrow-right text-red-500 mx-1"></i><span class="text-slate-500 font-semibold text-[8.5pt]">IN REALTÀ:</span>');
+                    itemsHtml += `<div class="mindmap-item mindmap-item-trap"><i class="fa-solid fa-ban text-red-500 mr-2"></i>${formattedItem}</div>`;
+                } else if (isExceptionPhase) {
+                    itemsHtml += `<div class="mindmap-item mindmap-item-extra"><i class="fa-solid fa-triangle-exclamation text-emerald-600 mr-2"></i>${formattedItem}</div>`;
+                } else {
+                    itemsHtml += `<div class="mindmap-item"><i class="fa-solid fa-check text-blue-500 mr-2"></i>${formattedItem}</div>`;
+                }
+            });
+
+            cmapHtmlNodes += `
+                <div class="mindmap-phase-col">
+                    <div class="mindmap-phase-node">${phase.title}</div>
+                    ${itemsHtml}
+                </div>
+            `;
+        });
+
+        currentConceptMapHtml[prefix] = `
+            <div class="mindmap-container">
+                <div class="mindmap-root">${rootTitle}</div>
+                <div class="mindmap-phases">${cmapHtmlNodes}</div>
+            </div>
+        `;
     }
 
     function renderMatrice(text, prefix) {
@@ -1100,6 +1138,12 @@
         return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
     }
 
+    function getAutomatedPrintName(type, meta) {
+        let safeType = String(type).toUpperCase().trim();
+        let safeAula = (meta && meta.aula ? meta.aula : "AULA").toUpperCase().replace(/[^A-Z0-9]/g, '_').trim();
+        return `${safeType}_${safeAula}_${getFormattedDateString()}`;
+    }
+
     function printBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         const wantMappe = document.getElementById('batch-mappe').checked;
@@ -1111,41 +1155,45 @@
         if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
 
         let combinedHtml = "";
+        let firstMeta = null;
+
         selectedIds.forEach((id) => {
-            const docObj = archiveDB.find(d => d.id === id);
-            if(!docObj || !processAndRender(docObj.rawText, 'batch', true)) return;
+            const doc = archiveDB.find(d => d.id === id);
+            if(!doc || !processAndRender(doc.rawText, 'batch', true)) return;
             const meta = currentDocMeta['batch'];
+            if(!firstMeta) firstMeta = meta;
 
             if(wantConcept && currentConceptMapHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${currentConceptMapHtml['batch']}</div>`;
             }
             if(wantMappe) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
                 combinedHtml += `<div class="batch-page-fluid">${printHeader}${document.getElementById('batch-mappa-render').innerHTML}</div>`;
             }
             if(wantMatrici) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${document.getElementById('batch-matrice-render').innerHTML}</div>`;
             }
             if(wantDispense && currentDispensaHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${currentDispensaHtml['batch']}</div>`;
             }
         });
 
         document.getElementById('print-area').innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${combinedHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         
-        let baseName = "fascicolo"; 
+        let baseName = "FASCICOLO"; 
         let selCount = [wantMappe, wantMatrici, wantDispense, wantConcept].filter(Boolean).length;
         if (selCount === 1) {
-            if(wantMappe) baseName = "mappa";
-            if(wantMatrici) baseName = "matrice";
-            if(wantDispense) baseName = "dispensa";
-            if(wantConcept) baseName = "concettuale";
+            if(wantMappe) baseName = "MAPPA";
+            if(wantMatrici) baseName = "MATRICE";
+            if(wantDispense) baseName = "DISPENSA";
+            if(wantConcept) baseName = "CONCETTUALE";
         }
+        
         const originalTitle = document.title;
-        document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
+        document.title = getAutomatedPrintName(baseName, firstMeta);
         
         setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
@@ -1154,10 +1202,26 @@
         const printArea = document.getElementById('print-area');
         const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
         const meta = currentDocMeta[prefix];
-        let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || (type==='mappa'?'Mappa':'Matrice')}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
-        printArea.innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${printHeader}${contentHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
+        
+        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
+
+        let printHeader = `
+            <div class="print-header-container">
+                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula">${meta.aula || docTitle}</p>
+                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
+                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
+                    ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
+                </div>
+            </div>
+        `;
+        
+        printArea.innerHTML = printHeader + contentHtml;
+        
         const originalTitle = document.title;
-        document.title = `${type}_${getFormattedDateString()}_contiautoscuole`;
+        document.title = getAutomatedPrintName(type, meta);
+        
         setTimeout(() => { window.print(); document.title = originalTitle; printArea.innerHTML = ''; }, 300);
     }
 
@@ -1165,12 +1229,39 @@
         const printArea = document.getElementById('print-area');
         const htmlContent = currentDispensaHtml[prefix];
         const meta = currentDocMeta[prefix];
-        if(!htmlContent) return;
-        let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
-        printArea.innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${printHeader}${htmlContent}</td></tr></tbody></table>${printFooterHtmlBlock}`;
+
+        if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
+        
+        let printHeader = `
+            <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
+                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
+                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
+                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.argomento || ''}</h2>
+                </div>
+            </div>
+        `;
+        
+        printArea.innerHTML = printHeader + htmlContent;
+        
         const originalTitle = document.title;
-        document.title = `dispensa_${getFormattedDateString()}_contiautoscuole`;
+        document.title = getAutomatedPrintName('DISPENSA', meta);
+        
         setTimeout(() => { window.print(); document.title = originalTitle; printArea.innerHTML = ''; }, 300);
+    }
+
+    function exportCSV(prefix) {
+        const csvArray = currentCsvData[prefix];
+        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato.");
+        let csvContent = "";
+        csvArray.forEach(row => { csvContent += row.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",") + "\r\n"; });
+        const meta = currentDocMeta[prefix];
+        const safeName = (meta.argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `Export_${safeName}.csv`);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
     /* ==========================================================================
@@ -1233,10 +1324,13 @@
                 
                 archiveDB[docIndex] = updatedDoc;
                 await syncDatabase();
-                toggleEditMode(); alert("Modifiche salvate in locale.");
+                toggleEditMode(); alert("Modifiche salvate in IDB con successo!");
             }
         }
     }
+
+    function escapeQuotes(str) { return str.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+    function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
     async function renameEntity(type, oldName, parentName = '') {
         let docRef = type === 'paragrafo' ? archiveDB.find(d => d.id === oldName) : null;
@@ -1262,21 +1356,6 @@
             renderArchiveList(document.getElementById('search-db').value);
         }
     }
-
-    // --- ALTRE UTILITIES ---
-    function exportCSV(prefix) {
-        const csvArray = currentCsvData[prefix];
-        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato.");
-        let csvContent = "";
-        csvArray.forEach(row => { csvContent += row.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",") + "\r\n"; });
-        const safeName = (currentDocMeta[prefix].argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `Export_${safeName}.csv`);
-        document.body.appendChild(link); link.click(); document.body.removeChild(link);
-    }
-    function escapeQuotes(str) { return str.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
-    function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
     // --- REGIA STAMPA AVANZATA ---
     function openAdvancedPrint() {
@@ -1318,29 +1397,36 @@
         });
         document.getElementById('modal-total-time').innerText = total + " min";
     }
+
     function executeAdvancedPrint() {
         const wantMappe = document.getElementById('batch-mappe').checked, wantMatrici = document.getElementById('batch-matrici').checked, wantDispense = document.getElementById('batch-dispense').checked, wantConcept = document.getElementById('batch-concept').checked;
         const overrideTime = document.getElementById('override-time-cb').checked;
         if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept) return alert("Seleziona almeno un tipo di documento dalla barra prima di stampare.");
         let combinedHtml = "";
+        let firstMeta = null;
+
         advancedQueue.forEach((doc) => {
             if(!processAndRender(doc.rawText, 'batch', true)) return;
             const meta = currentDocMeta['batch'];
+            if(!firstMeta) firstMeta = meta;
+
             if (overrideTime) { let m = doc.rawText.match(/PAGINA\s*\d+:/gi); meta.tempo = m ? (m.length * 2) + " min" : "Tempo non stimabile"; }
-            if(wantConcept && currentConceptMapHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${currentConceptMapHtml['batch']}</div>`;
-            if(wantMappe) combinedHtml += `<div class="batch-page-fluid"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>${document.getElementById('batch-mappa-render').innerHTML}</div>`;
-            if(wantMatrici) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
-            if(wantDispense && currentDispensaHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${currentDispensaHtml['batch']}</div>`;
+            
+            if(wantConcept && currentConceptMapHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>${currentConceptMapHtml['batch']}</div>`;
+            if(wantMappe) combinedHtml += `<div class="batch-page-fluid"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>${document.getElementById('batch-mappa-render').innerHTML}</div>`;
+            if(wantMatrici) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
+            if(wantDispense && currentDispensaHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>${currentDispensaHtml['batch']}</div>`;
         });
         document.getElementById('print-area').innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${combinedHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         
-        let baseName = "regia_avanzata", selCount = [wantMappe, wantMatrici, wantDispense, wantConcept].filter(Boolean).length;
-        if (selCount === 1) { if(wantMappe) baseName = "mappa"; if(wantMatrici) baseName = "matrice"; if(wantDispense) baseName = "dispensa"; if(wantConcept) baseName = "concettuale"; }
-        const originalTitle = document.title; document.title = `${baseName}_${getFormattedDateString()}_contiautoscuole`;
+        let baseName = "REGIA_AVANZATA"; 
+        let selCount = [wantMappe, wantMatrici, wantDispense, wantConcept].filter(Boolean).length;
+        if (selCount === 1) { if(wantMappe) baseName = "MAPPA"; if(wantMatrici) baseName = "MATRICE"; if(wantDispense) baseName = "DISPENSA"; if(wantConcept) baseName = "CONCETTUALE"; }
+        const originalTitle = document.title; document.title = getAutomatedPrintName(baseName, firstMeta);
         closeAdvancedPrint(); setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
 
-    // --- INIT ---
+    // --- INIT APP AL CARICAMENTO ---
     initApp();
 
 </script>
