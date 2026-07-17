@@ -127,14 +127,15 @@
             .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt; width: 12px !important;}
             .d-quiz-item > div { display: block !important; overflow: hidden !important; }
 
-            /* --- STILE MAPPA CONCETTUALE ALLIEVI (Organigramma) --- */
+/* --- NUOVI STILI POTENZIATI MAPPA CONCETTUALE PER SCHEMI ALLIEVI --- */
             .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
-            .mindmap-root { background: #0f172a; color: white; font-weight: 900; font-size: 16pt; padding: 12px 30px; border-radius: 8px; text-transform: uppercase; margin-bottom: 25px; text-align: center; border: 2px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%;}
-            .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; align-items: flex-start;}
-            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 220px; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; background: #f8fafc;}
-            .mindmap-phase-node { background: #d97706; color: white; font-weight: 900; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 11pt; text-transform: uppercase; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
-            .mindmap-item { background: white; border-left: 5px solid #3b82f6; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; font-size: 10pt; font-weight: 800; color: #1e293b; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center; text-transform: uppercase;}
-            .mindmap-item-extra { border-left-color: #10b981; font-style: normal; color: #065f46; background: #f0fdf4;}
+            .mindmap-root { background: #1e3a8a !important; color: white !important; font-weight: 900; font-size: 15pt; padding: 10px 24px; border-radius: 6px; text-transform: uppercase; margin-bottom: 20px; text-align: center; width: 85%; border: 2px solid #1e3a8a;}
+            .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; align-items: flex-start;}
+            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 240px; border: 2px solid #cbd5e1 !important; border-radius: 8px; padding: 12px; background: #f8fafc !important; page-break-inside: avoid; }
+            .mindmap-phase-node { background: #d97706 !important; color: white !important; font-weight: 900; padding: 6px 12px; border-radius: 4px; margin-bottom: 12px; text-align: center; font-size: 10.5pt; text-transform: uppercase; width: 100%; }
+            .mindmap-item { background: white !important; border-left: 5px solid #3b82f6 !important; padding: 6px 10px; margin-bottom: 6px; border-radius: 4px; font-size: 9.5pt; font-weight: 700; color: #1e293b !important; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: left; text-transform: uppercase;}
+            .mindmap-item-extra { border-left-color: #10b981 !important; color: #065f46 !important; background: #f0fdf4 !important;}
+            .mindmap-item-trap { border-left-color: #ef4444 !important; color: #991b1b !important; background: #fef2f2 !important; font-weight: 800; }
         }
     </style>
 </head>
@@ -740,14 +741,28 @@
 
                 html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText} ${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
 
+// --- NUOVA LOGICA: MAPPA CONCETTUALE SCHEMATICA A PAROLE CHIAVE ---
                 if (!conceptData[currentFase]) conceptData[currentFase] = [];
-                if (argToExtract) conceptData[currentFase].push(`<div class="mindmap-item">${argToExtract}</div>`);
+                
+                // Elemento 1: NODO PRINCIPALE - Parola Chiave del Quiz
+                if (argToExtract) {
+                    conceptData[currentFase].push(`<div class="mindmap-item"><i class="fa-solid fa-key text-blue-500 mr-2"></i>${argToExtract}</div>`);
+                }
+                
+                // Elemento 2: NODO EXTRA - Aggiunte Sostanziali (Brevi)
                 if (extraRaw) {
                     let extArrowMatch = extraRaw.match(/➔|->/);
                     if(extArrowMatch) {
                         let extArg = extraRaw.substring(0, extraRaw.indexOf(extArrowMatch[0])).replace(/\*\*/g, '').trim();
-                        if(extArg) conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-extra">EXTRA: ${extArg}</div>`);
+                        if(extArg) conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-extra"><i class="fa-solid fa-circle-plus text-emerald-500 mr-2"></i>${extArg}</div>`);
                     }
+                }
+                
+                // Elemento 3: NODO TRAPPOLA - Evidenza dell'inganno ministeriale
+                if (trapRaw) {
+                    let shortTrap = trapRaw.split('.')[0].replace(/TRAPPOLA:|ATTENZIONE:/i, '').trim();
+                    if(shortTrap.length > 45) shortTrap = shortTrap.substring(0, 42) + "...";
+                    conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-trap"><i class="fa-solid fa-ban text-red-500 mr-2"></i>TRAP: ${shortTrap}</div>`);
                 }
             }
         });
