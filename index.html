@@ -1164,9 +1164,13 @@
         return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
     }
 
+    /* ==========================================================================
+       STAMPA MULTIPLA CON NOMI FILE INTELLIGENTI
+    ========================================================================== */
     const printFooterHtmlBlock = `
         <div class="print-footer">
             <div style="display: flex; align-items: center;">
+                <img src="logo-conti.jpg" alt="Logo Conti" style="height: 26px; object-fit: contain; margin-right: 12px;" onerror="this.style.display='none'">
                 <span class="print-footer-text" style="font-size: 7.5pt;">MATERIALE DIDATTICO RISERVATO</span>
             </div>
             <div style="font-style: italic; font-size: 7.5pt; text-align: right; line-height: 1.2; white-space: nowrap;">
@@ -1175,6 +1179,17 @@
             </div>
         </div>
     `;
+
+    function getAutomatedPrintName(type, meta) {
+        let safeType = String(type).toUpperCase().trim();
+        let safeAula = (meta && meta.aula ? meta.aula : "AULA").toUpperCase().replace(/[^A-Z0-9]/g, '_').trim();
+        return `${safeType}_${safeAula}_${getFormattedDateString()}`;
+    }
+
+    function getFormattedDateString() {
+        const d = new Date();
+        return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
+    }
 
     function printDocument(type, prefix) {
         const printArea = document.getElementById('print-area');
@@ -1185,11 +1200,11 @@
 
         let printHeader = `
             <div class="print-header-container">
-                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p>
                 <p class="print-header-aula">${meta.aula || docTitle}</p>
-                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
+                <h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1>
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
+                    <h2 class="print-header-arg">${meta.obiettivo || ''}</h2>
                     ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
                 </div>
             </div>
@@ -1197,7 +1212,6 @@
         
         printArea.innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${printHeader}${contentHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         
-        // --- NUOVO SISTEMA NOME PDF ---
         const originalTitle = document.title;
         document.title = getAutomatedPrintName(type, meta);
         
@@ -1213,18 +1227,17 @@
         
         let printHeader = `
             <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
-                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">CONTI AUTOSCUOLE</p>
                 <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
-                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
+                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.argomento || 'Documento senza titolo'}</h1>
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.argomento || ''}</h2>
+                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.obiettivo || ''}</h2>
                 </div>
             </div>
         `;
         
         printArea.innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${printHeader}${htmlContent}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         
-        // --- NUOVO SISTEMA NOME PDF ---
         const originalTitle = document.title;
         document.title = getAutomatedPrintName('DISPENSA', meta);
         
@@ -1251,19 +1264,19 @@
             if(!firstMeta) firstMeta = meta;
 
             if(wantConcept && currentConceptMapHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${currentConceptMapHtml['batch']}</div>`;
             }
             if(wantMappe) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>`;
                 combinedHtml += `<div class="batch-page-fluid">${printHeader}${document.getElementById('batch-mappa-render').innerHTML}</div>`;
             }
             if(wantMatrici) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${document.getElementById('batch-matrice-render').innerHTML}</div>`;
             }
             if(wantDispense && currentDispensaHtml['batch']) {
-                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
+                let printHeader = `<div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>`;
                 combinedHtml += `<div class="batch-page">${printHeader}${currentDispensaHtml['batch']}</div>`;
             }
         });
@@ -1436,7 +1449,8 @@
         closeAdvancedPrint(); setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
 
-    // --- INIT ---
+    // --- INIT APP AL CARICAMENTO ---
+
     initApp();
 
 </script>
