@@ -427,7 +427,7 @@
     </div>
 
 <script>
-    /* ==========================================================================
+/* ==========================================================================
        MOTORE DI MEMORIA LOCALE ILLIMITATA (IndexedDB - Caveau su Disco Fisso)
     ========================================================================== */
     let archiveDB = [];
@@ -446,14 +446,14 @@
         });
     }
 
-async function salvaInIDB(dati) {
+    async function salvaInIDB(dati) {
         try {
             let db = await inizializzaIDB();
             let tx = db.transaction("archivio", "readwrite");
             tx.objectStore("archivio").put(dati, "archiveDB");
-            // Backup garantito
-            localStorage.setItem('driving_leader_studio_db_backup', JSON.stringify(dati));
-        } catch(e) { console.error("Errore IndexedDB", e); }
+            // Salvataggio di sicurezza anche su LocalStorage se c'è spazio
+            try { localStorage.setItem('driving_leader_studio_db_backup', JSON.stringify(dati)); } catch(e) {}
+        } catch(e) { console.error("Errore scrittura database locale IndexedDB", e); }
     }
 
     async function leggiDaIDB() {
@@ -472,14 +472,23 @@ async function salvaInIDB(dati) {
         await salvaInIDB(archiveDB);
     }
 
-    async function loadFallbackLocal() {
-        let backupDati = JSON.parse(localStorage.getItem('driving_leader_studio_db_backup')) || [];
-        archiveDB = await leggiDaIDB();
-        // Se IDB fallisce perché si usa un file locale, usa il backup
-        if (archiveDB.length === 0 && backupDati.length > 0) {
-            archiveDB = backupDati;
-            await syncDatabase();
+    async function initApp() {
+        try {
+            let backupDati = [];
+            try { backupDati = JSON.parse(localStorage.getItem('driving_leader_studio_db_backup')) || []; } catch(e) {}
+            
+            archiveDB = await leggiDaIDB();
+            
+            // Se IDB è vuoto o fallisce ma abbiamo il backup in local storage, usiamo quello
+            if (archiveDB.length === 0 && backupDati.length > 0) {
+                console.log("Ripristino dati dal backup locale...");
+                archiveDB = backupDati;
+                await syncDatabase();
+            }
+        } catch(e) {
+            console.error("Errore in fase di avvio DB:", e);
         }
+        
         renderArchiveList();
         if(archiveDB.length === 0) navTo('generator'); else navTo('archive');
     }
