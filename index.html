@@ -47,7 +47,8 @@
         .d-pratica p { margin: 0 0 8px 0; }
         
         /* Stili Matrice Compatta Raggruppata */
-        .matrice-columns { column-count: 1; }
+        .matrice-columns-1 { column-count: 1; }
+        @media (min-width: 1024px) { .matrice-columns-2 { column-count: 2; column-gap: 2rem; column-rule: 1px solid #334155; } }            
         .matrice-title { color: #fbbf24; font-weight: 900; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 4px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px; text-transform: uppercase;}
         .matrice-group-title { font-size: 10pt; font-weight: 800; margin-top: 10px; margin-bottom: 6px; margin-left: 12px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #334155; display: inline-block; padding-right: 20px;}
         .matrice-row { display: flex; align-items: flex-start; margin-bottom: 8px; padding-left: 12px; font-size: 1.05rem; color: #f8fafc; line-height: 1.4; position: relative;}
@@ -125,7 +126,8 @@
             .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0; }
 
             /* Stampa: Matrice a 2 Colonne Compatta */
-            .matrice-columns { column-count: 2; column-gap: 12mm; column-rule: 1px solid #e2e8f0; }
+            .matrice-columns-1 { column-count: 1 !important; display: block; }
+            .matrice-columns-2 { column-count: 2 !important; column-gap: 12mm; column-rule: 1px solid #e2e8f0; }
             .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 10.5pt !important; margin-top: 12pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 6px; background: transparent !important; page-break-after: avoid !important; break-after: avoid !important; text-transform: uppercase; }
             .matrice-row { display: block !important; margin-bottom: 6pt !important; padding-left: 4px; font-size: 9pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; overflow: hidden !important; width: 100% !important; position: relative;}
             .matrice-row > div { display: block !important; overflow: hidden !important; padding-left: 20px; position: relative;}
@@ -608,15 +610,10 @@
         }
     }
 
+// --- PARSER DISPENSA ALLIEVI (CON IMMAGINE E ANTI-SOVRAPPOSIZIONE) ---
     function parseDispensa(text, imageUrl) {
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
-        
-        // Cartello posizionato al centro in alto
-        if(imageUrl) {
-            html += `<div class="cartello-box"><img src="${imageUrl}" alt="Cartello Stradale"></div>`;
-        }
-
         let inSacro = false, inPratica = false, inQuiz = false;
 
         lines.forEach(line => {
@@ -627,7 +624,15 @@
             if (uL.startsWith('TITOLO:')) return; 
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
+                
+                let cartelloHtml = imageUrl 
+                    ? `<img src="${imageUrl}" style="position:absolute; top:12px; right:12px; max-width:85px; max-height:85px; object-fit:contain; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2); background:white; z-index:10;">`
+                    : `<div style="position:absolute; top:12px; right:12px; width:70px; height:70px; border:2px dashed #cbd5e1; border-radius:6px; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:7pt; text-align:center; flex-direction:column; z-index:10;"><i class="fa-solid fa-image mb-1 text-sm block"></i>Vuoto</div>`;
+                
+                // Il padding-right a 105px impedisce al testo di finire sotto l'immagine
+                html += `<div class="d-section d-sacro" style="position: relative; min-height: 95px; padding-right: 105px;">
+                            ${cartelloHtml}
+                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
@@ -792,9 +797,19 @@
         currentConceptMapHtml[prefix] = `<div class="mindmap-container"><div class="mindmap-root">${rootTitle}</div><div class="mindmap-phases">${cmapHtmlNodes}</div></div>`;
     }
 
+// --- RENDER MATRICE COMPATTA (COLONNE DINAMICHE & PARSER 3-PARTI) ---
     function renderMatrice(text, prefix) {
         const lines = text.split('\n');
-        let html = '<div class="matrice-columns">';
+        
+        // Contiamo quanti quiz ci sono per decidere se fare 1 o 2 colonne
+        let quizCount = lines.filter(line => {
+            let l = line.trim().toUpperCase();
+            return l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./) || l.includes('|');
+        }).length;
+
+        let colClass = quizCount > 15 ? 'matrice-columns-2' : 'matrice-columns-1';
+        let html = `<div class="${colClass}">`;
+        
         currentCsvData[prefix] = [["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]];
         
         let currentMatriceVisual = ""; let currentMatriceClean = "";  
@@ -819,15 +834,33 @@
                 currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
                 html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
             } else {
-                let parts = l.split('|'); let rawQuizText = parts[0].trim(); let expText = parts[1] ? parts[1].trim() : "";
-                let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
+                // IL NUOVO PARSER CHE SPARTISCE CORRETTAMENTE I 3 PEZZI
+                let parts = l.split('|'); 
+                let rawQuizText = parts[0].trim(); 
+                let esitoStr = parts.length > 1 ? parts[1].trim().toUpperCase() : "";
+                let expText = parts.length > 2 ? parts.slice(2).join('|').trim() : "";
+                
+                // Fallback nel caso l'IA si scordi un "|"
+                if (parts.length === 2) {
+                    if (esitoStr === 'V' || esitoStr === 'F' || esitoStr === 'VERO' || esitoStr === 'FALSO') {
+                        // Ok, è Testo | Esito
+                    } else {
+                        // È Testo | Spiegazione (l'esito è nascosto nel testo)
+                        expText = parts[1].trim();
+                        esitoStr = rawQuizText; 
+                    }
+                } else if (parts.length === 1) {
+                    esitoStr = rawQuizText;
+                }
+                
+                let isVero = esitoStr === 'V' || esitoStr === 'VERO' || esitoStr.includes('(V)') || esitoStr.includes(' VERO');
                 let badgeHtml = isVero ? '<span class="v-badge">V</span>' : '<span class="f-badge">F</span>';
                 
-                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '').replace(/\(V\)/i, '').replace(/\(F\)/i, '').replace(/VERO/i, '').replace(/FALSO/i, '').trim();
+                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '').replace(/^\.\.\.\s*/, '').replace(/\(V\)/gi, '').replace(/\(F\)/gi, '').replace(/\bVERO\b/gi, '').replace(/\bFALSO\b/gi, '').trim();
                 let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
                 let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
                 
-                let rowHtml = `<div class="matrice-row"><div>${badgeHtml} <span class="block">${testoVisual}</span>`;
+                let rowHtml = `<div class="matrice-row"><div>${badgeHtml} <span class="block">&hellip; ${testoVisual}</span>`;
                 if(!isVero && expText) rowHtml += `<span class="matrice-exp">${expText}</span>`;
                 rowHtml += `</div></div>`;
                 
@@ -1246,7 +1279,7 @@ function printDocument(type, prefix) {
         document.getElementById('read-edit-content').classList.remove('flex');
         document.getElementById('btn-toggle-edit').innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento';
 
-        processAndRender(docObj.rawText, 'read');
+        processAndRender(docObj.rawText, 'read', false, docObj.imageUrl);
         navTo('reader');
     }
 
@@ -1277,7 +1310,7 @@ function printDocument(type, prefix) {
         const docIndex = archiveDB.findIndex(d => d.id === currentReaderDocId);
         if(docIndex !== -1) {
             if (!newText.includes('=== MAPPA TECNICA ===') || !newText.includes('=== MATRICE QUIZ ===')) return alert("Errore: Delimitatori principali obbligatori mancanti.");
-            if(processAndRender(newText, 'read')) {
+            if(processAndRender(newText, 'read', false, archiveDB[docIndex].imageUrl)) {
                 let updatedDoc = { ...archiveDB[docIndex], rawText: newText };
                 const meta = currentDocMeta['read'];
                 if(meta.aula) updatedDoc.aula = meta.aula;
