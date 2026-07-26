@@ -22,28 +22,54 @@
         #maximize-backdrop.active { display: block; animation: fadeIn 0.2s; }
         body.panel-maximized .view-section.active { z-index: 9999 !important; position: relative; }
 
-        /* Stili Mappa e Matrici */
+        /* Stili Mappa Tecnica */
         .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.15rem;}
         .incipit-titolo { color: #fbbf24; font-size: 1.2rem; font-weight: 900; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 0.5rem;}
         .incipit-globale strong { font-weight: 700; color: inherit; display: inline; text-transform: none; }
         .fase-title { color: #38bdf8; font-weight: 900; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
         .incipit-fase { color: #94a3b8; font-style: italic; margin-bottom: 1.5rem; padding-left: 1rem; border-left: 2px solid #475569; font-size: 1.05rem; line-height: 1.4; }
         .testo-regola { color: #f8fafc; }
-        
         .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem;}
         .pagina-badge { background: #0284c7; color: white; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold; font-size: 0.85rem; margin-right: 1rem; white-space: nowrap; margin-top: 2px;}
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
-        
         .pagina-text strong { color: #38bdf8; font-weight: 700; }
-        .dispensa-page strong { color: #3b82f6; font-weight: 700; }
-
         .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
         .pagina-extra { color: #10b981; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(16, 185, 129, 0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #10b981; font-size: 0.95rem;}
-        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
-        .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
-        .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
-        .f-badge { color: #ef4444; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
-        .matrice-exp { display: block; font-size: 0.9rem; color: #94a3b8; margin-top: 0.2rem; font-style: italic; }
+
+        /* Stili Dispensa Pulita */
+        .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; text-align: left; }
+        .d-section { margin-bottom: 12px; padding: 16px; border-radius: 8px; text-align: left;}
+        .d-section-title { font-size: 11pt; font-weight: 900; color: #60a5fa; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 10px; text-transform: uppercase; display: flex; align-items: center;}
+        .d-sacro { background-color: #0f172a; border: 1px solid #1e293b; }
+        .d-sacro ul { margin: 0; padding-left: 0; list-style-type: none; }
+        .d-sacro li { margin-bottom: 8px; font-size: 11pt; line-height: 1.5; color: #f8fafc; }
+        .d-pratica { background-color: #022c22; border: 1px solid #064e3b; font-size: 11pt; line-height: 1.5; color: #d1fae5; }
+        .d-pratica p { margin: 0 0 8px 0; }
+        
+        /* Stili Matrice Compatta Raggruppata */
+        .matrice-columns { column-count: 1; }
+        .matrice-title { color: #fbbf24; font-weight: 900; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 4px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px; text-transform: uppercase;}
+        .matrice-group-title { font-size: 10pt; font-weight: 800; margin-top: 10px; margin-bottom: 6px; margin-left: 12px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #334155; display: inline-block; padding-right: 20px;}
+        .matrice-row { display: flex; align-items: flex-start; margin-bottom: 8px; padding-left: 12px; font-size: 1.05rem; color: #f8fafc; line-height: 1.4; position: relative;}
+        .matrice-row > div { display: block; padding-left: 24px; position: relative; width: 100%;}
+        .v-badge { position: absolute; left: 0; top: 2px; color: white !important; background: #16a34a !important; font-weight: 900; font-style: normal; font-size: 8pt !important; padding: 2px 5px; border-radius: 4px;}
+        .f-badge { position: absolute; left: 0; top: 2px; color: white !important; background: #dc2626 !important; font-weight: 900; font-style: normal; font-size: 8pt !important; padding: 2px 5px; border-radius: 4px;}
+        .matrice-exp { display: block; font-size: 0.95rem; color: #94a3b8; margin-top: 3px; font-style: italic; line-height: 1.3;}
+
+        /* Stili Nuova Mappa Concettuale Visiva */
+        .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        .mindmap-root { background: #1e3a8a; color: white; font-weight: 900; font-size: 15pt; padding: 10px 24px; border-radius: 6px; text-transform: uppercase; margin-bottom: 20px; text-align: center; width: 85%; border: 2px solid #3b82f6;}
+        .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; align-items: flex-start;}
+        .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 240px; border: 2px solid #334155; border-radius: 8px; padding: 12px; background: #1e293b; }
+        .mindmap-phase-node { background: #d97706; color: white; font-weight: 900; padding: 6px 12px; border-radius: 4px; margin-bottom: 12px; text-align: center; font-size: 10.5pt; text-transform: uppercase; width: 100%; }
+        .mindmap-item { background: #0f172a; border-left: 5px solid #3b82f6; padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 10.5pt; font-weight: 400; color: #f8fafc; width: 100%; border-right: 1px solid #334155; border-top: 1px solid #334155; border-bottom: 1px solid #334155; text-align: left; line-height: 1.5; }
+        .mindmap-item strong { font-weight: 700; color: #38bdf8; }
+        .mindmap-item-extra { border-left-color: #d97706; background: #451a03; }
+        .mindmap-item-extra i { color: #fbbf24 !important; }
+        .mindmap-item-trap { border-left-color: #dc2626; background: #450a0a; padding: 12px; }
+        .trap-part { color: #fca5a5; font-weight: 900; margin-bottom: 4px; display: block; font-size: 11pt; }
+        .reality-part { color: #94a3b8; font-weight: 400; display: block; line-height: 1.5; font-size: 10.5pt;}
+        .reality-part strong { color: #f8fafc; font-weight: 700; }
 
         /* Bottoni Custom */
         .btn-nav { background: transparent; border: 1px solid #334155; color: #cbd5e1; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; cursor: pointer; display: flex; align-items: center;}
@@ -62,10 +88,10 @@
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         /* =======================================================
-           STILI DI STAMPA GLOBALI E FIX FOOTER SCUDO
+           STILI DI STAMPA GLOBALI E IMPOSTAZIONI FASCICOLO
            ======================================================= */
         @media print {
-            html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10.5pt !important; }
+            html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10.5pt !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
             
@@ -80,56 +106,51 @@
             .batch-page-fluid { page-break-after: auto !important; margin-bottom: 2rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 2rem; }
             .batch-page-fluid:last-child { border-bottom: none; }
             
-            .pagina-text strong, .dispensa-page strong { color: #000 !important; font-weight: 700 !important; }
-
             .print-header-container { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; display: block !important; width: 100%; page-break-after: avoid !important;}
-            .print-header-aula { font-size: 9pt; color: #555; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+            .print-header-aula { font-size: 9pt; color: #d97706 !important; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
             .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000; }
             .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
 
+            /* Stampa: Mappa Tecnica */
             .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 11pt !important; line-height: 1.4 !important; page-break-inside: avoid; }
             .incipit-titolo { color: #b45309 !important; font-size: 12pt !important; margin-bottom: 4px !important; display: block; font-style: normal; text-transform: uppercase; background: transparent !important; padding: 0;}
             .incipit-globale strong { font-weight: 700 !important; color: inherit !important; display: inline !important; text-transform: none !important; }
-            
             .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 14pt !important; margin-top: 18pt !important; padding-bottom: 3pt !important; margin-bottom: 8pt !important; page-break-after: avoid !important; font-weight: 900 !important; text-transform: uppercase; }
             .incipit-fase { color: #222 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 11pt !important; line-height: 1.3 !important; page-break-after: avoid !important; }
             .testo-regola { color: #000 !important; font-weight: 500 !important; }
-            
-            /* REGOLE DI PROTEZIONE IMPAGINAZIONE RIGHE CHROME */
             .pagina-row { display: block !important; margin-bottom: 10pt !important; font-size: 10.5pt !important; line-height: 1.3 !important; page-break-inside: avoid !important; break-inside: avoid !important; border-bottom: 1px solid #eee; padding-bottom: 6px; overflow: hidden !important; width: 100% !important;}
             .pagina-badge { float: left !important; border: 1px solid black !important; padding: 2px 6px; font-weight: bold; margin-right: 12px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 9pt !important; margin-top: 2px; border-radius: 3px;}
             .pagina-text { display: block !important; color: black !important; overflow: hidden !important;}
+            .pagina-text strong { font-weight: 700 !important; color: #000 !important; }
             .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
             .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0; }
 
-/* --- STILI MATRICE COMPATTA (Right Page) --- */
-            .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid !important; text-transform: uppercase; }
-            .matrice-group-title { font-size: 9pt; font-weight: 800; margin-top: 6px; margin-bottom: 3px; margin-left: 12px; color: #475569; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; display: inline-block; padding-right: 15px;}
-            .matrice-row { display: block !important; margin-bottom: 4pt !important; padding-left: 12px; font-size: 9.5pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; font-style: normal !important; overflow: hidden !important; width: 100% !important;}
+            /* Stampa: Matrice a 2 Colonne (Fascicolo Right Page) */
+            .matrice-columns { column-count: 2; column-gap: 15mm; column-rule: 1px solid #e2e8f0; }
+            .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid !important; break-after: avoid !important; text-transform: uppercase; }
+            .matrice-group-title { display: block !important; font-size: 9pt; font-weight: 800; margin-top: 6px; margin-bottom: 4px; margin-left: 12px; color: #475569 !important; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-right: 15px; page-break-after: avoid !important; break-after: avoid !important;}
+            .matrice-row { display: block !important; margin-bottom: 5pt !important; padding-left: 12px; font-size: 9.5pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; overflow: hidden !important; width: 100% !important;}
             .matrice-row > div { display: block !important; overflow: hidden !important; padding-left: 18px; position: relative;}
-            .v-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #16a34a !important; font-weight: 900; font-style: normal; font-size: 7pt !important; padding: 1px 4px; border-radius: 3px;}
-            .f-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #dc2626 !important; font-weight: 900; font-style: normal; font-size: 7pt !important; padding: 1px 4px; border-radius: 3px;}
-            .matrice-exp { display: block !important; font-size: 8.5pt !important; color: #64748b !important; margin-top: 1px; font-style: italic; line-height: 1.2 !important;}
-            
-            /* --- STILI DISPENSA PULITA (Left Page) --- */
-            .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; text-align: left; }
-            .d-section { margin-bottom: 12px; padding: 12px 16px; border-radius: 6px; page-break-inside: avoid !important; text-align: left;}
-            .d-section-title { font-size: 11pt; font-weight: 900; color: #1e3a8a; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
-            .d-sacro { background-color: #f8fafc; border: 1px solid #e2e8f0; }
-            .d-sacro ul { margin: 0; padding-left: 0; list-style-type: none; }
-            .d-sacro li { margin-bottom: 5px; font-size: 10.5pt; line-height: 1.4; color: #000; }
-            .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 10.5pt; line-height: 1.4; color: #064e3b; }
-            .d-pratica p { margin: 0 0 6px 0; }
+            .matrice-exp { display: block !important; font-size: 8.5pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.2 !important;}
 
-            /* --- NUOVI STILI POTENZIATI MAPPA CONCETTUALE PER SCHEMI ALLIEVI --- */
-            .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
+            /* Stampa: Dispensa Pulita (Fascicolo Left Page) */
+            .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; text-align: left; }
+            .dispensa-page strong { font-weight: 700 !important; color: #000 !important; }
+            .d-section { margin-bottom: 12px; padding: 12px 16px; border-radius: 6px; page-break-inside: avoid !important; text-align: left;}
+            .d-section-title { font-size: 11pt; font-weight: 900; color: #1e3a8a !important; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
+            .d-sacro { background-color: #f8fafc !important; border: 1px solid #e2e8f0; }
+            .d-sacro li { margin-bottom: 5px; font-size: 10.5pt; line-height: 1.3; color: #000 !important; }
+            .d-pratica { background-color: #f0fdf4 !important; border: 1px solid #bbf7d0; font-size: 10.5pt; line-height: 1.3; color: #064e3b !important; }
+
+            /* Stampa: Mappa Concettuale Visiva */
             .mindmap-root { background: #1e3a8a !important; color: white !important; font-weight: 900; font-size: 15pt; padding: 10px 24px; border-radius: 6px; text-transform: uppercase; margin-bottom: 20px; text-align: center; width: 85%; border: 2px solid #1e3a8a;}
-            .mindmap-phases { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%; align-items: flex-start;}
-            .mindmap-phase-col { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 240px; border: 2px solid #cbd5e1 !important; border-radius: 8px; padding: 12px; background: #f8fafc !important; page-break-inside: avoid; }
+            .mindmap-phase-col { background: #f8fafc !important; border: 2px solid #cbd5e1 !important; border-radius: 8px; padding: 12px; page-break-inside: avoid !important; break-inside: avoid !important;}
             .mindmap-phase-node { background: #d97706 !important; color: white !important; font-weight: 900; padding: 6px 12px; border-radius: 4px; margin-bottom: 12px; text-align: center; font-size: 10.5pt; text-transform: uppercase; width: 100%; }
-            .mindmap-item { background: white !important; border-left: 5px solid #3b82f6 !important; padding: 6px 10px; margin-bottom: 6px; border-radius: 4px; font-size: 9.5pt; font-weight: 700; color: #1e293b !important; width: 100%; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: left; text-transform: uppercase;}
+            .mindmap-item { background: white !important; border-left: 5px solid #3b82f6 !important; padding: 6px 10px !important; margin-bottom: 6px !important; border-radius: 4px !important; font-size: 9.5pt !important; font-weight: 700; color: #1e293b !important; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; line-height: 1.4 !important; }
             .mindmap-item-extra { border-left-color: #10b981 !important; color: #065f46 !important; background: #f0fdf4 !important;}
-            .mindmap-item-trap { border-left-color: #ef4444 !important; color: #991b1b !important; background: #fef2f2 !important; font-weight: 800; }
+            .mindmap-item-trap { border-left-color: #ef4444 !important; background: #fef2f2 !important; }
+            .trap-part { color: #dc2626 !important; font-weight: 900 !important; font-size: 10pt !important; }
+            .reality-part { color: #333333 !important; font-weight: 400 !important; font-size: 9.5pt !important;}
         }
     </style>
 </head>
@@ -361,10 +382,8 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- AREA STAMPA -->
     <div id="print-area"></div>
 
     <!-- MODAL DI REGIA DI STAMPA AVANZATA -->
@@ -381,7 +400,6 @@
             </div>
             
             <p class="text-slate-400 text-sm mb-4 shrink-0"><i class="fa-solid fa-lightbulb text-yellow-500 mr-1"></i> <strong>Sposta e Ordina:</strong> Trascina i blocchi col mouse o usa i tasti di ordinamento veloci!</p>
-            
             <div id="advanced-queue-list" class="flex-grow overflow-y-auto space-y-2 mb-6 pr-2"></div>
 
             <div class="shrink-0 border-t border-slate-700 pt-4 space-y-4">
@@ -392,7 +410,6 @@
                         <span class="text-xs text-slate-400">Aggiorna istantaneamente il contatore in alto e verrà stampato sul PDF.</span>
                     </div>
                 </label>
-
                 <button onclick="executeAdvancedPrint()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl shadow-lg shadow-blue-500/20 transition text-lg flex justify-center items-center">
                     <i class="fa-solid fa-print mr-2"></i> Genera PDF Ordinato
                 </button>
@@ -446,11 +463,12 @@
         await salvaInIDB(archiveDB);
     }
 
-    async function initApp() {
+    async function loadFallbackLocal() {
         let vecchiDati = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
         let backupDati = JSON.parse(localStorage.getItem('driving_leader_studio_db_backup')) || [];
         
         if(vecchiDati.length > 0) {
+            console.log("Rilevati vecchi dati nel browser: migrazione automatica nel caveau IndexedDB...");
             archiveDB = vecchiDati;
             await syncDatabase();
             localStorage.removeItem('driving_leader_studio_db'); 
@@ -533,7 +551,7 @@
     });
 
     /* ==========================================================================
-       LOGICA DI ELABORAZIONE TESTO IA (Parser Core con 3 Sezioni)
+       LOGICA DI ELABORAZIONE TESTO IA E RENDER MAPPE
     ========================================================================== */
     function processAndRender(rawText, prefix, silent = false) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
@@ -566,12 +584,12 @@
                 matriceRaw = remainderMatrice.trim();
             }
         } catch(e) {
-            console.error("Errore di split", e);
+            console.error("Errore di split testo", e);
             return false;
         }
 
         renderMappa(mappaRaw, prefix);
-        if(conceptRaw) renderMappaConcettuale(conceptRaw, prefix); // NUOVA CHIAMATA
+        if(conceptRaw) renderMappaConcettuale(conceptRaw, prefix);
         renderMatrice(matriceRaw, prefix);
         
         const btnContainer = document.getElementById(`${prefix}-dispensa-btn-container`);
@@ -602,9 +620,9 @@
         }
     }
 
-// --- PARSER DISPENSA ALLIEVI (PULITA) ---
+    // --- PARSER DISPENSA ALLIEVI (PULITA E PRONTA PER IL CARTELLO) ---
     function parseDispensa(text) {
-        const lines = text.split('\\n');
+        const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
         let inSacro = false, inPratica = false, inQuiz = false;
 
@@ -613,29 +631,32 @@
             if(!l) return;
             let uL = l.toUpperCase();
 
-            // Ignora i Titoli ridondanti
+            // Rimuovo il "Titolo" ripetitivo
             if (uL.startsWith('TITOLO:')) {
                 return; 
             }
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                // Aggiunge spazio per eventuale inserimento manuale o a penna di un cartello
-                html += `<div class="d-section d-sacro" style="position: relative; min-height: 80px;">
-                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
+                // Min-height e position relative per ospitare comodamente un cartello in alto a dx
+                html += `
+                    <div class="d-section d-sacro" style="position: relative; min-height: 80px;">
+                        <!-- SEGNAPOSTO CARTELLO: Copia e incolla la tua immagine <img src="..."> qui al posto di questo div -->
+                        <div style="position:absolute; top:10px; right:10px; width:65px; height:65px; border:2px dashed #cbd5e1; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:7pt; text-align:center; flex-direction:column;"><i class="fa-solid fa-image mb-1 text-sm block"></i>Cartello</div>
+                        <div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
                 html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
-            // Ferma l'analisi quando inizia il Campo Minato (verrà coperto dalla Matrice a parte)
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
+                // Ferma l'elaborazione se incontra il Campo Minato, perché ora stampiamo i Quiz separatamente
                 if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
             }
             else if (!inQuiz) {
-                let formattedLine = l.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
-                let cleanLine = formattedLine.replace(/^[\\-\\*\\•]\\s*/, '').trim();
+                let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
                 
                 if (inSacro && cleanLine) {
                     html += `<li>${cleanLine}</li>`;
@@ -645,9 +666,10 @@
             }
         });
 
-        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
+        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`; 
         return html + '</div>';
     }
+
     function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let mergedLines = [];
@@ -663,8 +685,6 @@
         });
 
         let html = '';
-        let conceptData = {}; 
-        let currentFase = "CONCETTI CHIAVE"; 
         currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
         
         mergedLines.forEach(line => {
@@ -683,7 +703,6 @@
             else if (cleanStart.startsWith('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
-                currentFase = title; 
             } 
             else if (cleanStart.startsWith('OBIETTIVO PRATICO:')) {
                 let pText = l.replace(/.*?OBIETTIVO PRATICO:/i, '').trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -730,12 +749,11 @@
                     gancioText = `<div style="color: #6d28d9; font-weight: 600; display: block; margin-bottom: 8px; padding-left: 8px; border-left: 3px solid #8b5cf6; font-size: 0.95rem; font-style: italic;"><i class="fa-solid fa-bullhorn mr-2"></i><span style="color: inherit;">${gancioRaw}</span></div>`;
                 }
 
-                let mainText = remaining, mainRaw = remaining, argToExtract = ""; 
+                let mainText = remaining; 
                 let arrowMatch = mainText.match(/➔|->/);
                 if (arrowMatch) {
                     let idx = mainText.indexOf(arrowMatch[0]);
                     let arg = mainText.substring(0, idx).trim();
-                    argToExtract = arg.replace(/\*\*/g, '').trim(); 
                     let rule = mainText.substring(idx + arrowMatch[0].length).trim();
                     mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="testo-regola">${rule}</span>`;
                 } else if (mainText.length > 0) {
@@ -748,30 +766,6 @@
                 if (trapText) trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
                 html += `<div class="pagina-row"><div class="pagina-badge">${badgeText}</div><div class="pagina-text">${gancioText}${mainText} ${nessunText}${extraText}${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div></div>`;
-
-                // --- NUOVA LOGICA: MAPPA CONCETTUALE SCHEMATICA A PAROLE CHIAVE ---
-                if (!conceptData[currentFase]) conceptData[currentFase] = [];
-                
-                // Elemento 1: NODO PRINCIPALE - Parola Chiave del Quiz
-                if (argToExtract) {
-                    conceptData[currentFase].push(`<div class="mindmap-item"><i class="fa-solid fa-key text-blue-500 mr-2"></i>${argToExtract}</div>`);
-                }
-                
-                // Elemento 2: NODO EXTRA - Aggiunte Sostanziali (Brevi)
-                if (extraRaw) {
-                    let extArrowMatch = extraRaw.match(/➔|->/);
-                    if(extArrowMatch) {
-                        let extArg = extraRaw.substring(0, extraRaw.indexOf(extArrowMatch[0])).replace(/\*\*/g, '').trim();
-                        if(extArg) conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-extra"><i class="fa-solid fa-circle-plus text-emerald-500 mr-2"></i>${extArg}</div>`);
-                    }
-                }
-                
-                // Elemento 3: NODO TRAPPOLA - Evidenza dell'inganno ministeriale
-                if (trapRaw) {
-                    let shortTrap = trapRaw.split('.')[0].replace(/TRAPPOLA:|ATTENZIONE:/i, '').trim();
-                    if(shortTrap.length > 45) shortTrap = shortTrap.substring(0, 42) + "...";
-                    conceptData[currentFase].push(`<div class="mindmap-item mindmap-item-trap"><i class="fa-solid fa-ban text-red-500 mr-2"></i>TRAP: ${shortTrap}</div>`);
-                }
             }
         });
 
@@ -792,6 +786,7 @@
         document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
     }
 
+    // --- NUOVA MAPPA CONCETTUALE VISIVA ---
     function renderMappaConcettuale(text, prefix) {
         if(!text) {
             currentConceptMapHtml[prefix] = "";
@@ -832,10 +827,17 @@
                 let formattedItem = item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 
                 if (isTrapPhase || item.includes('➔ IN REALTÀ:')) {
-                    formattedItem = formattedItem.replace(/➔ IN REALTÀ:/i, '<br><i class="fa-solid fa-arrow-right text-red-500 mx-1"></i><span class="text-slate-500 font-semibold text-[8.5pt]">IN REALTÀ:</span>');
-                    itemsHtml += `<div class="mindmap-item mindmap-item-trap"><i class="fa-solid fa-ban text-red-500 mr-2"></i>${formattedItem}</div>`;
+                    let parts = formattedItem.split(/➔\s*IN REALTÀ:/i);
+                    if(parts.length === 2) {
+                        itemsHtml += `<div class="mindmap-item mindmap-item-trap">
+                            <span class="trap-part"><i class="fa-solid fa-bomb mr-2"></i>${parts[0].trim()} ➔</span>
+                            <span class="reality-part"><strong>IN REALTÀ:</strong> ${parts[1].trim()}</span>
+                        </div>`;
+                    } else {
+                        itemsHtml += `<div class="mindmap-item mindmap-item-trap"><i class="fa-solid fa-bomb mr-2"></i><span class="trap-part">${formattedItem}</span></div>`;
+                    }
                 } else if (isExceptionPhase) {
-                    itemsHtml += `<div class="mindmap-item mindmap-item-extra"><i class="fa-solid fa-triangle-exclamation text-emerald-600 mr-2"></i>${formattedItem}</div>`;
+                    itemsHtml += `<div class="mindmap-item mindmap-item-extra"><i class="fa-solid fa-triangle-exclamation mr-2"></i>${formattedItem}</div>`;
                 } else {
                     itemsHtml += `<div class="mindmap-item"><i class="fa-solid fa-check text-blue-500 mr-2"></i>${formattedItem}</div>`;
                 }
@@ -857,10 +859,10 @@
         `;
     }
 
-// --- RENDER MATRICE COMPATTA (GRUPPI VERO/FALSO) ---
+    // --- RENDER MATRICE COMPATTA E RAGGRUPPATA (2 COLONNE IN STAMPA) ---
     function renderMatrice(text, prefix) {
-        const lines = text.split('\\n');
-        let html = '';
+        const lines = text.split('\n');
+        let html = '<div class="matrice-columns">';
         currentCsvData[prefix] = [["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]];
         
         let currentMatriceVisual = ""; 
@@ -885,12 +887,12 @@
             let l = line.trim();
             if(!l) return;
             let upperL = l.toUpperCase();
-            let isContinuation = l.match(/^[\\-\\*\\•\\>—–]/) || l.match(/^\\.\\.\\./) || l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ');
+            let isContinuation = l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./) || l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ');
 
             if (!isContinuation) {
-                flushGroup(); // Stampa il gruppo precedente prima di iniziare la nuova radice
-                currentMatriceVisual = l.replace(/[\\[\\]\\*\\#]/g, '').trim();
-                currentMatriceClean = currentMatriceVisual.replace(/\\.\\.\\.$/, '').trim();
+                flushGroup(); 
+                currentMatriceVisual = l.replace(/[\[\]\*\#]/g, '').trim();
+                currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
                 html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
             } else {
                 let parts = l.split('|');
@@ -900,9 +902,9 @@
                 let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
                 let badgeHtml = isVero ? '<span class="v-badge">V</span>' : '<span class="f-badge">F</span>';
                 
-                let testoVisual = rawQuizText.replace(/^[\\-\\*\\•\\>—–]\\s*/, '').replace(/\\(V\\)/i, '').replace(/\\(F\\)/i, '').replace(/VERO/i, '').replace(/FALSO/i, '').trim();
-                let testoClean = testoVisual.replace(/^\\.\\.\\./, '').trim();
-                let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\\s+/g, ' ');
+                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '').replace(/\(V\)/i, '').replace(/\(F\)/i, '').replace(/VERO/i, '').replace(/FALSO/i, '').trim();
+                let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
+                let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
                 
                 let rowHtml = `<div class="matrice-row"><div>${badgeHtml} <span class="block">${testoVisual}</span>`;
                 if(!isVero) rowHtml += `<span class="matrice-exp">In realtà: ${expText}</span>`;
@@ -914,8 +916,9 @@
                 currentCsvData[prefix].push([currentMatriceClean, testoClean, fraseCompleta, isVero ? "V" : "F", expText]);
             }
         });
-        flushGroup(); // Assicurati di stampare l'ultimo gruppo
+        flushGroup(); 
 
+        html += '</div>';
         document.getElementById(`${prefix}-matrice-render`).innerHTML = html;
     }
 
@@ -950,7 +953,6 @@
         try {
             await syncDatabase();
             
-            // Memorizza l'Aula e il Capitolo appena salvati per tenerli aperti nell'archivio
             lastOpenedAula = newItem.aula;
             lastOpenedCapitolo = newItem.obiettivo;
             
@@ -1195,17 +1197,6 @@
         </div>
     `;
 
-    function getAutomatedPrintName(type, meta) {
-        let safeType = String(type).toUpperCase().trim();
-        let safeAula = (meta && meta.aula ? meta.aula : "AULA").toUpperCase().replace(/[^A-Z0-9]/g, '_').trim();
-        return `${safeType}_${safeAula}_${getFormattedDateString()}`;
-    }
-
-    function getFormattedDateString() {
-        const d = new Date();
-        return ("0" + d.getDate()).slice(-2) + ("0" + (d.getMonth() + 1)).slice(-2) + d.getFullYear();
-    }
-
     function printDocument(type, prefix) {
         const printArea = document.getElementById('print-area');
         const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
@@ -1229,7 +1220,6 @@
         
         const originalTitle = document.title;
         document.title = getAutomatedPrintName(type, meta);
-        
         setTimeout(() => { window.print(); document.title = originalTitle; printArea.innerHTML = ''; }, 300);
     }
 
@@ -1255,7 +1245,6 @@
         
         const originalTitle = document.title;
         document.title = getAutomatedPrintName('DISPENSA', meta);
-        
         setTimeout(() => { window.print(); document.title = originalTitle; printArea.innerHTML = ''; }, 300);
     }
 
@@ -1449,23 +1438,21 @@
 
             if (overrideTime) { let m = doc.rawText.match(/PAGINA\s*\d+:/gi); meta.tempo = m ? (m.length * 2) + " min" : "Tempo non stimabile"; }
             
-            if(wantConcept && currentConceptMapHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>${currentConceptMapHtml['batch']}</div>`;
-            if(wantMappe) combinedHtml += `<div class="batch-page-fluid"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>${document.getElementById('batch-mappa-render').innerHTML}</div>`;
-            if(wantMatrici) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
-            if(wantDispense && currentDispensaHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.obiettivo || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.argomento || ''}</h2></div></div>${currentDispensaHtml['batch']}</div>`;
+            if(wantConcept && currentConceptMapHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa Concettuale'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${currentConceptMapHtml['batch']}</div>`;
+            if(wantMappe) combinedHtml += `<div class="batch-page-fluid"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Mappa di Regia Didattica'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2>${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}</div></div>${document.getElementById('batch-mappa-render').innerHTML}</div>`;
+            if(wantMatrici) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Analisi Matriciale Quiz'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
+            if(wantDispense && currentDispensaHtml['batch']) combinedHtml += `<div class="batch-page"><div class="print-header-container"><p class="print-header-aula" style="color: #d97706;">CONTI AUTOSCUOLE</p><p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p><h1 class="print-header-ob">${meta.argomento || ''}</h1><div style="display:flex; justify-content: space-between; align-items: baseline;"><h2 class="print-header-arg">${meta.obiettivo || ''}</h2></div></div>${currentDispensaHtml['batch']}</div>`;
         });
         
         document.getElementById('print-area').innerHTML = `<table style="width: 100%; border: none; border-collapse: collapse;"><tfoot style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot><tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${combinedHtml}</td></tr></tbody></table>${printFooterHtmlBlock}`;
         
-        let baseName = "regia_avanzata", selCount = [wantMappe, wantMatrici, wantDispense, wantConcept].filter(Boolean).length;
-        if (selCount === 1) { if(wantMappe) baseName = "mappa"; if(wantMatrici) baseName = "matrice"; if(wantDispense) baseName = "dispensa"; if(wantConcept) baseName = "concettuale"; }
+        let baseName = "REGIA_AVANZATA", selCount = [wantMappe, wantMatrici, wantDispense, wantConcept].filter(Boolean).length;
+        if (selCount === 1) { if(wantMappe) baseName = "MAPPA"; if(wantMatrici) baseName = "MATRICE"; if(wantDispense) baseName = "DISPENSA"; if(wantConcept) baseName = "CONCETTUALE"; }
         const originalTitle = document.title; document.title = getAutomatedPrintName(baseName, firstMeta);
-        
         closeAdvancedPrint(); setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
     }
 
     // --- INIT APP AL CARICAMENTO ---
-
     initApp();
 
 </script>
