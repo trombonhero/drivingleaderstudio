@@ -102,30 +102,24 @@
             .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
             .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0; }
 
-            .matrice-title { display: block !important; color: black !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 3px solid #fbbf24 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid !important; text-transform: uppercase; }
-            .matrice-row { display: block !important; margin-bottom: 5pt !important; padding-left: 12px; font-size: 10pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; font-style: normal !important; overflow: hidden !important; width: 100% !important;}
-            .matrice-row > i { float: left !important; width: 20px !important; margin-top: 2px !important; }
-            .matrice-row > div { display: block !important; overflow: hidden !important; }
-            .v-badge { color: #10b981 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
-            .f-badge { color: #ef4444 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
-            .matrice-exp { display: block !important; font-size: 9pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.2 !important;}
-            .matrice-row > div > br { display: block !important; }
-
+/* --- STILI MATRICE COMPATTA (Right Page) --- */
+            .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid !important; text-transform: uppercase; }
+            .matrice-group-title { font-size: 9pt; font-weight: 800; margin-top: 6px; margin-bottom: 3px; margin-left: 12px; color: #475569; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; display: inline-block; padding-right: 15px;}
+            .matrice-row { display: block !important; margin-bottom: 4pt !important; padding-left: 12px; font-size: 9.5pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; font-style: normal !important; overflow: hidden !important; width: 100% !important;}
+            .matrice-row > div { display: block !important; overflow: hidden !important; padding-left: 18px; position: relative;}
+            .v-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #16a34a !important; font-weight: 900; font-style: normal; font-size: 7pt !important; padding: 1px 4px; border-radius: 3px;}
+            .f-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #dc2626 !important; font-weight: 900; font-style: normal; font-size: 7pt !important; padding: 1px 4px; border-radius: 3px;}
+            .matrice-exp { display: block !important; font-size: 8.5pt !important; color: #64748b !important; margin-top: 1px; font-style: italic; line-height: 1.2 !important;}
+            
+            /* --- STILI DISPENSA PULITA (Left Page) --- */
             .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; text-align: left; }
-            .d-header { text-align: left; border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 12px; }
-            .d-meta { font-size: 8.5pt; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; font-weight: bold;}
-            .d-title { font-size: 15pt; font-weight: 900; color: #0f172a; margin: 0; text-transform: uppercase; line-height: 1.2; page-break-after: avoid !important;}
-            .d-section { margin-bottom: 10px; padding: 10px 14px; border-radius: 6px; page-break-inside: avoid !important; text-align: left;}
+            .d-section { margin-bottom: 12px; padding: 12px 16px; border-radius: 6px; page-break-inside: avoid !important; text-align: left;}
             .d-section-title { font-size: 11pt; font-weight: 900; color: #1e3a8a; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
             .d-sacro { background-color: #f8fafc; border: 1px solid #e2e8f0; }
             .d-sacro ul { margin: 0; padding-left: 0; list-style-type: none; }
-            .d-sacro li { margin-bottom: 5px; font-size: 10pt; line-height: 1.3; color: #000; }
-            .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 10pt; line-height: 1.3; color: #064e3b; }
-            .d-pratica p { margin: 0 0 5px 0; }
-            .d-quiz { background-color: #fff1f2; border: 1px solid #fecaca; }
-            .d-quiz-item { display: block !important; margin-bottom: 6px; font-size: 10pt; line-height: 1.3; page-break-inside: avoid !important; break-inside: avoid !important; overflow: hidden !important; width: 100% !important;}
-            .d-quiz-item i { float: left !important; margin-top: 3px; margin-right: 6px; color: #f87171; font-size: 8pt; width: 12px !important;}
-            .d-quiz-item > div { display: block !important; overflow: hidden !important; }
+            .d-sacro li { margin-bottom: 5px; font-size: 10.5pt; line-height: 1.4; color: #000; }
+            .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 10.5pt; line-height: 1.4; color: #064e3b; }
+            .d-pratica p { margin: 0 0 6px 0; }
 
             /* --- NUOVI STILI POTENZIATI MAPPA CONCETTUALE PER SCHEMI ALLIEVI --- */
             .mindmap-container { display: flex; flex-direction: column; align-items: center; padding: 15px 0; font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; }
@@ -608,9 +602,9 @@
         }
     }
 
-    // --- PARSER DISPENSA ALLIEVI ---
+// --- PARSER DISPENSA ALLIEVI (PULITA) ---
     function parseDispensa(text) {
-        const lines = text.split('\n');
+        const lines = text.split('\\n');
         let html = '<div class="dispensa-page">';
         let inSacro = false, inPratica = false, inQuiz = false;
 
@@ -619,45 +613,41 @@
             if(!l) return;
             let uL = l.toUpperCase();
 
+            // Ignora i Titoli ridondanti
             if (uL.startsWith('TITOLO:')) {
-                let titleText = l.substring(7).trim();
-                html += `<h3 class="d-title">${titleText}</h3>`;
+                return; 
             }
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced" style="margin-right:10px;"></i> La Norma (Sintesi)</div><ul>`;
+                // Aggiunge spazio per eventuale inserimento manuale o a penna di un cartello
+                html += `<div class="d-section d-sacro" style="position: relative; min-height: 80px;">
+                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
-                html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div>`;
+                html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
+            // Ferma l'analisi quando inizia il Campo Minato (verrà coperto dalla Matrice a parte)
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
-                if(inSacro) html += `</ul></div>`;
-                if(inPratica) html += `</div>`;
+                if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
-                html += `<div class="d-section d-quiz"><div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb" style="margin-right:10px;"></i> Il Campo Minato (I Quiz)</div>`;
             }
-            else {
-                let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
+            else if (!inQuiz) {
+                let formattedLine = l.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
+                let cleanLine = formattedLine.replace(/^[\\-\\*\\•]\\s*/, '').trim();
                 
                 if (inSacro && cleanLine) {
                     html += `<li>${cleanLine}</li>`;
                 } else if (inPratica && cleanLine) {
-                    html += `<p style="margin-bottom: 8px;">${cleanLine}</p>`;
-                } else if (inQuiz && cleanLine) {
-                    let qLine = cleanLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:900; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>').replace(/VERO/g, '<span style="color:#16a34a; font-weight:900; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
-                    qLine = qLine.replace(/\[(.*?)\]/g, '<span class="d-quiz-box">$1</span>');
-                    html += `<div class="d-quiz-item"><i class="fa-solid fa-caret-right"></i><div>${qLine}</div></div>`;
+                    html += `<p class="mb-2">${cleanLine}</p>`;
                 }
             }
         });
 
-        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`; if(inQuiz) html += `</div>`;
+        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
         return html + '</div>';
     }
-
     function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let mergedLines = [];
@@ -867,39 +857,64 @@
         `;
     }
 
+// --- RENDER MATRICE COMPATTA (GRUPPI VERO/FALSO) ---
     function renderMatrice(text, prefix) {
-        const lines = text.split('\n');
+        const lines = text.split('\\n');
         let html = '';
-        currentCsvData[prefix] = []; 
-        currentCsvData[prefix].push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]);
-
+        currentCsvData[prefix] = [["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]];
+        
         let currentMatriceVisual = ""; 
         let currentMatriceClean = "";  
+        let currentGroup = { vere: [], false: [] };
+
+        function flushGroup() {
+            if (currentGroup.vere.length > 0 || currentGroup.false.length > 0) {
+                if(currentGroup.vere.length > 0) {
+                    html += `<div class="matrice-group-title" style="color:#16a34a; border-color:#bbf7d0;"><i class="fa-solid fa-check mr-1"></i> Vere</div>`;
+                    currentGroup.vere.forEach(q => html += q);
+                }
+                if(currentGroup.false.length > 0) {
+                    html += `<div class="matrice-group-title" style="color:#dc2626; border-color:#fecaca;"><i class="fa-solid fa-xmark mr-1"></i> False e Trappole</div>`;
+                    currentGroup.false.forEach(q => html += q);
+                }
+                currentGroup = { vere: [], false: [] };
+            }
+        }
 
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
             let upperL = l.toUpperCase();
-            let isContinuation = l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./) || l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ');
+            let isContinuation = l.match(/^[\\-\\*\\•\\>—–]/) || l.match(/^\\.\\.\\./) || l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ');
 
             if (!isContinuation) {
-                currentMatriceVisual = l.replace(/[\[\]\*\#]/g, '').trim();
-                currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
+                flushGroup(); // Stampa il gruppo precedente prima di iniziare la nuova radice
+                currentMatriceVisual = l.replace(/[\\[\\]\\*\\#]/g, '').trim();
+                currentMatriceClean = currentMatriceVisual.replace(/\\.\\.\\.$/, '').trim();
                 html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
             } else {
                 let parts = l.split('|');
                 let rawQuizText = parts[0].trim();
                 let expText = parts[1] ? parts[1].trim() : "Nessuna spiegazione fornita.";
-                let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
-                let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
-                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '').replace(/\(V\)/i, '').replace(/\(F\)/i, '').replace(/VERO/i, '').replace(/FALSO/i, '').trim();
-                let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
-                let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
                 
-                html += `<div class="matrice-row"><i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-3 mt-1 text-sm shrink-0"></i> <div><span class="block">${testoVisual} ${badgeHtml}</span><span class="matrice-exp"><i class="fa-solid fa-caret-right mr-1"></i>${expText}</span></div></div>`;
+                let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
+                let badgeHtml = isVero ? '<span class="v-badge">V</span>' : '<span class="f-badge">F</span>';
+                
+                let testoVisual = rawQuizText.replace(/^[\\-\\*\\•\\>—–]\\s*/, '').replace(/\\(V\\)/i, '').replace(/\\(F\\)/i, '').replace(/VERO/i, '').replace(/FALSO/i, '').trim();
+                let testoClean = testoVisual.replace(/^\\.\\.\\./, '').trim();
+                let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\\s+/g, ' ');
+                
+                let rowHtml = `<div class="matrice-row"><div>${badgeHtml} <span class="block">${testoVisual}</span>`;
+                if(!isVero) rowHtml += `<span class="matrice-exp">In realtà: ${expText}</span>`;
+                rowHtml += `</div></div>`;
+                
+                if(isVero) currentGroup.vere.push(rowHtml);
+                else currentGroup.false.push(rowHtml);
+
                 currentCsvData[prefix].push([currentMatriceClean, testoClean, fraseCompleta, isVero ? "V" : "F", expText]);
             }
         });
+        flushGroup(); // Assicurati di stampare l'ultimo gruppo
 
         document.getElementById(`${prefix}-matrice-render`).innerHTML = html;
     }
