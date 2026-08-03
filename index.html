@@ -798,7 +798,7 @@
     }
 
 // --- RENDER MATRICE COMPATTA (COLONNE DINAMICHE & PARSER 3-PARTI) ---
-    function renderMatrice(text, prefix) {
+function renderMatrice(text, prefix) {
         const lines = text.split('\n');
         
         // Contiamo quanti quiz ci sono per decidere se fare 1 o 2 colonne
@@ -834,18 +834,16 @@
                 currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
                 html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
             } else {
-                // IL NUOVO PARSER CHE SPARTISCE CORRETTAMENTE I 3 PEZZI
                 let parts = l.split('|'); 
                 let rawQuizText = parts[0].trim(); 
                 let esitoStr = parts.length > 1 ? parts[1].trim().toUpperCase() : "";
                 let expText = parts.length > 2 ? parts.slice(2).join('|').trim() : "";
                 
-                // Fallback nel caso l'IA si scordi un "|"
                 if (parts.length === 2) {
                     if (esitoStr === 'V' || esitoStr === 'F' || esitoStr === 'VERO' || esitoStr === 'FALSO') {
                         // Ok, è Testo | Esito
                     } else {
-                        // È Testo | Spiegazione (l'esito è nascosto nel testo)
+                        // È Testo | Spiegazione
                         expText = parts[1].trim();
                         esitoStr = rawQuizText; 
                     }
@@ -860,8 +858,9 @@
                 let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
                 let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
                 
+                // LA MODIFICA È QUI: TOLTO "!isVero", ORA MOSTRA SEMPRE LE SPIEGAZIONI
                 let rowHtml = `<div class="matrice-row"><div>${badgeHtml} <span class="block">&hellip; ${testoVisual}</span>`;
-                if(!isVero && expText) rowHtml += `<span class="matrice-exp">${expText}</span>`;
+                if(expText) rowHtml += `<span class="matrice-exp">${expText}</span>`;
                 rowHtml += `</div></div>`;
                 
                 if(isVero) currentGroup.vere.push(rowHtml); else currentGroup.false.push(rowHtml);
