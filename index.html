@@ -332,9 +332,10 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button onclick="addCartelloToDoc()" class="text-blue-400 hover:text-white bg-slate-900 px-3 py-2 rounded-lg transition border border-blue-500/30 hover:border-blue-400 flex items-center shadow-lg shrink-0 text-sm">
-                            <i class="fa-solid fa-image mr-2"></i> + Cartello
-                        </button>
+<input type="file" id="cartello-upload" accept="image/*" class="hidden" onchange="handleCartelloUpload(event)">
+<button onclick="document.getElementById('cartello-upload').click()" class="text-blue-400 hover:text-white bg-slate-900 px-3 py-2 rounded-lg transition border border-blue-500/30 hover:border-blue-400 flex items-center shadow-lg shrink-0 text-sm">
+    <i class="fa-solid fa-upload mr-2"></i> Carica Immagine
+</button>
                         <div id="read-dispensa-btn-container"></div>
                         <button onclick="toggleEditMode()" id="btn-toggle-edit" class="text-yellow-400 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-yellow-500/30 hover:border-yellow-400 flex items-center shadow-lg shrink-0">
                             <i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento
@@ -596,24 +597,37 @@
         if (success) { document.getElementById('gen-results-area').classList.remove('hidden'); document.getElementById('gen-results-area').classList.add('flex'); }
     }
 
-    async function addCartelloToDoc() {
+async function handleCartelloUpload(event) {
         if(!currentReaderDocId) return;
-        let url = prompt("Incolla qui l'URL (link) dell'immagine del cartello stradale:");
-        if (url) {
+        const file = event.target.files[0];
+        if(!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const base64Image = e.target.result;
             const docIndex = archiveDB.findIndex(d => d.id === currentReaderDocId);
             if(docIndex !== -1) {
-                archiveDB[docIndex].imageUrl = url;
+                archiveDB[docIndex].imageUrl = base64Image;
                 await syncDatabase();
-                processAndRender(archiveDB[docIndex].rawText, 'read', false, url);
-                alert("Cartello inserito!");
+                processAndRender(archiveDB[docIndex].rawText, 'read', false, base64Image);
             }
-        }
+            event.target.value = ""; // Resetta l'input
+        };
+        reader.readAsDataURL(file);
     }
 
-// --- PARSER DISPENSA ALLIEVI (CON IMMAGINE E ANTI-SOVRAPPOSIZIONE) ---
+// --- PARSER DISPENSA ALLIEVI (CENTRAL IMAGE & CAMPO MINATO RIPRISTINATO) ---
     function parseDispensa(text, imageUrl) {
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
+        
+        // Immagine CENTRALE sotto l'header e sopra il testo (nessuna sovrapposizione)
+        if (imageUrl) {
+            html += `<div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
+                        <img src="${imageUrl}" style="max-height: 180px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: inline-block;">
+                     </div>`;
+        }
+
         let inSacro = false, inPratica = false, inQuiz = false;
 
         lines.forEach(line => {
@@ -624,34 +638,39 @@
             if (uL.startsWith('TITOLO:')) return; 
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                
-                let cartelloHtml = imageUrl 
-                    ? `<img src="${imageUrl}" style="position:absolute; top:12px; right:12px; max-width:85px; max-height:85px; object-fit:contain; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2); background:white; z-index:10;">`
-                    : `<div style="position:absolute; top:12px; right:12px; width:70px; height:70px; border:2px dashed #cbd5e1; border-radius:6px; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:7pt; text-align:center; flex-direction:column; z-index:10;"><i class="fa-solid fa-image mb-1 text-sm block"></i>Vuoto</div>`;
-                
-                // Il padding-right a 105px impedisce al testo di finire sotto l'immagine
-                html += `<div class="d-section d-sacro" style="position: relative; min-height: 95px; padding-right: 105px;">
-                            ${cartelloHtml}
-                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
+                html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
                 html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
-            else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
+            else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):') || uL.includes('TRAPPOLE DEI QUIZ')) {
                 if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
+                // Ricrea il box del Campo Minato che avevamo perso
+                html += `<div style="background-color: #fff1f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; page-break-inside: avoid; text-align: left;">
+                            <div style="font-size: 11pt; font-weight: 900; color: #991b1b; border-bottom: 1px solid #fca5a5; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center;">
+                                <i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)
+                            </div>`;
             }
-            else if (!inQuiz) {
+            else {
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
-                if (inSacro && cleanLine) html += `<li>${cleanLine}</li>`;
-                else if (inPratica && cleanLine) html += `<p class="mb-2">${cleanLine}</p>`;
+                
+                if (inSacro && cleanLine) {
+                    html += `<li>${cleanLine}</li>`;
+                } else if (inPratica && cleanLine) {
+                    html += `<p class="mb-2">${cleanLine}</p>`;
+                } else if (inQuiz && cleanLine) {
+                    let qLine = cleanLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:900; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>').replace(/VERO/g, '<span style="color:#16a34a; font-weight:900; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
+                    qLine = qLine.replace(/\[(.*?)\]/g, '<strong style="color:#dc2626;">[$1]</strong>');
+                    html += `<div style="margin-bottom:6px; font-size:10.5pt; line-height:1.4; display:flex; align-items:flex-start;"><i class="fa-solid fa-caret-right text-red-400 mr-2 mt-1 text-sm shrink-0"></i><div>${qLine}</div></div>`;
+                }
             }
         });
 
-        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`; 
+        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`; if(inQuiz) html += `</div>`;
         return html + '</div>';
     }
 
