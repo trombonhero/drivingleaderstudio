@@ -616,12 +616,12 @@ async function handleCartelloUpload(event) {
         reader.readAsDataURL(file);
     }
 
-// --- PARSER DISPENSA ALLIEVI (CENTRAL IMAGE & CAMPO MINATO RIPRISTINATO) ---
+// --- PARSER DISPENSA ALLIEVI (FIX RICONOSCIMENTO TITOLI) ---
     function parseDispensa(text, imageUrl) {
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
         
-        // Immagine CENTRALE sotto l'header e sopra il testo (nessuna sovrapposizione)
+        // Immagine CENTRALE sotto l'header e sopra il testo
         if (imageUrl) {
             html += `<div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
                         <img src="${imageUrl}" style="max-height: 180px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: inline-block;">
@@ -635,25 +635,33 @@ async function handleCartelloUpload(event) {
             if(!l) return;
             let uL = l.toUpperCase();
 
+            // Evita che i "Titoli" si stampino due volte
             if (uL.startsWith('TITOLO:')) return; 
-            else if (uL.includes('IL TESTO SACRO:')) {
+            
+            // Riconoscimento elastico Sezione 1: La Norma
+            else if (uL.includes('TESTO SACRO') || uL.includes('NORMA IN SINTESI') || uL.includes('LA NORMA')) {
                 inSacro = true; inPratica = false; inQuiz = false;
                 html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
             }
-            else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
+            
+            // Riconoscimento elastico Sezione 2: La Pratica
+            else if (uL.includes('TRADUZIONE IN STRADA') || uL.includes('APPLICAZIONE PRATICA') || uL.includes('IL SENSO PRATICO')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
                 html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
-            else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):') || uL.includes('TRAPPOLE DEI QUIZ')) {
+            
+            // Riconoscimento elastico Sezione 3: I Quiz (Campo Minato)
+            else if (uL.includes('CAMPO MINATO') || uL.includes('I QUIZ') || uL.includes('TRAPPOLE DEI QUIZ')) {
                 if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
-                // Ricrea il box del Campo Minato che avevamo perso
                 html += `<div style="background-color: #fff1f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; page-break-inside: avoid; text-align: left;">
                             <div style="font-size: 11pt; font-weight: 900; color: #991b1b; border-bottom: 1px solid #fca5a5; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center;">
                                 <i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)
                             </div>`;
             }
+            
+            // Inserimento dei testi all'interno delle sezioni
             else {
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
