@@ -320,22 +320,22 @@
                         <input type="checkbox" id="batch-dispense" checked class="w-4 h-4 accent-amber-500 rounded cursor-pointer"> <span class="hidden md:inline">Dispense</span><span class="md:hidden">Disp</span>
                     </label>
                 </div>
-                <div class="flex gap-2 border-l border-slate-600 pl-4 md:pl-6 shrink-0">
-                    <button onclick="deselectAll()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full font-bold transition shadow flex items-center justify-center text-sm border border-slate-500 whitespace-nowrap shrink-0">
-                        Annulla
-                    </button>
-                    <div class="flex rounded-full shadow border border-slate-400 overflow-hidden shrink-0">
-                        <button onclick="printBatch()" class="bg-white hover:bg-slate-200 text-slate-900 px-5 py-2 font-black transition flex items-center justify-center text-sm whitespace-nowrap shrink-0">
-                            <i class="fa-solid fa-print mr-2 text-blue-600"></i> Crea PDF
-                        </button>
-                        <button onclick="openAdvancedPrint()" class="bg-slate-200 hover:bg-slate-300 border-l border-slate-400 text-slate-900 px-3 py-2 font-black transition flex items-center justify-center text-sm" title="Opzioni Avanzate e Ordine">
-                            <i class="fa-solid fa-sliders"></i>
-                        </button>
-                    </div>
-                    <button onclick="deleteBatch()" class="bg-red-600 hover:bg-red-500 text-white px-4 md:px-5 py-2 rounded-full font-black transition shadow flex items-center justify-center text-sm whitespace-nowrap shrink-0">
-                        <i class="fa-solid fa-trash-can md:mr-2"></i> <span class="hidden md:inline">Elimina</span>
-                    </button>
-                </div>
+                <div class="flex gap-4 border-l border-slate-600 pl-4 md:pl-6 shrink-0 items-center">
+    <div class="flex flex-col gap-1 border-r border-slate-600 pr-4 mr-2">
+        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Filtri Dispensa:</span>
+        <div class="flex gap-3">
+            <label class="text-slate-300 hover:text-white cursor-pointer text-xs flex items-center gap-1"><input type="checkbox" id="filter-sacro" checked class="w-3 h-3 accent-blue-500 rounded"> Norma</label>
+            <label class="text-slate-300 hover:text-white cursor-pointer text-xs flex items-center gap-1"><input type="checkbox" id="filter-pratica" checked class="w-3 h-3 accent-emerald-500 rounded"> Pratica</label>
+            <label class="text-slate-300 hover:text-white cursor-pointer text-xs flex items-center gap-1"><input type="checkbox" id="filter-quiz" checked class="w-3 h-3 accent-red-500 rounded"> Quiz</label>
+        </div>
+    </div>
+    <button onclick="deselectAll()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full font-bold transition shadow flex items-center justify-center text-sm border border-slate-500 whitespace-nowrap shrink-0">Annulla</button>
+    <div class="flex rounded-full shadow border border-slate-400 overflow-hidden shrink-0">
+        <button onclick="printBatch()" class="bg-white hover:bg-slate-200 text-slate-900 px-5 py-2 font-black transition flex items-center justify-center text-sm whitespace-nowrap shrink-0"><i class="fa-solid fa-print mr-2 text-blue-600"></i> Crea PDF</button>
+        <button onclick="openAdvancedPrint()" class="bg-slate-200 hover:bg-slate-300 border-l border-slate-400 text-slate-900 px-3 py-2 font-black transition flex items-center justify-center text-sm" title="Opzioni Avanzate"><i class="fa-solid fa-sliders"></i></button>
+    </div>
+    <button onclick="deleteBatch()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full font-black transition shadow flex items-center justify-center text-sm whitespace-nowrap shrink-0"><i class="fa-solid fa-trash-can md:mr-2"></i> Elimina</button>
+</div>
             </div>
         </div>
 
@@ -658,53 +658,53 @@ async function handleCartelloUpload(event) {
         reader.readAsDataURL(file);
     }
 
-// --- PARSER DISPENSA ALLIEVI (CENTRAL IMAGE & CAMPO MINATO RIPRISTINATO) ---
+// --- PARSER DISPENSA ALLIEVI (CON FILTRI E IMMAGINE) ---
     function parseDispensa(text, imageUrl) {
+        // Legge lo stato dei filtri
+        const fSacro = document.getElementById('filter-sacro') ? document.getElementById('filter-sacro').checked : true;
+        const fPratica = document.getElementById('filter-pratica') ? document.getElementById('filter-pratica').checked : true;
+        const fQuiz = document.getElementById('filter-quiz') ? document.getElementById('filter-quiz').checked : true;
+
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
         
-        // Immagine CENTRALE sotto l'header e sopra il testo (nessuna sovrapposizione)
         if (imageUrl) {
-            html += `<div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
-                        <img src="${imageUrl}" style="max-height: 180px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: inline-block;">
-                     </div>`;
+            html += `<div style="text-align: center; margin-bottom: 20px; margin-top: 10px;"><img src="${imageUrl}" style="max-height: 180px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: inline-block;"></div>`;
         }
 
         let inSacro = false, inPratica = false, inQuiz = false;
+        let skipCurrentSection = false;
 
         lines.forEach(line => {
-            let l = line.trim();
-            if(!l) return;
+            let l = line.trim(); if(!l) return;
             let uL = l.toUpperCase();
 
             if (uL.startsWith('TITOLO:')) return; 
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
-                html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
+                skipCurrentSection = !fSacro;
+                if(!skipCurrentSection) html += `<div class="d-section d-sacro"><div class="d-section-title"><i class="fa-solid fa-scale-balanced mr-2"></i> La Norma (Sintesi)</div><ul>`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
-                if(inSacro) html += `</ul></div>`;
+                if(inSacro && !skipCurrentSection) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
-                html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
+                skipCurrentSection = !fPratica;
+                if(!skipCurrentSection) html += `<div class="d-section d-pratica"><div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road mr-2"></i> Applicazione Pratica</div>`;
             }
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):') || uL.includes('TRAPPOLE DEI QUIZ')) {
-                if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`;
+                if(inSacro && !skipCurrentSection) html += `</ul></div>`; 
+                if(inPratica && !skipCurrentSection) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
-                // Ricrea il box del Campo Minato che avevamo perso
-                html += `<div style="background-color: #fff1f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; page-break-inside: avoid; text-align: left;">
-                            <div style="font-size: 11pt; font-weight: 900; color: #991b1b; border-bottom: 1px solid #fca5a5; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center;">
-                                <i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)
-                            </div>`;
+                skipCurrentSection = !fQuiz;
+                if(!skipCurrentSection) html += `<div style="background-color: #fff1f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; page-break-inside: avoid; text-align: left;"><div style="font-size: 11pt; font-weight: 900; color: #991b1b; border-bottom: 1px solid #fca5a5; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center;"><i class="fa-solid fa-bomb mr-2"></i> Il Campo Minato (I Quiz)</div>`;
             }
-            else {
+            else if (!skipCurrentSection) {
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
                 
-                if (inSacro && cleanLine) {
-                    html += `<li>${cleanLine}</li>`;
-                } else if (inPratica && cleanLine) {
-                    html += `<p class="mb-2">${cleanLine}</p>`;
-                } else if (inQuiz && cleanLine) {
+                if (inSacro && cleanLine) { html += `<li>${cleanLine}</li>`; } 
+                else if (inPratica && cleanLine) { html += `<p class="mb-2">${cleanLine}</p>`; } 
+                else if (inQuiz && cleanLine) {
                     let qLine = cleanLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:900; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>').replace(/VERO/g, '<span style="color:#16a34a; font-weight:900; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
                     qLine = qLine.replace(/\[(.*?)\]/g, '<strong style="color:#dc2626;">[$1]</strong>');
                     html += `<div style="margin-bottom:6px; font-size:10.5pt; line-height:1.4; display:flex; align-items:flex-start;"><i class="fa-solid fa-caret-right text-red-400 mr-2 mt-1 text-sm shrink-0"></i><div>${qLine}</div></div>`;
@@ -712,7 +712,9 @@ async function handleCartelloUpload(event) {
             }
         });
 
-        if(inSacro) html += `</ul></div>`; if(inPratica) html += `</div>`; if(inQuiz) html += `</div>`;
+        if(inSacro && !skipCurrentSection) html += `</ul></div>`; 
+        if(inPratica && !skipCurrentSection) html += `</div>`; 
+        if(inQuiz && !skipCurrentSection) html += `</div>`;
         return html + '</div>';
     }
 
@@ -1060,7 +1062,56 @@ async function toggleDocReady(docId) {
         return false;
     }
 
-function renderArchiveList(searchQuery = '') {
+// --- FUNZIONE PER EXPORT STATISTICHE CSV ---
+    function exportStatsCSV(aulaName) {
+        let docs = archiveDB.filter(d => d.aula === aulaName);
+        if(docs.length === 0) return alert("Nessun dato per questa Aula.");
+        
+        let csvContent = "Aula,Capitolo,Paragrafo/Lezione,Data Salvataggio,Minuti Stimati\r\n";
+        let totalMins = 0;
+
+        docs.forEach(d => {
+            let mins = 0;
+            if(d.tempo) { let m = d.tempo.match(/\d+/); if(m) mins = parseInt(m[0], 10); }
+            totalMins += mins;
+            
+            let row = [d.aula || "Varie", d.obiettivo || "Generico", d.argomento || "N/A", d.date || "N/A", mins]
+                .map(item => `"${String(item).replace(/"/g, '""')}"`).join(",");
+            csvContent += row + "\r\n";
+        });
+
+        let ore = Math.floor(totalMins / 60);
+        let minRestanti = totalMins % 60;
+        csvContent += `\r\n"TOTALE AULA","","","","${totalMins} min (${ore}h ${minRestanti}m)"\r\n`;
+
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `Statistiche_${aulaName.replace(/[^a-z0-9]/gi, '_')}.csv`);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    // --- FUNZIONE SELEZIONA TUTTA L'AULA ---
+    function toggleAula(aulaIndex, isChecked) {
+        document.querySelectorAll(`.chk-aula-${aulaIndex}`).forEach(cb => { 
+            cb.checked = isChecked; 
+            if(isChecked) globalSelectedIds.add(cb.value); else globalSelectedIds.delete(cb.value); 
+        });
+        updateSelectionBar();
+    }
+
+    // --- FUNZIONE SPUNTA PRONTO (CONFERMATO) ---
+    async function toggleDocReady(docId) {
+        const docIndex = archiveDB.findIndex(d => d.id === docId);
+        if(docIndex !== -1) {
+            archiveDB[docIndex].isReady = !archiveDB[docIndex].isReady;
+            await syncDatabase();
+            lastOpenedAula = archiveDB[docIndex].aula;
+            lastOpenedCapitolo = archiveDB[docIndex].obiettivo;
+            renderArchiveList(document.getElementById('search-db')?.value || '');
+        }
+    }
+
+    function renderArchiveList(searchQuery = '') {
         const container = document.getElementById('archive-container');
         container.innerHTML = '';
 
@@ -1092,15 +1143,32 @@ function renderArchiveList(searchQuery = '') {
         let aulaIndex = 0;
         Object.keys(grouped).sort().forEach(aulaName => {
             let isAulaExpanded = forceExpand || (!isSearching && lastOpenedAula === aulaName);
+            
+            // Calcolo Ore e Minuti totali AULA
+            let totalAulaMinutes = 0;
+            Object.values(grouped[aulaName]).forEach(cap => {
+                cap.forEach(d => { if(d.tempo) { let m = d.tempo.match(/\d+/); if(m) totalAulaMinutes += parseInt(m[0],10); } });
+            });
+            let oreAula = Math.floor(totalAulaMinutes / 60);
+            let minRestantiAula = totalAulaMinutes % 60;
+            let strTempoAula = oreAula > 0 ? `${oreAula}h ${minRestantiAula}m` : `${totalAulaMinutes} min`;
+
             let aulaHtml = `<div class="mb-6 glass-panel overflow-hidden transition-all p-0 border border-slate-700">
                 <div class="p-6 cursor-pointer flex justify-between items-center hover:bg-slate-800/80 transition-colors"
                      onclick="document.getElementById('grid-aula-${aulaIndex}').classList.toggle('hidden'); 
                               document.getElementById('icon-aula-${aulaIndex}').classList.toggle('fa-chevron-up'); 
                               document.getElementById('icon-aula-${aulaIndex}').classList.toggle('fa-chevron-down');">
-                    <h3 class="text-2xl font-black text-emerald-400 uppercase tracking-widest flex items-center">
-                        <i class="fa-solid fa-school mr-4"></i>${aulaName}
-                    </h3>
-                    <i id="icon-aula-${aulaIndex}" class="fa-solid ${isAulaExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-400 text-xl transition-transform"></i>
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox" onchange="toggleAula('${aulaIndex}', this.checked); event.stopPropagation();" class="w-5 h-5 accent-emerald-500 rounded cursor-pointer" title="Seleziona tutta l'Aula">
+                        <h3 class="text-2xl font-black text-emerald-400 uppercase tracking-widest flex items-center m-0">
+                            <i class="fa-solid fa-school mr-4"></i>${aulaName}
+                        </h3>
+                        <span class="bg-slate-900 text-yellow-400 px-3 py-1 rounded-lg text-sm font-mono border border-slate-600 shadow-inner flex items-center ml-2"><i class="fa-regular fa-clock mr-2"></i> ${strTempoAula}</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="exportStatsCSV('${aulaName.replace(/'/g, "\\'")}'); event.stopPropagation();" class="bg-slate-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm transition-colors border border-slate-600 shadow"><i class="fa-solid fa-file-csv mr-2"></i> Statistiche</button>
+                        <i id="icon-aula-${aulaIndex}" class="fa-solid ${isAulaExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-400 text-xl transition-transform"></i>
+                    </div>
                 </div>
                 <div id="grid-aula-${aulaIndex}" class="space-y-4 p-6 pt-0 border-t border-slate-700/50 ${isAulaExpanded ? '' : 'hidden'}">`;
             
@@ -1141,7 +1209,7 @@ function renderArchiveList(searchQuery = '') {
                     aulaHtml += `
                         <div class="${cardBorderClass} border rounded-lg p-4 flex flex-col justify-between shadow hover:border-blue-500 transition group relative pr-8">
                             <div class="absolute top-4 right-4 z-20 flex flex-col gap-3">
-                                <input type="checkbox" class="doc-checkbox chk-cap-${aulaIndex}-${obIndex} w-5 h-5 accent-blue-500 rounded cursor-pointer shadow-lg border border-slate-500" value="${docObj.id}" onchange="toggleDocSelection('${docObj.id}', this.checked)" ${isChecked}>
+                                <input type="checkbox" class="doc-checkbox chk-aula-${aulaIndex} chk-cap-${aulaIndex}-${obIndex} w-5 h-5 accent-blue-500 rounded cursor-pointer shadow-lg border border-slate-500" value="${docObj.id}" onchange="toggleDocSelection('${docObj.id}', this.checked)" ${isChecked}>
                                 <button onclick="toggleDocReady('${docObj.id}'); event.stopPropagation();" class="${readyBtnClass} transition-colors" title="Segna come Pronto"><i class="fa-solid fa-circle-check text-xl bg-slate-900 rounded-full"></i></button>
                             </div>
                             <div class="cursor-pointer flex-grow mb-3 pr-10" onclick="openArchivedDocument('${docObj.id}')">
