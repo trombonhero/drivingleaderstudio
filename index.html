@@ -114,20 +114,27 @@
             #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
             
-            @page { margin: 10mm 10mm 15mm 10mm !important; } 
+            /* Margine inferiore aumentato a 22mm per non tagliare le frasi */
+            @page { margin: 10mm 10mm 22mm 10mm !important; } 
             
-            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; }
+            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; padding-bottom: 5mm; }
             .print-footer img { height: 26px; object-fit: contain; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
+
+            /* Spaziatore tfoot che impedisce al testo di sovrapporsi al footer */
+            table.print-table { width: 100%; border: none; border-collapse: collapse; }
+            thead.print-thead { display: table-header-group; }
+            tfoot.print-tfoot { display: table-footer-group; }
+            tfoot.print-tfoot td { height: 20mm; border: none; padding: 0; }
 
             .batch-page { page-break-after: always !important; break-after: page !important; }
             .batch-page-fluid { page-break-after: auto !important; margin-bottom: 2rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 2rem; }
             .batch-page-fluid:last-child { border-bottom: none; }
             
-            .print-header-container { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; display: block !important; width: 100%; page-break-after: avoid !important;}
-            .print-header-aula { font-size: 9pt; color: #d97706 !important; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-            .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000; }
-            .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
+            .print-header-container { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px; display: block !important; width: 100%; page-break-after: avoid !important;}
+            .print-header-aula { font-size: 8pt; color: #d97706 !important; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+            .print-header-ob { font-size: 14pt; margin: 0 0 2px 0; font-weight: 900; line-height: 1.1; color: #000; }
+            .print-header-arg { font-size: 10pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
 
             /* Stampa: Mappa Tecnica */
             .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 11pt !important; line-height: 1.4 !important; page-break-inside: avoid; }
@@ -341,25 +348,28 @@
 
         <div id="view-reader" class="view-section p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full h-full flex flex-col">
-                <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
-                    <button onclick="navTo('archive')" class="text-slate-300 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-slate-700"><i class="fa-solid fa-arrow-left mr-2"></i>Torna all'Archivio</button>
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md gap-4">
+                    <button onclick="navTo('archive')" class="text-slate-300 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-slate-700 whitespace-nowrap shrink-0"><i class="fa-solid fa-arrow-left mr-2"></i>Torna all'Archivio</button>
                     
-                    <div class="text-center flex-grow px-4 overflow-hidden">
+                    <div class="text-center flex-grow px-4 overflow-hidden w-full md:w-auto">
                         <p class="text-xs text-blue-400 font-bold uppercase tracking-widest truncate" id="reader-aula-title">AULA</p>
                         <h3 class="text-xl font-bold text-white truncate" id="reader-item-title">Titolo Argomento</h3>
                     </div>
 
-                    <div class="flex gap-3">
-<input type="file" id="cartello-upload" accept="image/*" class="hidden" onchange="handleCartelloUpload(event)">
-<button onclick="document.getElementById('cartello-upload').click()" class="text-blue-400 hover:text-white bg-slate-900 px-3 py-2 rounded-lg transition border border-blue-500/30 hover:border-blue-400 flex items-center shadow-lg shrink-0 text-sm">
-    <i class="fa-solid fa-upload mr-2"></i> Carica Immagine
-</button>
+                    <div class="flex flex-wrap items-center justify-center gap-3 shrink-0">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="reader-search" onkeyup="filterReaderContent(this.value)" placeholder="Cerca quiz qui..." class="w-44 bg-slate-900 border border-slate-600 text-white placeholder-slate-500 rounded-lg py-1.5 pl-8 pr-3 focus:outline-none focus:border-emerald-500 transition text-sm">
+                        </div>
+                        <input type="file" id="cartello-upload" accept="image/*" class="hidden" onchange="handleCartelloUpload(event)">
+                        <button onclick="document.getElementById('cartello-upload').click()" class="text-blue-400 hover:text-white bg-slate-900 px-3 py-1.5 rounded-lg transition border border-blue-500/30 hover:border-blue-400 flex items-center shadow-lg text-sm">
+                            <i class="fa-solid fa-upload mr-1.5"></i> Immagine
+                        </button>
                         <div id="read-dispensa-btn-container"></div>
-                        <button onclick="toggleEditMode()" id="btn-toggle-edit" class="text-yellow-400 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-yellow-500/30 hover:border-yellow-400 flex items-center shadow-lg shrink-0">
-                            <i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento
+                        <button onclick="toggleEditMode()" id="btn-toggle-edit" class="text-yellow-400 hover:text-white bg-slate-900 px-3 py-1.5 rounded-lg transition border border-yellow-500/30 hover:border-yellow-400 flex items-center shadow-lg text-sm">
+                            <i class="fa-solid fa-pen-to-square mr-1.5"></i> Modifica
                         </button>
                     </div>
-                    
                 </div>
 
                 <div id="read-view-content" class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
@@ -1493,10 +1503,35 @@ function createPrintHeader(meta, docTitle) {
         document.getElementById('read-view-content').classList.add('grid');
         document.getElementById('read-edit-content').classList.add('hidden');
         document.getElementById('read-edit-content').classList.remove('flex');
-        document.getElementById('btn-toggle-edit').innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento';
+        document.getElementById('btn-toggle-edit').innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Modifica';
+
+        // Resetta la casella di ricerca quiz quando si apre una nuova scheda
+        const readerSearch = document.getElementById('reader-search');
+        if(readerSearch) readerSearch.value = '';
 
         processAndRender(docObj.rawText, 'read', false, docObj.imageUrl);
         navTo('reader');
+    }
+
+    // --- FILTRO RAPIDO QUIZ NELLA SCHEDA APERTA ---
+    function filterReaderContent(query) {
+        const q = query.toLowerCase().trim();
+        
+        // Filtra le righe della Matrice Quiz
+        const matriceRows = document.querySelectorAll('#read-matrice-render .matrice-row');
+        matriceRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if(!q || text.includes(q)) row.style.display = 'block';
+            else row.style.display = 'none';
+        });
+
+        // Filtra le righe della Mappa Tecnica
+        const mappaRows = document.querySelectorAll('#read-mappa-render .pagina-row');
+        mappaRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if(!q || text.includes(q)) row.style.display = 'flex';
+            else row.style.display = 'none';
+        });
     }
 
     function toggleEditMode() {
