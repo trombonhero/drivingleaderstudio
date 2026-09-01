@@ -109,23 +109,23 @@
         /* =======================================================
            STILI DI STAMPA GLOBALI E IMPOSTAZIONI FASCICOLO
            ======================================================= */
-        @media print {
+@media print {
             html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10.5pt !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
             
-            /* Margine inferiore spinto a 25mm per blindare lo spazio del footer */
-            @page { margin: 10mm 10mm 25mm 10mm !important; } 
+            /* Margine inferiore spinto a 35mm per non toccare MAI il footer */
+            @page { margin: 10mm 10mm 35mm 10mm !important; } 
             
-            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; padding-bottom: 5mm; height: 18mm;}
+            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: flex-end; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; height: 18mm; padding-bottom: 6mm;}
             .print-footer img { height: 26px; object-fit: contain; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
 
-            /* Il tfoot alto 25mm crea il muro invisibile che blocca il testo prima del footer */
+            /* Il tfoot fa da "muro invisibile" alla fine delle tabelle */
             table.print-table { width: 100%; border: none; border-collapse: collapse; }
             thead.print-thead { display: table-header-group; }
             tfoot.print-tfoot { display: table-footer-group; }
-            tfoot.print-tfoot td { height: 25mm !important; border: none; padding: 0; }
+            tfoot.print-tfoot td { height: 35mm !important; border: none; padding: 0; }
 
             .batch-page { page-break-after: always !important; break-after: page !important; }
             .batch-page-fluid { page-break-after: auto !important; margin-bottom: 2rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 2rem; }
@@ -154,8 +154,7 @@
             .matrice-columns-1 { column-count: 1 !important; display: block; }
             .matrice-columns-2 { column-count: 2 !important; column-gap: 12mm; column-rule: 1px solid #e2e8f0; }
             .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 10.5pt !important; margin-top: 12pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 6px; background: transparent !important; page-break-after: avoid !important; break-after: avoid !important; text-transform: uppercase; }
-            .matrice-row { display: block !important; margin-bottom: 6pt !important; padding-left: 4px; font-size: 9pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; overflow: hidden !important; width: 100% !important; position: relative;}
-            .matrice-row > div { display: block !important; overflow: hidden !important; padding-left: 20px; position: relative;}
+            .matrice-row { display: inline-block !important; width: 100% !important; margin-bottom: 8pt !important; padding-left: 4px; font-size: 9pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; position: relative;}            .matrice-row > div { display: block !important; overflow: hidden !important; padding-left: 20px; position: relative;}
             .v-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #16a34a !important; font-weight: 900; font-style: normal; font-size: 7.5pt !important; padding: 1px 4px; border-radius: 3px;}
             .f-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #dc2626 !important; font-weight: 900; font-style: normal; font-size: 7.5pt !important; padding: 1px 4px; border-radius: 3px;}
             .matrice-exp { display: block !important; font-size: 8pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.1 !important;}
@@ -1720,7 +1719,7 @@ function createPrintHeader(meta, docTitle) {
         document.getElementById('quiz-total-counter').innerText = totalQuizCount;
     }
 
-    function executeGlobalQuizSearch(query) {
+function executeGlobalQuizSearch(query) {
         const container = document.getElementById('quiz-results-container');
         const q = query.toLowerCase().trim();
         
@@ -1730,9 +1729,21 @@ function createPrintHeader(meta, docTitle) {
         }
 
         const words = q.split(' ').filter(w => w.length > 0);
+        
+        // FILTRO INTELLIGENTE: 
+        // Se la parola digitata ha 3 lettere o meno (es. "ATA"), cerca la parola esatta intera (\b).
+        // Se è più lunga, accetta anche parti di parola (es. "carn" trova "carnet").
         let results = globalQuizDatabase.filter(quiz => {
             const searchText = (quiz.testoCompleto + " " + quiz.spiegazione).toLowerCase();
-            return words.every(word => searchText.includes(word));
+            return words.every(word => {
+                if (word.length <= 3) {
+                    const safeWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regexExatta = new RegExp(`\\b${safeWord}\\b`, 'i');
+                    return regexExatta.test(searchText);
+                } else {
+                    return searchText.includes(word);
+                }
+            });
         });
 
         if (results.length === 0) {
@@ -1741,16 +1752,20 @@ function createPrintHeader(meta, docTitle) {
         }
 
         let html = '';
-        // Limita a 100 risultati per non bloccare il browser
         results.slice(0, 100).forEach(quiz => {
             let badgeClass = quiz.esito ? 'bg-emerald-500' : 'bg-red-500';
             let badgeText = quiz.esito ? 'V' : 'F';
             
-            // Evidenziazione termini
+            // EVIDENZIAZIONE INTELLIGENTE GIALLA
             let highlightedTesto = quiz.testoCompleto;
             let highlightedExp = quiz.spiegazione;
+            
             words.forEach(word => {
-                const regex = new RegExp(`(${word.replace(/[.*+?^${}()|[\]\\]/g, '\$&')})`, 'gi');
+                const safeWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                // Usa lo stesso principio: parola intera per i testi corti
+                let regexStr = word.length <= 3 ? `\\b(${safeWord})\\b` : `(${safeWord})`;
+                const regex = new RegExp(regexStr, 'gi');
+                
                 highlightedTesto = highlightedTesto.replace(regex, '<mark class="bg-amber-400 text-black px-1 rounded font-bold">$1</mark>');
                 if(highlightedExp) highlightedExp = highlightedExp.replace(regex, '<mark class="bg-amber-400 text-black px-1 rounded font-bold">$1</mark>');
             });
@@ -1761,7 +1776,7 @@ function createPrintHeader(meta, docTitle) {
                         <div class="${badgeClass} text-white font-black text-xl w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-md">${badgeText}</div>
                         <div class="flex-grow">
                             <p class="text-white text-lg font-medium leading-snug mb-2">${highlightedTesto}</p>
-                            ${quiz.spiegazione ? `<div class="bg-slate-900 border-l-4 border-slate-500 p-3 mb-3 rounded-r text-sm text-slate-300 font-italic">${highlightedExp}</div>` : ''}
+                            ${quiz.spiegazione ? `<div class="bg-slate-900 border-l-4 border-slate-500 p-3 mb-3 rounded-r text-sm text-slate-300 italic">${highlightedExp}</div>` : ''}
                             <div class="flex items-center gap-2 mt-2 pt-3 border-t border-slate-700">
                                 <span class="bg-slate-900 text-blue-400 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border border-slate-700">${quiz.docAula}</span>
                                 <span class="text-slate-400 text-xs font-semibold"><i class="fa-solid fa-folder-open mr-1"></i> ${quiz.docArgomento}</span>
@@ -1772,9 +1787,7 @@ function createPrintHeader(meta, docTitle) {
             `;
         });
 
-        if (results.length > 100) {
-            html += `<div class="text-center text-slate-500 text-sm mt-4 italic">Mostrati i primi 100 risultati su ${results.length}. Affina la ricerca per vederne altri.</div>`;
-        }
+        if (results.length > 100) html += `<div class="text-center text-slate-500 text-sm mt-4 italic">Mostrati i primi 100 risultati su ${results.length}. Affina la ricerca per vederne altri.</div>`;
         container.innerHTML = html;
     }
 
