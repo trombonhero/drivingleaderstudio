@@ -114,11 +114,18 @@
             #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
             
-            @page { margin: 10mm 10mm 15mm 10mm !important; } 
+            /* Margine inferiore spinto a 25mm per blindare lo spazio del footer */
+            @page { margin: 10mm 10mm 25mm 10mm !important; } 
             
-            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; }
+            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; padding-bottom: 5mm; height: 18mm;}
             .print-footer img { height: 26px; object-fit: contain; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
+
+            /* Il tfoot alto 25mm crea il muro invisibile che blocca il testo prima del footer */
+            table.print-table { width: 100%; border: none; border-collapse: collapse; }
+            thead.print-thead { display: table-header-group; }
+            tfoot.print-tfoot { display: table-footer-group; }
+            tfoot.print-tfoot td { height: 25mm !important; border: none; padding: 0; }
 
             .batch-page { page-break-after: always !important; break-after: page !important; }
             .batch-page-fluid { page-break-after: auto !important; margin-bottom: 2rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 2rem; }
@@ -197,9 +204,10 @@
                     <p class="text-slate-400 font-medium text-xs tracking-widest uppercase mt-1">Generatore & Archivio</p>
                 </div>
             </div>
-            <div class="flex gap-4">
-                <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore</button>
-                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> Archivio Didattico</button>
+            <div class="flex gap-2 md:gap-4">
+                <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> <span class="hidden md:inline">Generatore</span></button>
+                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> <span class="hidden md:inline">Archivio Didattico</span></button>
+                <button onclick="openQuizExplorer()" id="nav-btn-quiz" class="btn-nav text-amber-400 border-amber-500/30 hover:bg-amber-500/10"><i class="fa-solid fa-bolt mr-2"></i> Esplora Quiz</button>
             </div>
         </div>
 
@@ -336,6 +344,35 @@
     </div>
     <button onclick="deleteBatch()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full font-black transition shadow flex items-center justify-center text-sm whitespace-nowrap shrink-0"><i class="fa-solid fa-trash-can md:mr-2"></i> Elimina</button>
 </div>
+            </div>
+        </div>
+
+        <!-- NUOVA VISTA: ESPLORA QUIZ UNIVERSALE -->
+        <div id="view-quiz" class="view-section p-4 md:p-8 relative">
+            <div class="max-w-5xl mx-auto w-full flex flex-col h-full">
+                <div class="glass-panel shrink-0 mb-6 border-t-4 border-t-amber-500 shadow-xl">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                        <div>
+                            <h2 class="text-3xl font-black text-amber-400 mb-1"><i class="fa-solid fa-bolt mr-3"></i>Motore di Ricerca Quiz</h2>
+                            <p class="text-slate-300 text-sm">Ricerca istantanea su tutti i quiz del database. Ottimo per rispondere al volo in aula.</p>
+                        </div>
+                        <div class="bg-slate-900 px-4 py-2 rounded-lg border border-slate-700 shadow-inner">
+                            <span class="text-slate-400 text-xs uppercase tracking-wider font-bold">Quiz nel DB:</span>
+                            <span id="quiz-total-counter" class="ml-2 text-white font-black text-lg">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="relative w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-amber-500 text-xl"></i>
+                        <input type="text" id="global-quiz-search" oninput="executeGlobalQuizSearch(this.value)" placeholder="Scrivi una frase, una parola o un trabocchetto da cercare..." class="w-full bg-slate-900 border-2 border-slate-600 text-white placeholder-slate-500 rounded-xl py-4 pl-14 pr-4 focus:outline-none focus:border-amber-500 transition text-xl shadow-inner font-semibold">
+                    </div>
+                </div>
+                
+                <div id="quiz-results-container" class="flex-grow overflow-y-auto space-y-3 pb-32">
+                    <div class="text-center py-20 text-slate-500 italic">
+                        <i class="fa-solid fa-keyboard text-4xl mb-4 block text-slate-600"></i>Inizia a digitare per cercare tra i quiz di tutte le aule.
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1611,6 +1648,134 @@ function createPrintHeader(meta, docTitle) {
         if (selCount === 1) { if(wantMappe) baseName = "MAPPA"; if(wantMatrici) baseName = "MATRICE"; if(wantDispense) baseName = "DISPENSA"; if(wantConcept) baseName = "CONCETTUALE"; }
         const originalTitle = document.title; document.title = getAutomatedPrintName(baseName, firstMeta);
         closeAdvancedPrint(); setTimeout(() => { window.print(); document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 300);
+    }
+
+// ==========================================================================
+    // MOTORE UNIVERSALE RICERCA QUIZ (IN AULA)
+    // ==========================================================================
+    let globalQuizDatabase = [];
+
+    function openQuizExplorer() {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-quiz').classList.add('active');
+        document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+        document.getElementById('nav-btn-quiz').classList.add('active');
+        
+        buildGlobalQuizDatabase();
+        document.getElementById('global-quiz-search').focus();
+    }
+
+    function buildGlobalQuizDatabase() {
+        globalQuizDatabase = [];
+        let totalQuizCount = 0;
+
+        archiveDB.forEach(doc => {
+            if (doc.rawText && doc.rawText.includes('=== MATRICE QUIZ ===')) {
+                let matriceRaw = doc.rawText.split('=== MATRICE QUIZ ===')[1];
+                if (matriceRaw.includes('=== DISPENSA ALLIEVI ===')) {
+                    matriceRaw = matriceRaw.split('=== DISPENSA ALLIEVI ===')[0];
+                }
+                
+                const lines = matriceRaw.split('\n');
+                let currentMatriceClean = "";
+
+                lines.forEach(line => {
+                    let l = line.trim(); if(!l) return;
+                    let upperL = l.toUpperCase();
+                    let isContinuation = l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./) || l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ');
+
+                    if (!isContinuation) {
+                        currentMatriceClean = l.replace(/[\[\]\*\#]/g, '').replace(/\.\.\.$/, '').trim();
+                    } else {
+                        let parts = l.split('|'); 
+                        let rawQuizText = parts[0].trim(); 
+                        let esitoStr = parts.length > 1 ? parts[1].trim().toUpperCase() : "";
+                        let expText = parts.length > 2 ? parts.slice(2).join('|').trim() : "";
+                        
+                        if (parts.length === 2) {
+                            if (esitoStr === 'V' || esitoStr === 'F' || esitoStr === 'VERO' || esitoStr === 'FALSO') {} 
+                            else { expText = parts[1].trim(); esitoStr = rawQuizText; }
+                        } else if (parts.length === 1) { esitoStr = rawQuizText; }
+                        
+                        let isVero = esitoStr === 'V' || esitoStr === 'VERO' || esitoStr.includes('(V)') || esitoStr.includes(' VERO');
+                        let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '').replace(/^\.\.\.\s*/, '').replace(/\(V\)/gi, '').replace(/\(F\)/gi, '').replace(/\bVERO\b/gi, '').replace(/\bFALSO\b/gi, '').trim();
+                        let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
+                        let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
+
+                        globalQuizDatabase.push({
+                            testoCompleto: fraseCompleta,
+                            testoVisual: testoVisual,
+                            radice: currentMatriceClean,
+                            esito: isVero,
+                            spiegazione: expText,
+                            docId: doc.id,
+                            docAula: doc.aula,
+                            docArgomento: doc.argomento
+                        });
+                        totalQuizCount++;
+                    }
+                });
+            }
+        });
+        document.getElementById('quiz-total-counter').innerText = totalQuizCount;
+    }
+
+    function executeGlobalQuizSearch(query) {
+        const container = document.getElementById('quiz-results-container');
+        const q = query.toLowerCase().trim();
+        
+        if (q.length < 2) {
+            container.innerHTML = `<div class="text-center py-20 text-slate-500 italic"><i class="fa-solid fa-keyboard text-4xl mb-4 block text-slate-600"></i>Inizia a digitare per cercare...</div>`;
+            return;
+        }
+
+        const words = q.split(' ').filter(w => w.length > 0);
+        let results = globalQuizDatabase.filter(quiz => {
+            const searchText = (quiz.testoCompleto + " " + quiz.spiegazione).toLowerCase();
+            return words.every(word => searchText.includes(word));
+        });
+
+        if (results.length === 0) {
+            container.innerHTML = `<div class="bg-slate-800/50 border border-slate-700 rounded-xl p-8 text-center"><i class="fa-solid fa-ghost text-4xl text-slate-500 mb-3 block"></i><p class="text-slate-300 font-bold">Nessun quiz trovato con questi termini.</p></div>`;
+            return;
+        }
+
+        let html = '';
+        // Limita a 100 risultati per non bloccare il browser
+        results.slice(0, 100).forEach(quiz => {
+            let badgeClass = quiz.esito ? 'bg-emerald-500' : 'bg-red-500';
+            let badgeText = quiz.esito ? 'V' : 'F';
+            
+            // Evidenziazione termini
+            let highlightedTesto = quiz.testoCompleto;
+            let highlightedExp = quiz.spiegazione;
+            words.forEach(word => {
+                const regex = new RegExp(`(${word.replace(/[.*+?^${}()|[\]\\]/g, '\$&')})`, 'gi');
+                highlightedTesto = highlightedTesto.replace(regex, '<mark class="bg-amber-400 text-black px-1 rounded font-bold">$1</mark>');
+                if(highlightedExp) highlightedExp = highlightedExp.replace(regex, '<mark class="bg-amber-400 text-black px-1 rounded font-bold">$1</mark>');
+            });
+
+            html += `
+                <div class="bg-slate-800 border border-slate-600 rounded-xl p-4 shadow-lg hover:border-amber-500 transition-colors cursor-pointer" onclick="openArchivedDocument('${quiz.docId}')">
+                    <div class="flex gap-4">
+                        <div class="${badgeClass} text-white font-black text-xl w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-md">${badgeText}</div>
+                        <div class="flex-grow">
+                            <p class="text-white text-lg font-medium leading-snug mb-2">${highlightedTesto}</p>
+                            ${quiz.spiegazione ? `<div class="bg-slate-900 border-l-4 border-slate-500 p-3 mb-3 rounded-r text-sm text-slate-300 font-italic">${highlightedExp}</div>` : ''}
+                            <div class="flex items-center gap-2 mt-2 pt-3 border-t border-slate-700">
+                                <span class="bg-slate-900 text-blue-400 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border border-slate-700">${quiz.docAula}</span>
+                                <span class="text-slate-400 text-xs font-semibold"><i class="fa-solid fa-folder-open mr-1"></i> ${quiz.docArgomento}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        if (results.length > 100) {
+            html += `<div class="text-center text-slate-500 text-sm mt-4 italic">Mostrati i primi 100 risultati su ${results.length}. Affina la ricerca per vederne altri.</div>`;
+        }
+        container.innerHTML = html;
     }
 
     // --- INIT APP AL CARICAMENTO ---
