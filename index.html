@@ -109,32 +109,45 @@
         /* =======================================================
            STILI DI STAMPA GLOBALI E IMPOSTAZIONI FASCICOLO
            ======================================================= */
-@media print {
+        @media print {
             html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10.5pt !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
             
-            /* Margine inferiore spinto a 35mm per non toccare MAI il footer */
-            @page { margin: 10mm 10mm 35mm 10mm !important; } 
+            /* 1. Margine ridotto al minimo: spinge il footer all'estremo limite basso del foglio */
+            @page { margin: 10mm !important; } 
             
-            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: flex-end; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 8pt; color: #475569; background: white; z-index: 1000; height: 18mm; padding-bottom: 6mm;}
-            .print-footer img { height: 26px; object-fit: contain; }
+            /* 2. Footer fissato sul fondo con un'altezza predefinita compatta */
+            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 6px; padding-bottom: 2px; font-size: 8pt; color: #475569; background: white; z-index: 1000; height: 25px;}
+            .print-footer img { height: 20px; object-fit: contain; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
 
-            /* Il tfoot fa da "muro invisibile" alla fine delle tabelle */
+            /* 3. IL MURO: Il tfoot alto 40px impedisce fisicamente al testo di scendere fino al footer */
             table.print-table { width: 100%; border: none; border-collapse: collapse; }
             thead.print-thead { display: table-header-group; }
             tfoot.print-tfoot { display: table-footer-group; }
-            tfoot.print-tfoot td { height: 35mm !important; border: none; padding: 0; }
+            tfoot.print-tfoot td { height: 40px !important; border: none; padding: 0; }
 
             .batch-page { page-break-after: always !important; break-after: page !important; }
             .batch-page-fluid { page-break-after: auto !important; margin-bottom: 2rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 2rem; }
             .batch-page-fluid:last-child { border-bottom: none; }
             
-            .print-header-container { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; display: block !important; width: 100%; page-break-after: avoid !important;}
+            .print-header-container { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px; display: block !important; width: 100%; page-break-after: avoid !important;}
             .print-header-aula { font-size: 9pt; color: #d97706 !important; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-            .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000; }
-            .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
+            .print-header-ob { font-size: 14pt; margin: 0 0 2px 0; font-weight: 900; line-height: 1.1; color: #000; }
+            .print-header-arg { font-size: 10pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
+
+            /* Stampa: Matrice a 2 Colonne Compatta */
+            .matrice-columns-1 { column-count: 1 !important; display: block; }
+            .matrice-columns-2 { column-count: 2 !important; column-gap: 12mm; column-rule: 1px solid #e2e8f0; padding-bottom: 10px !important;}
+            .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 10.5pt !important; margin-top: 12pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 6px; background: transparent !important; page-break-after: avoid !important; break-after: avoid !important; text-transform: uppercase; }
+            
+            /* 4. BLOCCO COLONNE: 'inline-block' impedisce a Chrome di tagliare i quiz a metà o infilarli sotto al tavolo */
+            .matrice-row { display: inline-block !important; width: 100% !important; margin-bottom: 6pt !important; padding-left: 4px; font-size: 9pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; position: relative;}
+            .matrice-row > div { display: block !important; overflow: hidden !important; padding-left: 20px; position: relative;}
+            .v-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #16a34a !important; font-weight: 900; font-style: normal; font-size: 7.5pt !important; padding: 1px 4px; border-radius: 3px;}
+            .f-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #dc2626 !important; font-weight: 900; font-style: normal; font-size: 7.5pt !important; padding: 1px 4px; border-radius: 3px;}
+            .matrice-exp { display: block !important; font-size: 8pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.1 !important;}
 
             /* Stampa: Mappa Tecnica */
             .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 11pt !important; line-height: 1.4 !important; page-break-inside: avoid; }
@@ -150,15 +163,6 @@
             .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
             .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0; }
 
-            /* Stampa: Matrice a 2 Colonne Compatta */
-            .matrice-columns-1 { column-count: 1 !important; display: block; }
-            .matrice-columns-2 { column-count: 2 !important; column-gap: 12mm; column-rule: 1px solid #e2e8f0; }
-            .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 10.5pt !important; margin-top: 12pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 6px; background: transparent !important; page-break-after: avoid !important; break-after: avoid !important; text-transform: uppercase; }
-            .matrice-row { display: inline-block !important; width: 100% !important; margin-bottom: 8pt !important; padding-left: 4px; font-size: 9pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; position: relative;}            .matrice-row > div { display: block !important; overflow: hidden !important; padding-left: 20px; position: relative;}
-            .v-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #16a34a !important; font-weight: 900; font-style: normal; font-size: 7.5pt !important; padding: 1px 4px; border-radius: 3px;}
-            .f-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #dc2626 !important; font-weight: 900; font-style: normal; font-size: 7.5pt !important; padding: 1px 4px; border-radius: 3px;}
-            .matrice-exp { display: block !important; font-size: 8pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.1 !important;}
-
             /* Stampa: Dispensa Pulita con Cartello Centrale */
             .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; text-align: left; }
             .dispensa-page strong { font-weight: 700 !important; color: #000 !important; }
@@ -170,7 +174,7 @@
             .cartello-box { text-align: center; margin-bottom: 15px; }
             .cartello-box img { max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
 
-            /* Stampa: Nuova Mappa Concettuale (Spazi ridotti e Colori visibili) */
+            /* Stampa: Vecchia Mappa Concettuale (se rimasta in memoria) */
             .mindmap-root { background: #1e3a8a !important; color: white !important; font-weight: 900; font-size: 18pt !important; padding: 12px 24px; border-radius: 6px; text-transform: uppercase; margin-bottom: 15px; text-align: center; width: 90%; border: 2px solid #1e3a8a;}
             .mindmap-phase-col { background: white !important; border: 2px solid #cbd5e1 !important; border-radius: 8px; padding: 8px; page-break-inside: avoid !important; break-inside: avoid !important;}
             .mindmap-phase-node { background: #1e293b !important; color: white !important; font-weight: 900; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; text-align: center; font-size: 11pt; text-transform: uppercase; width: 100%; }
