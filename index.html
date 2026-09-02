@@ -333,7 +333,10 @@
                 </div>
                 <div class="flex gap-4 border-l border-slate-600 pl-4 md:pl-6 shrink-0 items-center">
     <div class="flex flex-col gap-1 border-r border-slate-600 pr-4 mr-2">
-        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Filtri Dispensa:</span>
+        <div class="flex justify-between items-center mb-1">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Filtri Dispensa:</span>
+            <label class="text-amber-400 hover:text-amber-300 cursor-pointer text-[10px] flex items-center gap-1 font-bold" title="Stampa teoria e quiz sulla stessa pagina senza andare a capo"><input type="checkbox" id="batch-unisci" class="w-3 h-3 accent-amber-500 rounded"> Unisci Dispensa+Quiz</label>
+        </div>
         <div class="flex gap-3">
             <label class="text-slate-300 hover:text-white cursor-pointer text-xs flex items-center gap-1"><input type="checkbox" id="filter-sacro" checked class="w-3 h-3 accent-blue-500 rounded"> Norma</label>
             <label class="text-slate-300 hover:text-white cursor-pointer text-xs flex items-center gap-1"><input type="checkbox" id="filter-pratica" checked class="w-3 h-3 accent-emerald-500 rounded"> Pratica</label>
@@ -1432,13 +1435,16 @@ function createPrintHeader(meta, docTitle) {
         }, 300);
     }
 
-    function printBatch() {
+function printBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         const wantMappe = document.getElementById('batch-mappe').checked;
         const wantMatrici = document.getElementById('batch-matrici').checked;
         const wantDispense = document.getElementById('batch-dispense').checked;
         const wantConcept = document.getElementById('batch-concept').checked;
         const forceMappaBreak = document.getElementById('batch-mappe-break').checked;
+        
+        // RECUPERA IL VALORE DELLA NUOVA SPUNTA "UNISCI"
+        const unisciPagine = document.getElementById('batch-unisci').checked;
 
         if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept) return alert("Seleziona almeno un tipo di documento da stampare.");
         if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
@@ -1446,9 +1452,9 @@ function createPrintHeader(meta, docTitle) {
         let combinedHtml = "";
         let firstMeta = null;
 
-        // PAGINA 1 VUOTA (Se Dispensa e Matrice sono accoppiate)
-        // Così a Pagina 2 (Sinistra) andrà la Dispensa e a Pagina 3 (Destra) andrà la Matrice
-        if (wantDispense && wantMatrici) {
+        // PAGINA 1 VUOTA: Solo se li stiamo stampando staccati per affiancarli a libro.
+        // Se l'opzione "Unisci" è attiva, non inseriamo pagine vuote per l'impaginazione a libro.
+        if (wantDispense && wantMatrici && !unisciPagine) {
             combinedHtml += `<div style="page-break-after: always; break-after: page; height: 1px;">&nbsp;</div>`;
         }
 
@@ -1466,22 +1472,31 @@ function createPrintHeader(meta, docTitle) {
                 combinedHtml += `<div class="${pageClass}"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Mappa di Regia')}</td></tr></thead><tbody><tr><td>${document.getElementById('batch-mappa-render').innerHTML}</td></tr></tbody></table></div>`;
             }
             
-            // Impaginazione A LIBRO: Dispensa a sinistra (even/left), Matrice a destra (odd/right)
-            if(wantDispense && wantMatrici) {
-                if(currentDispensaHtml['batch']) {
-                    // Forziamo il browser ad allocare la Dispensa su una pagina "sinistra" (pari)
-                    combinedHtml += `<div style="break-before: left; page-break-before: left;"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
-                }
-                if(document.getElementById('batch-matrice-render').innerHTML) {
-                    // Forziamo il browser ad allocare la Matrice su una pagina "destra" (dispari)
-                    combinedHtml += `<div style="break-before: right; page-break-before: right;"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
-                }
+            if (unisciPagine && wantDispense && wantMatrici) {
+                // MODALITÀ UNITA: Dispensa e Matrice nella STESSA TABELLA, sulla stessa pagina.
+                let unitoHtml = "";
+                if(currentDispensaHtml['batch']) unitoHtml += `<div style="margin-bottom: 20px;">${currentDispensaHtml['batch']}</div>`;
+                if(document.getElementById('batch-matrice-render').innerHTML) unitoHtml += `<div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
+                
+                // Creiamo un unico blocco che salta pagina solo alla fine
+                combinedHtml += `<div class="batch-page"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Dispensa & Quiz')}</td></tr></thead><tbody><tr><td>${unitoHtml}</td></tr></tbody></table></div>`;
             } else {
-                if(wantDispense && currentDispensaHtml['batch']) {
-                    combinedHtml += `<div class="batch-page"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
-                }
-                if(wantMatrici) {
-                    combinedHtml += `<div class="batch-page"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
+                // MODALITÀ STACCATA (A LIBRO) o STAMPA SINGOLA
+                if(wantDispense && wantMatrici) {
+                    if(currentDispensaHtml['batch']) {
+                        combinedHtml += `<div style="break-before: left; page-break-before: left;"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
+                    }
+                    if(document.getElementById('batch-matrice-render').innerHTML) {
+                        combinedHtml += `<div style="break-before: right; page-break-before: right;"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
+                    }
+                } else {
+                    // Stampa solo uno dei due
+                    if(wantDispense && currentDispensaHtml['batch']) {
+                        combinedHtml += `<div class="batch-page"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
+                    }
+                    if(wantMatrici) {
+                        combinedHtml += `<div class="batch-page"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
+                    }
                 }
             }
         });
