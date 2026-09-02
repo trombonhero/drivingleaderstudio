@@ -117,9 +117,9 @@
             /* 1. Margine ridotto al minimo: spinge il footer all'estremo limite basso del foglio */
             @page { margin: 10mm !important; } 
             
-            /* 2. Footer fissato sul fondo con un'altezza predefinita compatta */
-            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 6px; padding-bottom: 2px; font-size: 8pt; color: #475569; background: white; z-index: 1000; height: 25px;}
-            .print-footer img { height: 20px; object-fit: contain; }
+/* 2. Footer blindato: altezza fissa, niente sbavature e divieto assoluto di spezzarsi su due pagine */
+            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 5px; font-size: 8pt; color: #475569; background: white; z-index: 1000; height: 14mm; overflow: hidden !important; page-break-inside: avoid !important; break-inside: avoid !important; }
+            .print-footer img { height: 22px; max-height: 22px; object-fit: contain; display: block; margin-bottom: 2px; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
 
             /* 3. IL MURO: Il tfoot alto 40px impedisce fisicamente al testo di scendere fino al footer */
