@@ -174,12 +174,18 @@
             .cartello-box { text-align: center; margin-bottom: 15px; }
             .cartello-box img { max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
 
-            /* Stampa: Foglio di Marcia / Obiettivi Didattici per Allievi */
-            .ob-sheet { font-family: 'Segoe UI', Arial, sans-serif; text-align: left; }
-            .ob-cap-box { border: 1.5px solid #cbd5e1 !important; border-radius: 6px; overflow: hidden; margin-bottom: 7px; page-break-inside: avoid; background: #ffffff !important; }
-            .ob-cap-header { background: #1e293b !important; color: #ffffff !important; padding: 4px 8px; font-size: 8.5pt; font-weight: 800; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .ob-par-title { font-size: 8.5pt; font-weight: 800; color: #0d9488 !important; text-transform: uppercase; margin: 4px 0 3px 0; display: flex; align-items: center; }
-            .ob-item-card { background: #f8fafc !important; border: 1px solid #e2e8f0 !important; border-left: 3.5px solid #0d9488 !important; border-radius: 4px; padding: 4px 7px; margin-bottom: 4px; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            /* Stampa: Checklist Obiettivi - Design Minimalista & Arioso */
+            .ob-sheet { font-family: 'Segoe UI', Arial, sans-serif; text-align: left; background: white !important; }
+            .ob-cap-container { margin-bottom: 14px; }
+            .ob-cap-header { border-bottom: 1.5px solid #0f172a; padding-bottom: 3px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: baseline; }
+            .ob-cap-title { font-size: 10pt; font-weight: 900; color: #0f172a !important; text-transform: uppercase; letter-spacing: 0.5px; }
+            .ob-par-block { margin-bottom: 10px; page-break-inside: avoid; padding-left: 4px; }
+            .ob-par-title { font-size: 8.5pt; font-weight: 800; color: #0d9488 !important; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; letter-spacing: 0.3px; }
+            .ob-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px solid #f1f5f9; page-break-inside: avoid; }
+            .ob-circle { display: inline-block; width: 13px; height: 13px; border: 1.5px solid #94a3b8; border-radius: 50%; margin-top: 2px; margin-right: 8px; flex-shrink: 0; background: white; }
+            .ob-text { font-size: 9pt; color: #1e293b !important; line-height: 1.35; font-weight: 500; flex-grow: 1; }
+            .ob-tag { font-size: 7.2pt; font-weight: 700; color: #475569 !important; background: #f1f5f9 !important; padding: 1px 5px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; border: 1px solid #e2e8f0; }
+            .ob-notes-area { margin-top: 8px; border: 1px dashed #cbd5e1; border-radius: 5px; padding: 6px 10px; background: #fafafa !important; page-break-inside: avoid; }
 
             /* Stampa: Vecchia Mappa Concettuale (se rimasta in memoria) */
             .mindmap-root { background: #1e3a8a !important; color: white !important; font-weight: 900; font-size: 18pt !important; padding: 12px 24px; border-radius: 6px; text-transform: uppercase; margin-bottom: 15px; text-align: center; width: 90%; border: 2px solid #1e3a8a;}
@@ -1445,11 +1451,11 @@ function createPrintHeader(meta, docTitle) {
         }, 300);
     }
 
-// --- GENERATORE FOGLIO OBIETTIVI DIDATTICI PER ALLIEVI ---
+// --- GENERATORE CHECKLIST OBIETTIVI DIDATTICI (ARiOSA & ESSENZIALE) ---
     function generateObiettiviSheetHtml(selectedDocs) {
         if(!selectedDocs || selectedDocs.length === 0) return "";
         let firstDoc = selectedDocs[0];
-        let aula = firstDoc.aula || "Corso di Guida";
+        let aula = firstDoc.aula || "Corso Patenti";
         
         let totalMinutes = 0;
         selectedDocs.forEach(d => {
@@ -1457,16 +1463,17 @@ function createPrintHeader(meta, docTitle) {
         });
         let timeStr = totalMinutes > 0 ? (totalMinutes + " min") : "";
 
-        // Raggruppamento per Capitolo -> Paragrafo
+        // Raggruppamento pulito: Capitolo -> Paragrafi
         let grouped = {};
+        let totalObiettiviCount = 0;
+
         selectedDocs.forEach(doc => {
-            let cap = doc.obiettivo || "Capitolo Generale";
-            let par = doc.argomento || "Lezione";
+            let cap = doc.obiettivo || "Programma";
+            let par = doc.argomento || "Modulo";
             if(!grouped[cap]) grouped[cap] = {};
             if(!grouped[cap][par]) grouped[cap][par] = [];
 
             let lines = (doc.rawText || "").split('\n');
-            let currentFase = "";
             let currentObj = null;
             let foundAny = false;
 
@@ -1476,18 +1483,16 @@ function createPrintHeader(meta, docTitle) {
                 let uL = l.toUpperCase();
                 let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
 
-                if (cleanStart.startsWith('FASE')) {
-                    currentFase = l.replace(/[\*\#🛑]/g, '').trim();
-                } else if (uL.includes('OBIETTIVO PRATICO:')) {
+                if (uL.includes('OBIETTIVO PRATICO:')) {
                     let idx = uL.indexOf('OBIETTIVO PRATICO:');
                     let objText = l.substring(idx + 18).trim().replace(/\*\*(.*?)\*\*/g, '$1');
                     currentObj = {
-                        fase: currentFase,
                         testo: objText,
                         pagine: []
                     };
                     grouped[cap][par].push(currentObj);
                     foundAny = true;
+                    totalObiettiviCount++;
                 } else if (cleanStart.startsWith('PAGINA') && currentObj) {
                     let pMatch = l.match(/PAGINA\s*(\d+)/i);
                     if (pMatch && !currentObj.pagine.includes(pMatch[1])) {
@@ -1496,96 +1501,98 @@ function createPrintHeader(meta, docTitle) {
                 }
             });
 
-            // Se non c'è la dicitura OBIETTIVO PRATICO esplicita, fallback sul titolo dell'argomento
             if(!foundAny) {
                 grouped[cap][par].push({
-                    fase: "",
                     testo: par,
                     pagine: []
                 });
+                totalObiettiviCount++;
             }
         });
 
         let bodyHtml = "";
         Object.keys(grouped).forEach(capTitle => {
             let parsHtml = "";
-            let objCountCap = 0;
 
             Object.keys(grouped[capTitle]).forEach(parTitle => {
                 let items = grouped[capTitle][parTitle];
-                objCountCap += items.length;
-
                 let itemsHtml = "";
-                items.forEach(item => {
-                    let pagBadge = item.pagine.length > 0 ? `<span style="background: #e2e8f0; color: #1e293b; font-size: 6.8pt; font-weight: 700; padding: 1px 4px; border-radius: 3px; white-space: nowrap;">PAG. ${item.pagine.join(', ')}</span>` : "";
-                    let faseLabel = item.fase ? `<span style="font-size: 7.2pt; font-weight: 700; color: #0d9488; text-transform: uppercase; margin-right: 4px;">[${item.fase}]</span>` : "";
 
+                items.forEach(item => {
+                    let pagBadge = item.pagine.length > 0 ? `<span class="ob-tag">p. ${item.pagine.join(', ')}</span>` : "";
+
+                    // Riga essenziale: solo cerchietto, testo pulito dell'abilità e pagina
                     itemsHtml += `
-                        <div class="ob-item-card">
-                            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
-                                <div style="display: flex; align-items: flex-start; gap: 6px; flex-grow: 1;">
-                                    <span style="display: inline-block; width: 12px; height: 12px; border: 1.5px solid #475569; border-radius: 3px; background: white; margin-top: 1px; shrink-0;"></span>
-                                    <div style="font-size: 8.2pt; color: #0f172a; line-height: 1.3; font-weight: 600;">
-                                        ${faseLabel}${item.testo}
-                                    </div>
-                                </div>
-                                ${pagBadge}
+                        <div class="ob-row">
+                            <div style="display: flex; align-items: flex-start; flex-grow: 1;">
+                                <span class="ob-circle"></span>
+                                <span class="ob-text">${item.testo}</span>
                             </div>
-                            <div style="margin-top: 3px; padding-top: 2px; border-top: 1px dashed #cbd5e1; font-size: 7pt; color: #94a3b8; display: flex; align-items: center;">
-                                <span style="font-weight: 700; color: #64748b; margin-right: 4px; font-size: 6.8pt; text-transform: uppercase;">Note / Concetti:</span>
-                                <span style="border-bottom: 1px dotted #cbd5e1; flex-grow: 1; height: 7px;"></span>
-                            </div>
+                            ${pagBadge}
                         </div>
                     `;
                 });
 
                 parsHtml += `
-                    <div style="margin-bottom: 4px;">
+                    <div class="ob-par-block">
                         <div class="ob-par-title">
-                            <i class="fa-solid fa-bookmark mr-1 text-[7.5pt] opacity-75"></i> ${parTitle}
+                            <i class="fa-solid fa-angle-right mr-1.5 text-[7pt] text-teal-600"></i> ${parTitle}
                         </div>
-                        ${itemsHtml}
+                        <div style="padding-left: 2px;">
+                            ${itemsHtml}
+                        </div>
                     </div>
                 `;
             });
 
             bodyHtml += `
-                <div class="ob-cap-box">
+                <div class="ob-cap-container">
                     <div class="ob-cap-header">
-                        <span><i class="fa-solid fa-folder-open mr-1.5 text-teal-400"></i> ${capTitle}</span>
-                        <span style="font-weight: 600; opacity: 0.85; font-size: 7.2pt;">${objCountCap} Obiettivi</span>
+                        <span class="ob-cap-title"><i class="fa-solid fa-compass mr-1.5 text-teal-600"></i> ${capTitle}</span>
                     </div>
-                    <div style="padding: 4px 6px 2px 6px;">
-                        ${parsHtml}
-                    </div>
+                    ${parsHtml}
                 </div>
             `;
         });
 
         return `
             <div class="batch-page ob-sheet">
-                <div style="border-bottom: 2.5px solid #0d9488; padding-bottom: 5px; margin-bottom: 8px;">
+                <!-- Testata Ariosa e Istituzionale -->
+                <div style="border-bottom: 2px solid #0d9488; padding-bottom: 8px; margin-bottom: 14px;">
                     <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                        <p style="font-size: 7.5pt; color: #d97706; margin: 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">
-                            CONTI AUTOSCUOLE <span style="color:#64748b;">| ROADMAP DIDATTICA CANDIDATI</span>
+                        <p style="font-size: 8pt; color: #d97706; margin: 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">
+                            CONTI AUTOSCUOLE <span style="color:#64748b;">| ROADMAP COMPETENZE</span>
                         </p>
-                        ${timeStr ? `<span style="font-size: 7.5pt; font-weight: bold; color: #475569;"><i class="fa-regular fa-clock mr-1"></i> ${timeStr}</span>` : ''}
+                        <span style="font-size: 8pt; font-weight: 700; color: #475569;">
+                            ${totalObiettiviCount} Competenze ${timeStr ? `• ~${timeStr}` : ''}
+                        </span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 2px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 4px;">
                         <div>
-                            <h1 style="font-size: 13.5pt; font-weight: 900; margin: 0; color: #0f172a; text-transform: uppercase; line-height: 1.1;">
+                            <h1 style="font-size: 14pt; font-weight: 900; margin: 0; color: #0f172a; text-transform: uppercase; line-height: 1.1;">
                                 ${aula}
                             </h1>
-                            <p style="font-size: 7.5pt; color: #475569; margin: 1px 0 0 0; font-style: italic;">
-                                Quadro di marcia della lezione: verifica e spunta gli obiettivi pratici assimilati.
+                            <p style="font-size: 8pt; color: #64748b; margin: 2px 0 0 0;">
+                                Spunta gli obiettivi man mano che li assimili durante la lezione.
                             </p>
                         </div>
-                        <div style="font-size: 7.5pt; color: #1e293b; font-weight: 600; text-align: right; white-space: nowrap; padding-bottom: 1px;">
-                            Allievo: _______________________ &nbsp; Data: __________
+                        <div style="font-size: 8pt; color: #334155; font-weight: 600; text-align: right; white-space: nowrap;">
+                            Candidato: _________________________ &nbsp;&nbsp; Data: ____________
                         </div>
                     </div>
                 </div>
+
+                <!-- Lista Competenze -->
                 ${bodyHtml}
+
+                <!-- Unico Spazio Note Spazioso in fondo -->
+                <div class="ob-notes-area">
+                    <div style="font-size: 7.2pt; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+                        <i class="fa-solid fa-pen-fancy mr-1"></i> Note personali, formule e parole chiave della lezione:
+                    </div>
+                    <div style="border-bottom: 1px dotted #cbd5e1; height: 18px;"></div>
+                    <div style="border-bottom: 1px dotted #cbd5e1; height: 18px;"></div>
+                </div>
             </div>
         `;
     }
