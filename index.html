@@ -110,39 +110,39 @@
            STILI DI STAMPA GLOBALI E IMPOSTAZIONI FASCICOLO
            ======================================================= */
         @media print {
-            html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10.5pt !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10pt !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
             
-            /* 1. Margine ridotto al minimo: spinge il footer all'estremo limite basso del foglio */
+            /* Margine pulito di 10mm su tutto il foglio */
             @page { margin: 10mm !important; } 
             
-/* 2. Footer blindato: altezza fissa, niente sbavature e divieto assoluto di spezzarsi su due pagine */
-            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 5px; font-size: 8pt; color: #475569; background: white; z-index: 1000; height: 14mm; overflow: hidden !important; page-break-inside: avoid !important; break-inside: avoid !important; }
+            /* Footer fisso a fondo pagina */
+            .print-footer { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; border-top: 1.5px solid #cbd5e1; padding-top: 6px; font-size: 8pt; color: #475569; background: white; z-index: 1000; height: 14mm; overflow: hidden !important; page-break-inside: avoid !important; break-inside: avoid !important; }
             .print-footer img { height: 22px; max-height: 22px; object-fit: contain; display: block; margin-bottom: 2px; }
             .print-footer-text { font-weight: 800; letter-spacing: 0.5px; }
 
-            /* 3. IL MURO: Il tfoot alto 40px impedisce fisicamente al testo di scendere fino al footer */
-            table.print-table { width: 100%; border: none; border-collapse: collapse; }
+            /* IL MURO PROTETTIVO: 22mm bloccano il contenuto ben prima della riga grigia del footer */
+            table.print-table { width: 100%; border: none; border-collapse: collapse; margin-bottom: 0 !important; }
             thead.print-thead { display: table-header-group; }
             tfoot.print-tfoot { display: table-footer-group; }
-            tfoot.print-tfoot td { height: 40px !important; border: none; padding: 0; }
+            tfoot.print-tfoot td { height: 22mm !important; border: none !important; padding: 0 !important; }
 
             .batch-page { page-break-after: always !important; break-after: page !important; }
+            /* Evita la pagina bianca fantasma alla fine della stampa */
+            .batch-page:last-child { page-break-after: auto !important; break-after: auto !important; }
             .batch-page-fluid { page-break-after: auto !important; margin-bottom: 2rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 2rem; }
             .batch-page-fluid:last-child { border-bottom: none; }
             
             .print-header-container { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px; display: block !important; width: 100%; page-break-after: avoid !important;}
-            .print-header-aula { font-size: 9pt; color: #d97706 !important; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+            .print-header-aula { font-size: 8.5pt; color: #d97706 !important; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
             .print-header-ob { font-size: 14pt; margin: 0 0 2px 0; font-weight: 900; line-height: 1.1; color: #000; }
             .print-header-arg { font-size: 10pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
 
-            /* Stampa: Matrice a 2 Colonne Compatta */
+            /* Stampa: Matrice Quiz a 2 Colonne */
             .matrice-columns-1 { column-count: 1 !important; display: block; }
-            .matrice-columns-2 { column-count: 2 !important; column-gap: 12mm; column-rule: 1px solid #e2e8f0; padding-bottom: 10px !important;}
-            .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 10.5pt !important; margin-top: 12pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 6px; background: transparent !important; page-break-after: avoid !important; break-after: avoid !important; text-transform: uppercase; }
-            
-            /* 4. BLOCCO COLONNE: 'inline-block' impedisce a Chrome di tagliare i quiz a metà o infilarli sotto al tavolo */
+            .matrice-columns-2 { column-count: 2 !important; column-gap: 12mm; column-rule: 1px solid #e2e8f0; }
+            .matrice-title { display: block !important; color: #1e3a8a !important; font-weight: 900 !important; font-size: 10.5pt !important; margin-top: 10pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 4px solid #d97706 !important; padding-left: 6px; background: transparent !important; page-break-after: avoid !important; break-after: avoid !important; text-transform: uppercase; }
             .matrice-row { display: inline-block !important; width: 100% !important; margin-bottom: 6pt !important; padding-left: 4px; font-size: 9pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid !important; break-inside: avoid !important; position: relative;}
             .matrice-row > div { display: block !important; overflow: hidden !important; padding-left: 20px; position: relative;}
             .v-badge { position: absolute; left: 0; top: 1px; color: white !important; background: #16a34a !important; font-weight: 900; font-style: normal; font-size: 7.5pt !important; padding: 1px 4px; border-radius: 3px;}
@@ -150,29 +150,42 @@
             .matrice-exp { display: block !important; font-size: 8pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.1 !important;}
 
             /* Stampa: Mappa Tecnica */
-            .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 11pt !important; line-height: 1.4 !important; page-break-inside: avoid; }
-            .incipit-titolo { color: #b45309 !important; font-size: 12pt !important; margin-bottom: 4px !important; display: block; font-style: normal; text-transform: uppercase; background: transparent !important; padding: 0;}
+            .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 10.5pt !important; line-height: 1.4 !important; page-break-inside: avoid; }
+            .incipit-titolo { color: #b45309 !important; font-size: 11pt !important; margin-bottom: 4px !important; display: block; font-style: normal; text-transform: uppercase; background: transparent !important; padding: 0;}
             .incipit-globale strong { font-weight: 700 !important; color: inherit !important; display: inline !important; text-transform: none !important; }
-            .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 14pt !important; margin-top: 18pt !important; padding-bottom: 3pt !important; margin-bottom: 8pt !important; page-break-after: avoid !important; font-weight: 900 !important; text-transform: uppercase; }
-            .incipit-fase { color: #222 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 11pt !important; line-height: 1.3 !important; page-break-after: avoid !important; }
+            .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 13pt !important; margin-top: 16pt !important; padding-bottom: 3pt !important; margin-bottom: 8pt !important; page-break-after: avoid !important; font-weight: 900 !important; text-transform: uppercase; }
+            .incipit-fase { color: #222 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 10.5pt !important; line-height: 1.3 !important; page-break-after: avoid !important; }
             .testo-regola { color: #000 !important; font-weight: 500 !important; }
-            .pagina-row { display: block !important; margin-bottom: 10pt !important; font-size: 10.5pt !important; line-height: 1.3 !important; page-break-inside: avoid !important; break-inside: avoid !important; border-bottom: 1px solid #eee; padding-bottom: 6px; overflow: hidden !important; width: 100% !important;}
-            .pagina-badge { float: left !important; border: 1px solid black !important; padding: 2px 6px; font-weight: bold; margin-right: 12px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 9pt !important; margin-top: 2px; border-radius: 3px;}
+            .pagina-row { display: block !important; margin-bottom: 8pt !important; font-size: 10pt !important; line-height: 1.35 !important; page-break-inside: avoid !important; break-inside: avoid !important; border-bottom: 1px solid #eee; padding-bottom: 6px; overflow: hidden !important; width: 100% !important;}
+            .pagina-badge { float: left !important; border: 1px solid black !important; padding: 2px 6px; font-weight: bold; margin-right: 12px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 8.5pt !important; margin-top: 2px; border-radius: 3px;}
             .pagina-text { display: block !important; color: black !important; overflow: hidden !important;}
             .pagina-text strong { font-weight: 700 !important; color: #000 !important; }
-            .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
-            .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0; }
+            .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c; font-size: 9.5pt !important; background: transparent !important; }
+            .pagina-extra { color: #065f46 !important; font-weight: 600 !important; display: block; margin-top: 4px; padding-left: 8px; border-left: 3px solid #10b981 !important; font-size: 9.5pt !important; background: transparent !important; }
 
-            /* Stampa: Dispensa Pulita con Cartello Centrale */
-            .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; page-break-inside: avoid; text-align: left; }
+            /* Stampa: Dispensa Allievi */
+            .dispensa-page { font-family: 'Segoe UI', Arial, sans-serif; text-align: left; }
             .dispensa-page strong { font-weight: 700 !important; color: #000 !important; }
             .d-section { margin-bottom: 12px; padding: 12px 16px; border-radius: 6px; page-break-inside: avoid !important; text-align: left;}
-            .d-section-title { font-size: 11pt; font-weight: 900; color: #1e3a8a !important; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
+            .d-section-title { font-size: 10.5pt; font-weight: 900; color: #1e3a8a !important; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; page-break-after: avoid !important;}
             .d-sacro { background-color: #f8fafc !important; border: 1px solid #e2e8f0; }
-            .d-sacro li { margin-bottom: 5px; font-size: 10.5pt; line-height: 1.3; color: #000 !important; }
-            .d-pratica { background-color: #f0fdf4 !important; border: 1px solid #bbf7d0; font-size: 10.5pt; line-height: 1.3; color: #064e3b !important; }
+            .d-sacro li { margin-bottom: 5px; font-size: 10pt; line-height: 1.35; color: #000 !important; }
+            .d-pratica { background-color: #f0fdf4 !important; border: 1px solid #bbf7d0; font-size: 10pt; line-height: 1.35; color: #064e3b !important; }
             .cartello-box { text-align: center; margin-bottom: 15px; }
             .cartello-box img { max-width: 150px; max-height: 150px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+            /* Stampa: Roadmap Obiettivi - Design Istituzionale Navy & Oro, Arioso */
+            .ob-sheet { font-family: 'Segoe UI', Arial, sans-serif; text-align: left; background: white !important; }
+            .ob-cap-container { margin-bottom: 18px; }
+            .ob-cap-header { border-bottom: 2px solid #1e3a8a; padding-bottom: 4px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: baseline; }
+            .ob-cap-title { font-size: 11.5pt; font-weight: 900; color: #1e3a8a !important; text-transform: uppercase; letter-spacing: 0.5px; }
+            .ob-par-block { margin-bottom: 14px; page-break-inside: avoid; }
+            .ob-par-title { font-size: 9.5pt; font-weight: 800; color: #0f172a !important; text-transform: uppercase; margin-bottom: 7px; display: flex; align-items: center; border-left: 3px solid #d97706; padding-left: 8px; }
+            .ob-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 7px 0; border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; }
+            .ob-checkbox { display: inline-block; width: 14px; height: 14px; border: 1.5px solid #334155; border-radius: 3px; margin-top: 2px; margin-right: 10px; flex-shrink: 0; background: white; }
+            .ob-text { font-size: 10pt; color: #1e293b !important; line-height: 1.4; font-weight: 500; flex-grow: 1; }
+            .ob-tag { font-size: 8pt; font-weight: 700; color: #1e293b !important; background: #f8fafc !important; padding: 2px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; border: 1px solid #cbd5e1; }
+            .ob-notes-area { margin-top: 16px; border: 1.5px dashed #94a3b8; border-radius: 6px; padding: 12px 14px; background: #fafafa !important; page-break-inside: avoid; }
 
             /* Stampa: Checklist Obiettivi - Design Minimalista & Arioso */
             .ob-sheet { font-family: 'Segoe UI', Arial, sans-serif; text-align: left; background: white !important; }
@@ -1451,7 +1464,7 @@ function createPrintHeader(meta, docTitle) {
         }, 300);
     }
 
-// --- GENERATORE CHECKLIST OBIETTIVI DIDATTICI (ARiOSA & ESSENZIALE) ---
+// --- GENERATORE FOGLIO OBIETTIVI (NAVY & ORO, SPAZIOSO, PROTETTO DA TFOOT) ---
     function generateObiettiviSheetHtml(selectedDocs) {
         if(!selectedDocs || selectedDocs.length === 0) return "";
         let firstDoc = selectedDocs[0];
@@ -1463,7 +1476,6 @@ function createPrintHeader(meta, docTitle) {
         });
         let timeStr = totalMinutes > 0 ? (totalMinutes + " min") : "";
 
-        // Raggruppamento pulito: Capitolo -> Paragrafi
         let grouped = {};
         let totalObiettiviCount = 0;
 
@@ -1478,18 +1490,14 @@ function createPrintHeader(meta, docTitle) {
             let foundAny = false;
 
             lines.forEach(line => {
-                let l = line.trim();
-                if(!l) return;
+                let l = line.trim(); if(!l) return;
                 let uL = l.toUpperCase();
                 let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
 
                 if (uL.includes('OBIETTIVO PRATICO:')) {
                     let idx = uL.indexOf('OBIETTIVO PRATICO:');
                     let objText = l.substring(idx + 18).trim().replace(/\*\*(.*?)\*\*/g, '$1');
-                    currentObj = {
-                        testo: objText,
-                        pagine: []
-                    };
+                    currentObj = { testo: objText, pagine: [] };
                     grouped[cap][par].push(currentObj);
                     foundAny = true;
                     totalObiettiviCount++;
@@ -1502,10 +1510,7 @@ function createPrintHeader(meta, docTitle) {
             });
 
             if(!foundAny) {
-                grouped[cap][par].push({
-                    testo: par,
-                    pagine: []
-                });
+                grouped[cap][par].push({ testo: par, pagine: [] });
                 totalObiettiviCount++;
             }
         });
@@ -1521,11 +1526,10 @@ function createPrintHeader(meta, docTitle) {
                 items.forEach(item => {
                     let pagBadge = item.pagine.length > 0 ? `<span class="ob-tag">p. ${item.pagine.join(', ')}</span>` : "";
 
-                    // Riga essenziale: solo cerchietto, testo pulito dell'abilità e pagina
                     itemsHtml += `
                         <div class="ob-row">
                             <div style="display: flex; align-items: flex-start; flex-grow: 1;">
-                                <span class="ob-circle"></span>
+                                <span class="ob-checkbox"></span>
                                 <span class="ob-text">${item.testo}</span>
                             </div>
                             ${pagBadge}
@@ -1536,9 +1540,9 @@ function createPrintHeader(meta, docTitle) {
                 parsHtml += `
                     <div class="ob-par-block">
                         <div class="ob-par-title">
-                            <i class="fa-solid fa-angle-right mr-1.5 text-[7pt] text-teal-600"></i> ${parTitle}
+                            <i class="fa-solid fa-bookmark mr-2 text-amber-600 text-xs"></i> ${parTitle}
                         </div>
-                        <div style="padding-left: 2px;">
+                        <div style="padding-left: 4px;">
                             ${itemsHtml}
                         </div>
                     </div>
@@ -1548,56 +1552,65 @@ function createPrintHeader(meta, docTitle) {
             bodyHtml += `
                 <div class="ob-cap-container">
                     <div class="ob-cap-header">
-                        <span class="ob-cap-title"><i class="fa-solid fa-compass mr-1.5 text-teal-600"></i> ${capTitle}</span>
+                        <span class="ob-cap-title"><i class="fa-solid fa-layer-group mr-2 text-blue-700"></i> ${capTitle}</span>
                     </div>
                     ${parsHtml}
                 </div>
             `;
         });
 
+        // Testata elegante Navy & Oro
+        let headerHtml = `
+            <div style="border-bottom: 2.5px solid #1e3a8a; padding-bottom: 10px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <p style="font-size: 8.5pt; color: #d97706; margin: 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">
+                        CONTI AUTOSCUOLE <span style="color:#64748b;">| ROADMAP COMPETENZE</span>
+                    </p>
+                    <span style="font-size: 8.5pt; font-weight: 700; color: #475569;">
+                        ${totalObiettiviCount} Competenze ${timeStr ? `• ~${timeStr}` : ''}
+                    </span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px;">
+                    <div>
+                        <h1 style="font-size: 15pt; font-weight: 900; margin: 0; color: #0f172a; text-transform: uppercase; line-height: 1.1;">
+                            ${aula}
+                        </h1>
+                        <p style="font-size: 8.5pt; color: #64748b; margin: 3px 0 0 0;">
+                            Spunta le competenze man mano che le acquisisci durante la spiegazione.
+                        </p>
+                    </div>
+                    <div style="font-size: 8.5pt; color: #334155; font-weight: 600; text-align: right; white-space: nowrap;">
+                        Candidato: _________________________ &nbsp;&nbsp; Data: ____________
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Box note spazioso in fondo
+        let notesHtml = `
+            <div class="ob-notes-area">
+                <div style="font-size: 8pt; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                    <i class="fa-solid fa-pen-fancy mr-1.5 text-amber-600"></i> Note personali, parole-chiave ed eccezioni:
+                </div>
+                <div style="border-bottom: 1px dotted #cbd5e1; height: 22px;"></div>
+                <div style="border-bottom: 1px dotted #cbd5e1; height: 22px;"></div>
+                <div style="border-bottom: 1px dotted #cbd5e1; height: 22px;"></div>
+            </div>
+        `;
+
+        // Incapsulato in table.print-table: la tfoot garantisce che nulla tocchi il footer
         return `
             <div class="batch-page ob-sheet">
-                <!-- Testata Ariosa e Istituzionale -->
-                <div style="border-bottom: 2px solid #0d9488; padding-bottom: 8px; margin-bottom: 14px;">
-                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                        <p style="font-size: 8pt; color: #d97706; margin: 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">
-                            CONTI AUTOSCUOLE <span style="color:#64748b;">| ROADMAP COMPETENZE</span>
-                        </p>
-                        <span style="font-size: 8pt; font-weight: 700; color: #475569;">
-                            ${totalObiettiviCount} Competenze ${timeStr ? `• ~${timeStr}` : ''}
-                        </span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 4px;">
-                        <div>
-                            <h1 style="font-size: 14pt; font-weight: 900; margin: 0; color: #0f172a; text-transform: uppercase; line-height: 1.1;">
-                                ${aula}
-                            </h1>
-                            <p style="font-size: 8pt; color: #64748b; margin: 2px 0 0 0;">
-                                Spunta gli obiettivi man mano che li assimili durante la lezione.
-                            </p>
-                        </div>
-                        <div style="font-size: 8pt; color: #334155; font-weight: 600; text-align: right; white-space: nowrap;">
-                            Candidato: _________________________ &nbsp;&nbsp; Data: ____________
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lista Competenze -->
-                ${bodyHtml}
-
-                <!-- Unico Spazio Note Spazioso in fondo -->
-                <div class="ob-notes-area">
-                    <div style="font-size: 7.2pt; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
-                        <i class="fa-solid fa-pen-fancy mr-1"></i> Note personali, formule e parole chiave della lezione:
-                    </div>
-                    <div style="border-bottom: 1px dotted #cbd5e1; height: 18px;"></div>
-                    <div style="border-bottom: 1px dotted #cbd5e1; height: 18px;"></div>
-                </div>
+                <table class="print-table">
+                    <thead class="print-thead"><tr><td>${headerHtml}</td></tr></thead>
+                    <tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot>
+                    <tbody><tr><td>${bodyHtml}${notesHtml}</td></tr></tbody>
+                </table>
             </div>
         `;
     }
 
-    function printBatch() {
+function printBatch() {
         const selectedIds = Array.from(globalSelectedIds);
         const wantMappe = document.getElementById('batch-mappe').checked;
         const wantMatrici = document.getElementById('batch-matrici').checked;
@@ -1605,7 +1618,6 @@ function createPrintHeader(meta, docTitle) {
         const wantConcept = document.getElementById('batch-concept').checked;
         const wantObiettivi = document.getElementById('batch-obiettivi') ? document.getElementById('batch-obiettivi').checked : false;
         const forceMappaBreak = document.getElementById('batch-mappe-break').checked;
-        
         const unisciPagine = document.getElementById('batch-unisci').checked;
 
         if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept && !wantObiettivi) {
@@ -1622,12 +1634,12 @@ function createPrintHeader(meta, docTitle) {
             if(doc) selectedDocObjects.push(doc);
         });
 
-        // 1. FOGLIO OBIETTIVI DIDATTICI (Se spuntato, compare come prima pagina / copertina del fascicolo)
+        // 1. Foglio Obiettivi (Se spuntato)
         if(wantObiettivi) {
             combinedHtml += generateObiettiviSheetHtml(selectedDocObjects);
         }
 
-        // PAGINA 1 VUOTA: Solo se Dispensa e Matrice sono accoppiate e staccate per libro
+        // Pagina 1 vuota solo se Dispensa e Matrice sono separate a libro
         if (wantDispense && wantMatrici && !unisciPagine && !wantObiettivi) {
             combinedHtml += `<div style="page-break-after: always; break-after: page; height: 1px;">&nbsp;</div>`;
         }
@@ -1642,28 +1654,28 @@ function createPrintHeader(meta, docTitle) {
             }
             if(wantMappe) {
                 let pageClass = forceMappaBreak ? 'batch-page' : 'batch-page-fluid';
-                combinedHtml += `<div class="${pageClass}"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Mappa di Regia')}</td></tr></thead><tbody><tr><td>${document.getElementById('batch-mappa-render').innerHTML}</td></tr></tbody></table></div>`;
+                combinedHtml += `<div class="${pageClass}"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Mappa di Regia')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-mappa-render').innerHTML}</td></tr></tbody></table></div>`;
             }
             
             if (unisciPagine && wantDispense && wantMatrici) {
                 let unitoHtml = "";
                 if(currentDispensaHtml['batch']) unitoHtml += `<div style="margin-bottom: 20px;">${currentDispensaHtml['batch']}</div>`;
                 if(document.getElementById('batch-matrice-render').innerHTML) unitoHtml += `<div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
-                combinedHtml += `<div class="batch-page"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Dispensa & Quiz')}</td></tr></thead><tbody><tr><td>${unitoHtml}</td></tr></tbody></table></div>`;
+                combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa & Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${unitoHtml}</td></tr></tbody></table></div>`;
             } else {
                 if(wantDispense && wantMatrici) {
                     if(currentDispensaHtml['batch']) {
-                        combinedHtml += `<div style="break-before: left; page-break-before: left;"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
+                        combinedHtml += `<div style="break-before: left; page-break-before: left;"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
                     }
                     if(document.getElementById('batch-matrice-render').innerHTML) {
-                        combinedHtml += `<div style="break-before: right; page-break-before: right;"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
+                        combinedHtml += `<div style="break-before: right; page-break-before: right;"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
                     }
                 } else {
                     if(wantDispense && currentDispensaHtml['batch']) {
-                        combinedHtml += `<div class="batch-page"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
+                        combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
                     }
                     if(wantMatrici) {
-                        combinedHtml += `<div class="batch-page"><table class="print-table" style="width: 100%; border: none; border-collapse: collapse;"><thead class="print-thead" style="display: table-header-group;"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
+                        combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
                     }
                 }
             }
