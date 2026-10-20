@@ -1485,14 +1485,25 @@ function createPrintHeader(meta, docTitle) {
             let currentFaseTempo = "";
             let foundAny = false;
 
-            lines.forEach(line => {
+            lines.forEach((line, lineIdx) => {
                 let l = line.trim(); if(!l) return;
                 let uL = l.toUpperCase();
                 let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
 
-                // Cattura Il Senso Pratico del paragrafo
-                if (cleanStart.startsWith('IL SENSO PRATICO:')) {
-                    grouped[cap][par].sensoPratico = l.replace(/.*?IL SENSO PRATICO:/i, '').replace(/[\*\_]/g, '').trim();
+                // Cattura Il Senso Pratico in modo elastico (anche se va a capo o senza "IL")
+                if (uL.includes('SENSO PRATICO')) {
+                    let mSenso = l.match(/SENSO\s+PRATICO\s*[:\-–—]?\s*(.*)/i);
+                    let val = mSenso ? mSenso[1].replace(/[\*\_]/g, '').trim() : "";
+                    
+                    // Se il testo è andato a capo nella riga successiva, lo recupera da lì
+                    if (!val && lineIdx + 1 < lines.length) {
+                        let nextLine = lines[lineIdx + 1].trim();
+                        let nextUpper = nextLine.toUpperCase();
+                        if (!nextUpper.startsWith('FASE') && !nextUpper.includes('OBIETTIVO') && !nextUpper.startsWith('PAGINA')) {
+                            val = nextLine.replace(/[\*\_]/g, '').trim();
+                        }
+                    }
+                    if (val) grouped[cap][par].sensoPratico = val;
                 }
                 // Cattura la FASE con eventuale minutaggio parziale
                 else if (cleanStart.startsWith('FASE')) {
