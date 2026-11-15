@@ -363,8 +363,12 @@
         </div>
     </div>
     <button onclick="deselectAll()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full font-bold transition shadow flex items-center justify-center text-sm border border-slate-500 whitespace-nowrap shrink-0">Annulla</button>
+    <label class="text-emerald-300 hover:text-white cursor-pointer text-xs flex items-center gap-1.5 font-bold bg-slate-900 px-3 py-2 rounded-full border border-emerald-500/40 shrink-0" title="Sostituisce l'intestazione autoscuola con il tuo brand personale per la vendita">
+        <input type="checkbox" id="batch-brand-personale" class="w-3.5 h-3.5 accent-emerald-500 rounded cursor-pointer"> Brand Personale
+    </label>
     <div class="flex rounded-full shadow border border-slate-400 overflow-hidden shrink-0">
-        <button onclick="printBatch()" class="bg-white hover:bg-slate-200 text-slate-900 px-5 py-2 font-black transition flex items-center justify-center text-sm whitespace-nowrap shrink-0"><i class="fa-solid fa-print mr-2 text-blue-600"></i> Crea PDF</button>
+        <button onclick="printBatch()" class="bg-white hover:bg-slate-200 text-slate-900 px-4 py-2 font-black transition flex items-center justify-center text-sm whitespace-nowrap shrink-0"><i class="fa-solid fa-print mr-2 text-blue-600"></i> PDF</button>
+        <button onclick="exportBatchToWord()" class="bg-blue-600 hover:bg-blue-500 border-l border-blue-400 text-white px-4 py-2 font-black transition flex items-center justify-center text-sm whitespace-nowrap shrink-0" title="Esporta file modificabile per Google Documenti o Word"><i class="fa-solid fa-file-word mr-1.5"></i> G-Docs / Word</button>
         <button onclick="openAdvancedPrint()" class="bg-slate-200 hover:bg-slate-300 border-l border-slate-400 text-slate-900 px-3 py-2 font-black transition flex items-center justify-center text-sm" title="Opzioni Avanzate"><i class="fa-solid fa-sliders"></i></button>
     </div>
     <button onclick="deleteBatch()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full font-black transition shadow flex items-center justify-center text-sm whitespace-nowrap shrink-0"><i class="fa-solid fa-trash-can md:mr-2"></i> Elimina</button>
@@ -1398,11 +1402,31 @@ async function toggleDocReady(docId) {
         </div>
     `;
 
+function getActiveFooterHtml() {
+    const isPersonalBrand = document.getElementById('batch-brand-personale') && document.getElementById('batch-brand-personale').checked;
+    if (isPersonalBrand) {
+        return `
+            <div class="print-footer">
+                <div style="display: flex; align-items: center;">
+                    <span class="print-footer-text" style="font-size: 8pt; color: #1e3a8a;">DRIVING LEADER STUDIO &bull; METODO DIDATTICO</span>
+                </div>
+                <div style="font-style: italic; font-size: 7.5pt; text-align: right; line-height: 1.2; white-space: nowrap;">
+                    A cura di Michele Fortunato<br>
+                    Tutti i diritti riservati &copy; ${new Date().getFullYear()}
+                </div>
+            </div>
+        `;
+    }
+    return printFooterHtmlBlock;
+}
+
 function createPrintHeader(meta, docTitle) {
+        const isPersonalBrand = document.getElementById('batch-brand-personale') && document.getElementById('batch-brand-personale').checked;
+        const brandLabel = isPersonalBrand ? 'DRIVING LEADER STUDIO' : 'CONTI AUTOSCUOLE';
         return `
             <div class="print-header-container">
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <p class="print-header-aula">CONTI AUTOSCUOLE <span style="color:#555;">| ${meta.aula || docTitle}</span></p>
+                    <p class="print-header-aula">${brandLabel} <span style="color:#555;">| ${meta.aula || docTitle}</span></p>
                     ${meta.tempo ? `<span style="font-size: 9pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
                 </div>
                 <h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1>
@@ -1423,12 +1447,11 @@ function createPrintHeader(meta, docTitle) {
                 <tfoot class="print-tfoot" style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot>
                 <tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${contentHtml}</td></tr></tbody>
             </table>
-            ${printFooterHtmlBlock}`;
+            ${getActiveFooterHtml()}`;
         
         const originalTitle = document.title; document.title = getAutomatedPrintName(type, meta);
         setTimeout(() => { 
             window.print(); 
-            // Aggiunto ritardo di 1 secondo per dare il tempo al browser di salvare il nome del PDF
             setTimeout(() => { document.title = originalTitle; printArea.innerHTML = ''; }, 1000);
         }, 300);
     }
@@ -1445,7 +1468,7 @@ function createPrintHeader(meta, docTitle) {
                 <tfoot class="print-tfoot" style="display: table-footer-group;"><tr><td style="height: 35px; border: none; padding: 0;"></td></tr></tfoot>
                 <tbody style="display: table-row-group;"><tr><td style="border: none; padding: 0;">${htmlContent}</td></tr></tbody>
             </table>
-            ${printFooterHtmlBlock}`;
+            ${getActiveFooterHtml()}`;
             
         const originalTitle = document.title; document.title = getAutomatedPrintName('DISPENSA', meta);
         setTimeout(() => { 
@@ -1454,189 +1477,7 @@ function createPrintHeader(meta, docTitle) {
         }, 300);
     }
 
-// --- GENERATORE FOGLIO OBIETTIVI (CON SENSO PRATICO, TEMPI E OTTIMIZZATO B&W) ---
-    function generateObiettiviSheetHtml(selectedDocs) {
-        if(!selectedDocs || selectedDocs.length === 0) return "";
-        let firstDoc = selectedDocs[0];
-        let aula = firstDoc.aula || "Corso Patenti";
-        
-        let totalMinutes = 0;
-        selectedDocs.forEach(d => {
-            if(d.tempo) { let m = d.tempo.match(/\d+/); if(m) totalMinutes += parseInt(m[0], 10); }
-        });
-        let timeStr = totalMinutes > 0 ? (totalMinutes + " min") : "";
-
-        let grouped = {};
-        let totalObiettiviCount = 0;
-
-        selectedDocs.forEach(doc => {
-            let cap = doc.obiettivo || "Programma";
-            let par = doc.argomento || "Modulo";
-            if(!grouped[cap]) grouped[cap] = {};
-            if(!grouped[cap][par]) {
-                grouped[cap][par] = {
-                    tempoDoc: doc.tempo || "",
-                    sensoPratico: "",
-                    items: []
-                };
-            }
-
-            let lines = (doc.rawText || "").split('\n');
-            let currentFaseTempo = "";
-            let foundAny = false;
-
-            lines.forEach((line, lineIdx) => {
-                let l = line.trim(); if(!l) return;
-                let uL = l.toUpperCase();
-                let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
-
-                // Cattura Il Senso Pratico in modo elastico (anche se va a capo o senza "IL")
-                if (uL.includes('SENSO PRATICO')) {
-                    let mSenso = l.match(/SENSO\s+PRATICO\s*[:\-–—]?\s*(.*)/i);
-                    let val = mSenso ? mSenso[1].replace(/[\*\_]/g, '').trim() : "";
-                    
-                    // Se il testo è andato a capo nella riga successiva, lo recupera da lì
-                    if (!val && lineIdx + 1 < lines.length) {
-                        let nextLine = lines[lineIdx + 1].trim();
-                        let nextUpper = nextLine.toUpperCase();
-                        if (!nextUpper.startsWith('FASE') && !nextUpper.includes('OBIETTIVO') && !nextUpper.startsWith('PAGINA')) {
-                            val = nextLine.replace(/[\*\_]/g, '').trim();
-                        }
-                    }
-                    if (val) grouped[cap][par].sensoPratico = val;
-                }
-                // Cattura la FASE con eventuale minutaggio parziale
-                else if (cleanStart.startsWith('FASE')) {
-                    let mTempo = l.match(/TEMPO:\s*(\d+\s*min)/i);
-                    currentFaseTempo = mTempo ? mTempo[1] : "";
-                }
-                // Cattura l'Obiettivo Pratico
-                else if (uL.includes('OBIETTIVO PRATICO:')) {
-                    let idx = uL.indexOf('OBIETTIVO PRATICO:');
-                    let objText = l.substring(idx + 18).trim().replace(/\*\*(.*?)\*\*/g, '$1');
-                    grouped[cap][par].items.push({
-                        testo: objText,
-                        tempo: currentFaseTempo
-                    });
-                    foundAny = true;
-                    totalObiettiviCount++;
-                }
-            });
-
-            if(!foundAny) {
-                grouped[cap][par].items.push({
-                    testo: par,
-                    tempo: doc.tempo || ""
-                });
-                totalObiettiviCount++;
-            }
-        });
-
-        let bodyHtml = "";
-        Object.keys(grouped).forEach(capTitle => {
-            let parsHtml = "";
-
-            Object.keys(grouped[capTitle]).forEach(parTitle => {
-                let parData = grouped[capTitle][parTitle];
-                let itemsHtml = "";
-
-                parData.items.forEach(item => {
-                    let tempoBadge = item.tempo ? `<span class="ob-time-tag">${item.tempo}</span>` : "";
-
-                    itemsHtml += `
-                        <div class="ob-row">
-                            <div style="display: flex; align-items: flex-start; flex-grow: 1;">
-                                <span class="ob-checkbox"></span>
-                                <span class="ob-text">${item.testo}</span>
-                            </div>
-                            ${tempoBadge}
-                        </div>
-                    `;
-                });
-
-                let sensoHtml = parData.sensoPratico ? `
-                    <div class="ob-senso-box">
-                        <strong>Perché serve nella realtà:</strong> ${parData.sensoPratico}
-                    </div>
-                ` : '';
-
-                let parTempoDisplay = parData.tempoDoc ? `<span class="ob-par-time">⏱ ~${parData.tempoDoc}</span>` : '';
-
-                parsHtml += `
-                    <div class="ob-par-block">
-                        <div class="ob-par-header">
-                            <div class="ob-par-title">${parTitle}</div>
-                            ${parTempoDisplay}
-                        </div>
-                        ${sensoHtml}
-                        <div style="padding-left: 2px;">
-                            ${itemsHtml}
-                        </div>
-                    </div>
-                `;
-            });
-
-            bodyHtml += `
-                <div class="ob-cap-container">
-                    <div class="ob-cap-header">
-                        <span class="ob-cap-title">${capTitle}</span>
-                    </div>
-                    ${parsHtml}
-                </div>
-            `;
-        });
-
-        // Testata B&W Native: nitida sia a colori che in b/n
-        let headerHtml = `
-            <div style="border-bottom: 2.5px solid #000; padding-bottom: 10px; margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                    <p style="font-size: 8.5pt; color: #000; margin: 0; text-transform: uppercase; font-weight: 900; letter-spacing: 1px;">
-                        CONTI AUTOSCUOLE <span style="font-weight: normal; color: #444;">| ROADMAP COMPETENZE D'AULA</span>
-                    </p>
-                    <span style="font-size: 9pt; font-weight: 800; color: #000; font-family: monospace;">
-                        ${totalObiettiviCount} Competenze ${timeStr ? `• Totale: ~${timeStr}` : ''}
-                    </span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px;">
-                    <div>
-                        <h1 style="font-size: 15pt; font-weight: 900; margin: 0; color: #000; text-transform: uppercase; line-height: 1.1;">
-                            ${aula}
-                        </h1>
-                        <p style="font-size: 8.5pt; color: #333; margin: 3px 0 0 0;">
-                            Spunta le competenze man mano che le acquisisci durante la spiegazione.
-                        </p>
-                    </div>
-                    <div style="font-size: 8.5pt; color: #000; font-weight: 600; text-align: right; white-space: nowrap;">
-                        Candidato: _________________________ &nbsp;&nbsp; Data: ____________
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Box note spazioso in fondo
-        let notesHtml = `
-            <div class="ob-notes-area">
-                <div style="font-size: 8pt; font-weight: 800; color: #000; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
-                    Note personali, parole-chiave ed eccezioni:
-                </div>
-                <div style="border-bottom: 1px dotted #888; height: 22px;"></div>
-                <div style="border-bottom: 1px dotted #888; height: 22px;"></div>
-                <div style="border-bottom: 1px dotted #888; height: 22px;"></div>
-            </div>
-        `;
-
-        return `
-            <div class="batch-page ob-sheet">
-                <table class="print-table">
-                    <thead class="print-thead"><tr><td>${headerHtml}</td></tr></thead>
-                    <tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot>
-                    <tbody><tr><td>${bodyHtml}${notesHtml}</td></tr></tbody>
-                </table>
-            </div>
-        `;
-    }
-
-function printBatch() {
+    function buildBatchHtmlContent() {
         const selectedIds = Array.from(globalSelectedIds);
         const wantMappe = document.getElementById('batch-mappe').checked;
         const wantMatrici = document.getElementById('batch-matrici').checked;
@@ -1647,9 +1488,13 @@ function printBatch() {
         const unisciPagine = document.getElementById('batch-unisci').checked;
 
         if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept && !wantObiettivi) {
-            return alert("Seleziona almeno un tipo di documento da stampare.");
+            alert("Seleziona almeno un tipo di documento da esportare/stampare.");
+            return null;
         }
-        if(selectedIds.length === 0) return alert("Nessun documento selezionato.");
+        if(selectedIds.length === 0) {
+            alert("Nessun documento selezionato.");
+            return null;
+        }
 
         let combinedHtml = "";
         let firstMeta = null;
@@ -1660,12 +1505,10 @@ function printBatch() {
             if(doc) selectedDocObjects.push(doc);
         });
 
-        // 1. Foglio Obiettivi (Se spuntato)
         if(wantObiettivi) {
             combinedHtml += generateObiettiviSheetHtml(selectedDocObjects);
         }
 
-        // Pagina 1 vuota solo se Dispensa e Matrice sono separate a libro
         if (wantDispense && wantMatrici && !unisciPagine && !wantObiettivi) {
             combinedHtml += `<div style="page-break-after: always; break-after: page; height: 1px;">&nbsp;</div>`;
         }
@@ -1707,8 +1550,6 @@ function printBatch() {
             }
         });
 
-        document.getElementById('print-area').innerHTML = `${combinedHtml}${printFooterHtmlBlock}`;
-        
         let baseName = "FASCICOLO"; 
         let selCount = [wantMappe, wantMatrici, wantDispense, wantConcept, wantObiettivi].filter(Boolean).length;
         if (selCount === 1) {
@@ -1718,12 +1559,79 @@ function printBatch() {
             if(wantConcept) baseName = "INFOGRAFICA";
             if(wantObiettivi) baseName = "OBIETTIVI";
         }
-        
-        const originalTitle = document.title; document.title = getAutomatedPrintName(baseName, firstMeta || selectedDocObjects[0]);
+
+        return { html: combinedHtml, meta: firstMeta || selectedDocObjects[0], baseName: baseName };
+    }
+
+    function printBatch() {
+        const built = buildBatchHtmlContent();
+        if(!built) return;
+
+        document.getElementById('print-area').innerHTML = `${built.html}${getActiveFooterHtml()}`;
+        const originalTitle = document.title; 
+        document.title = getAutomatedPrintName(built.baseName, built.meta);
         setTimeout(() => { 
             window.print(); 
             setTimeout(() => { document.title = originalTitle; document.getElementById('print-area').innerHTML = ''; }, 1000); 
         }, 300);
+    }
+
+    // --- ESPORTAZIONE EDITABILE PER GOOGLE DOCUMENTI & WORD (.DOC) ---
+    function exportBatchToWord() {
+        const built = buildBatchHtmlContent();
+        if(!built) return;
+
+        const isPersonalBrand = document.getElementById('batch-brand-personale') && document.getElementById('batch-brand-personale').checked;
+        const footerAutor = isPersonalBrand ? 'Driving Leader Studio - A cura di Michele Fortunato' : 'Conti Autoscuole - A cura di M. Fortunato';
+
+        // Foglio di stile compatibile con Google Documenti e Microsoft Word
+        const wordStyles = `
+            <style>
+                body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5pt; color: #0f172a; line-height: 1.4; }
+                .print-header-container { border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 14px; }
+                .print-header-aula { font-size: 9pt; color: #d97706; text-transform: uppercase; font-weight: bold; margin: 0; }
+                .print-header-ob { font-size: 16pt; font-weight: bold; color: #0f172a; margin: 2px 0; }
+                .print-header-arg { font-size: 11pt; color: #475569; font-style: italic; margin: 0; }
+                .d-section { border: 1px solid #cbd5e1; padding: 10px 14px; margin-bottom: 12px; background-color: #f8fafc; }
+                .d-section-title { font-size: 11pt; font-weight: bold; color: #1e3a8a; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase; }
+                .d-pratica { background-color: #f0fdf4; border-color: #bbf7d0; color: #064e3b; }
+                .matrice-title { font-size: 11pt; font-weight: bold; color: #1e3a8a; border-left: 4px solid #d97706; padding-left: 8px; margin-top: 14px; margin-bottom: 6px; text-transform: uppercase; }
+                .matrice-row { margin-bottom: 6px; padding-left: 8px; font-size: 9.5pt; }
+                .v-badge { background-color: #16a34a; color: #ffffff; font-weight: bold; padding: 1px 5px; font-size: 8pt; }
+                .f-badge { background-color: #dc2626; color: #ffffff; font-weight: bold; padding: 1px 5px; font-size: 8pt; }
+                .matrice-exp { display: block; font-size: 8.5pt; color: #475569; font-style: italic; margin-top: 2px; }
+                .incipit-globale { background-color: #fef9c3; border-left: 4px solid #d97706; padding: 10px; font-style: italic; margin-bottom: 12px; }
+                .fase-title { font-size: 13pt; font-weight: bold; border-bottom: 1.5px solid #000; margin-top: 16px; margin-bottom: 6px; text-transform: uppercase; }
+                .pagina-row { margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+                .pagina-badge { font-weight: bold; border: 1px solid #000; padding: 1px 5px; font-size: 8.5pt; margin-right: 6px; }
+                .pagina-trap { color: #b91c1c; font-weight: bold; margin-top: 4px; }
+                .pagina-extra { color: #065f46; font-weight: bold; margin-top: 4px; }
+                .batch-page { page-break-after: always; }
+                .doc-footer-note { margin-top: 20px; border-top: 1px solid #cbd5e1; padding-top: 6px; font-size: 8pt; color: #64748b; text-align: right; }
+            </style>
+        `;
+
+        const fullDocHtml = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'><title>${built.baseName}</title>${wordStyles}</head>
+            <body>
+                ${built.html}
+                <div class="doc-footer-note">${footerAutor} &copy; ${new Date().getFullYear()}</div>
+            </body>
+            </html>
+        `;
+
+        const blob = new Blob(['\ufeff', fullDocHtml], { type: 'application/msword;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const fileName = getAutomatedPrintName(built.baseName, built.meta) + ".doc";
+        
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     }
 
     function exportCSV(prefix) {
