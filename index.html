@@ -1408,7 +1408,7 @@ function getActiveFooterHtml() {
         return `
             <div class="print-footer">
                 <div style="display: flex; align-items: center;">
-                    <span class="print-footer-text" style="font-size: 8pt; color: #1e3a8a;">DRIVING STUDIO &bull; METODO DIDATTICO</span>
+                    <span class="print-footer-text" style="font-size: 8pt; color: #1e3a8a;">DRIVING LEADER STUDIO &bull; METODO DIDATTICO</span>
                 </div>
                 <div style="font-style: italic; font-size: 7.5pt; text-align: right; line-height: 1.2; white-space: nowrap;">
                     A cura di Michele Fortunato<br>
@@ -1477,15 +1477,193 @@ function createPrintHeader(meta, docTitle) {
         }, 300);
     }
 
-    function buildBatchHtmlContent() {
+
+    // --- GENERATORE FOGLIO OBIETTIVI (CON SENSO PRATICO, TEMPI E B&W NATIVE) ---
+    function generateObiettiviSheetHtml(selectedDocs) {
+        if(!selectedDocs || selectedDocs.length === 0) return "";
+        let firstDoc = selectedDocs[0];
+        let aula = firstDoc.aula || "Corso Patenti";
+        
+        let totalMinutes = 0;
+        selectedDocs.forEach(d => {
+            if(d.tempo) { let m = d.tempo.match(/\d+/); if(m) totalMinutes += parseInt(m[0], 10); }
+        });
+        let timeStr = totalMinutes > 0 ? (totalMinutes + " min") : "";
+
+        let grouped = {};
+        let totalObiettiviCount = 0;
+
+        selectedDocs.forEach(doc => {
+            let cap = doc.obiettivo || "Programma";
+            let par = doc.argomento || "Modulo";
+            if(!grouped[cap]) grouped[cap] = {};
+            if(!grouped[cap][par]) {
+                grouped[cap][par] = {
+                    tempoDoc: doc.tempo || "",
+                    sensoPratico: "",
+                    items: []
+                };
+            }
+
+            let lines = (doc.rawText || "").split('\n');
+            let currentFaseTempo = "";
+            let foundAny = false;
+
+            lines.forEach((line, lineIdx) => {
+                let l = line.trim(); if(!l) return;
+                let uL = l.toUpperCase();
+                let cleanStart = l.replace(/^[^a-zA-Z0-9]+/, '').toUpperCase();
+
+                // Cattura Il Senso Pratico in modo elastico (anche su riga successiva o senza "IL")
+                if (uL.includes('SENSO PRATICO')) {
+                    let mSenso = l.match(/SENSO\s+PRATICO\s*[:\-–—]?\s*(.*)/i);
+                    let val = mSenso ? mSenso[1].replace(/[\*\_]/g, '').trim() : "";
+                    
+                    if (!val && lineIdx + 1 < lines.length) {
+                        let nextLine = lines[lineIdx + 1].trim();
+                        let nextUpper = nextLine.toUpperCase();
+                        if (!nextUpper.startsWith('FASE') && !nextUpper.includes('OBIETTIVO') && !nextUpper.startsWith('PAGINA')) {
+                            val = nextLine.replace(/[\*\_]/g, '').trim();
+                        }
+                    }
+                    if (val) grouped[cap][par].sensoPratico = val;
+                }
+                else if (cleanStart.startsWith('FASE')) {
+                    let mTempo = l.match(/TEMPO:\s*(\d+\s*min)/i);
+                    currentFaseTempo = mTempo ? mTempo[1] : "";
+                }
+                else if (uL.includes('OBIETTIVO PRATICO:')) {
+                    let idx = uL.indexOf('OBIETTIVO PRATICO:');
+                    let objText = l.substring(idx + 18).trim().replace(/\*\*(.*?)\*\*/g, '$1');
+                    grouped[cap][par].items.push({
+                        testo: objText,
+                        tempo: currentFaseTempo
+                    });
+                    foundAny = true;
+                    totalObiettiviCount++;
+                }
+            });
+
+            if(!foundAny) {
+                grouped[cap][par].items.push({
+                    testo: par,
+                    tempo: doc.tempo || ""
+                });
+                totalObiettiviCount++;
+            }
+        });
+
+        let bodyHtml = "";
+        Object.keys(grouped).forEach(capTitle => {
+            let parsHtml = "";
+
+            Object.keys(grouped[capTitle]).forEach(parTitle => {
+                let parData = grouped[capTitle][parTitle];
+                let itemsHtml = "";
+
+                parData.items.forEach(item => {
+                    let tempoBadge = item.tempo ? `<span class="ob-time-tag">${item.tempo}</span>` : "";
+
+                    itemsHtml += `
+                        <div class="ob-row">
+                            <div style="display: flex; align-items: flex-start; flex-grow: 1;">
+                                <span class="ob-checkbox"></span>
+                                <span class="ob-text">${item.testo}</span>
+                            </div>
+                            ${tempoBadge}
+                        </div>
+                    `;
+                });
+
+                let sensoHtml = parData.sensoPratico ? `
+                    <div class="ob-senso-box">
+                        <strong>Perché serve nella realtà:</strong> ${parData.sensoPratico}
+                    </div>
+                ` : '';
+
+                let parTempoDisplay = parData.tempoDoc ? `<span class="ob-par-time">⏱ ~${parData.tempoDoc}</span>` : '';
+
+                parsHtml += `
+                    <div class="ob-par-block">
+                        <div class="ob-par-header">
+                            <div class="ob-par-title">${parTitle}</div>
+                            ${parTempoDisplay}
+                        </div>
+                        ${sensoHtml}
+                        <div style="padding-left: 2px;">
+                            ${itemsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            bodyHtml += `
+                <div class="ob-cap-container">
+                    <div class="ob-cap-header">
+                        <span class="ob-cap-title">${capTitle}</span>
+                    </div>
+                    ${parsHtml}
+                </div>
+            `;
+        });
+
+        let headerHtml = `
+            <div style="border-bottom: 2.5px solid #000; padding-bottom: 10px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <p style="font-size: 8.5pt; color: #000; margin: 0; text-transform: uppercase; font-weight: 900; letter-spacing: 1px;">
+                        DRIVING LEADER <span style="font-weight: normal; color: #444;">| ROADMAP COMPETENZE D'AULA</span>
+                    </p>
+                    <span style="font-size: 9pt; font-weight: 800; color: #000; font-family: monospace;">
+                        ${totalObiettiviCount} Competenze ${timeStr ? `• Totale: ~${timeStr}` : ''}
+                    </span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px;">
+                    <div>
+                        <h1 style="font-size: 15pt; font-weight: 900; margin: 0; color: #000; text-transform: uppercase; line-height: 1.1;">
+                            ${aula}
+                        </h1>
+                        <p style="font-size: 8.5pt; color: #333; margin: 3px 0 0 0;">
+                            Spunta le competenze man mano che le acquisisci durante la spiegazione.
+                        </p>
+                    </div>
+                    <div style="font-size: 8.5pt; color: #000; font-weight: 600; text-align: right; white-space: nowrap;">
+                        Candidato: _________________________ &nbsp;&nbsp; Data: ____________
+                    </div>
+                </div>
+            </div>
+        `;
+
+        let notesHtml = `
+            <div class="ob-notes-area">
+                <div style="font-size: 8pt; font-weight: 800; color: #000; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                    Note personali, parole-chiave ed eccezioni:
+                </div>
+                <div style="border-bottom: 1px dotted #888; height: 22px;"></div>
+                <div style="border-bottom: 1px dotted #888; height: 22px;"></div>
+                <div style="border-bottom: 1px dotted #888; height: 22px;"></div>
+            </div>
+        `;
+
+        return `
+            <div class="batch-page ob-sheet">
+                <table class="print-table">
+                    <thead class="print-thead"><tr><td>${headerHtml}</td></tr></thead>
+                    <tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot>
+                    <tbody><tr><td>${bodyHtml}${notesHtml}</td></tr></tbody>
+                </table>
+            </div>
+        `;
+    }
+
+function buildBatchHtmlContent() {
         const selectedIds = Array.from(globalSelectedIds);
-        const wantMappe = document.getElementById('batch-mappe').checked;
-        const wantMatrici = document.getElementById('batch-matrici').checked;
-        const wantDispense = document.getElementById('batch-dispense').checked;
-        const wantConcept = document.getElementById('batch-concept').checked;
+        const wantMappe = document.getElementById('batch-mappe') ? document.getElementById('batch-mappe').checked : false;
+        const wantMatrici = document.getElementById('batch-matrici') ? document.getElementById('batch-matrici').checked : false;
+        const wantDispense = document.getElementById('batch-dispense') ? document.getElementById('batch-dispense').checked : false;
+        const wantConcept = document.getElementById('batch-concept') ? document.getElementById('batch-concept').checked : false;
         const wantObiettivi = document.getElementById('batch-obiettivi') ? document.getElementById('batch-obiettivi').checked : false;
-        const forceMappaBreak = document.getElementById('batch-mappe-break').checked;
-        const unisciPagine = document.getElementById('batch-unisci').checked;
+        const forceMappaBreak = document.getElementById('batch-mappe-break') ? document.getElementById('batch-mappe-break').checked : false;
+        const unisciPagine = document.getElementById('batch-unisci') ? document.getElementById('batch-unisci').checked : false;
 
         if(!wantMappe && !wantMatrici && !wantDispense && !wantConcept && !wantObiettivi) {
             alert("Seleziona almeno un tipo di documento da esportare/stampare.");
@@ -1505,50 +1683,60 @@ function createPrintHeader(meta, docTitle) {
             if(doc) selectedDocObjects.push(doc);
         });
 
+        // 1. FOGLIO OBIETTIVI (Se spuntato)
         if(wantObiettivi) {
-            combinedHtml += generateObiettiviSheetHtml(selectedDocObjects);
+            if (typeof generateObiettiviSheetHtml === "function") {
+                combinedHtml += generateObiettiviSheetHtml(selectedDocObjects);
+            } else {
+                alert("Errore: manca la funzione generateObiettiviSheetHtml nel codice.");
+                return null;
+            }
         }
 
+        // Pagina 1 vuota solo se Dispensa e Matrice sono separate a libro
         if (wantDispense && wantMatrici && !unisciPagine && !wantObiettivi) {
             combinedHtml += `<div style="page-break-after: always; break-after: page; height: 1px;">&nbsp;</div>`;
         }
 
-        selectedDocObjects.forEach((doc) => {
-            if(!processAndRender(doc.rawText, 'batch', true, doc.imageUrl)) return;
-            const meta = currentDocMeta['batch'];
-            if(!firstMeta) firstMeta = meta;
+        // 2. ALTRI DOCUMENTI (Mappe, Dispense, Matrici, Infografiche)
+        if (wantMappe || wantMatrici || wantDispense || wantConcept) {
+            selectedDocObjects.forEach((doc) => {
+                if(!processAndRender(doc.rawText, 'batch', true, doc.imageUrl)) return;
+                const meta = currentDocMeta['batch'];
+                if(!firstMeta) firstMeta = meta;
 
-            if(wantConcept && currentConceptMapHtml['batch']) {
-                combinedHtml += `<div class="batch-page">${currentConceptMapHtml['batch']}</div>`;
-            }
-            if(wantMappe) {
-                let pageClass = forceMappaBreak ? 'batch-page' : 'batch-page-fluid';
-                combinedHtml += `<div class="${pageClass}"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Mappa di Regia')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-mappa-render').innerHTML}</td></tr></tbody></table></div>`;
-            }
-            
-            if (unisciPagine && wantDispense && wantMatrici) {
-                let unitoHtml = "";
-                if(currentDispensaHtml['batch']) unitoHtml += `<div style="margin-bottom: 20px;">${currentDispensaHtml['batch']}</div>`;
-                if(document.getElementById('batch-matrice-render').innerHTML) unitoHtml += `<div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
-                combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa & Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${unitoHtml}</td></tr></tbody></table></div>`;
-            } else {
-                if(wantDispense && wantMatrici) {
-                    if(currentDispensaHtml['batch']) {
-                        combinedHtml += `<div style="break-before: left; page-break-before: left;"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
-                    }
-                    if(document.getElementById('batch-matrice-render').innerHTML) {
-                        combinedHtml += `<div style="break-before: right; page-break-before: right;"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
-                    }
+                if(wantConcept && currentConceptMapHtml['batch']) {
+                    combinedHtml += `<div class="batch-page">${currentConceptMapHtml['batch']}</div>`;
+                }
+                if(wantMappe) {
+                    let pageClass = forceMappaBreak ? 'batch-page' : 'batch-page-fluid';
+                    combinedHtml += `<div class="${pageClass}"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Mappa di Regia')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-mappa-render').innerHTML}</td></tr></tbody></table></div>`;
+                }
+                
+                if (unisciPagine && wantDispense && wantMatrici) {
+                    let unitoHtml = "";
+                    if(currentDispensaHtml['batch']) unitoHtml += `<div style="margin-bottom: 20px;">${currentDispensaHtml['batch']}</div>`;
+                    if(document.getElementById('batch-matrice-render').innerHTML) unitoHtml += `<div>${document.getElementById('batch-matrice-render').innerHTML}</div>`;
+                    combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa & Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${unitoHtml}</td></tr></tbody></table></div>`;
                 } else {
-                    if(wantDispense && currentDispensaHtml['batch']) {
-                        combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
-                    }
-                    if(wantMatrici) {
-                        combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
+                    if(wantDispense && wantMatrici) {
+                        if(currentDispensaHtml['batch']) {
+                            combinedHtml += `<div style="break-before: left; page-break-before: left;"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
+                        }
+                        if(document.getElementById('batch-matrice-render').innerHTML) {
+                            combinedHtml += `<div style="break-before: right; page-break-before: right;"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
+                        }
+                    } else {
+                        if(wantDispense && currentDispensaHtml['batch']) {
+                            combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Dispensa Allievi')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${currentDispensaHtml['batch']}</td></tr></tbody></table></div>`;
+                        }
+                        if(wantMatrici) {
+                            combinedHtml += `<div class="batch-page"><table class="print-table"><thead class="print-thead"><tr><td>${createPrintHeader(meta, 'Analisi Matriciale Quiz')}</td></tr></thead><tfoot class="print-tfoot"><tr><td style="height: 22mm; border: none; padding: 0;"></td></tr></tfoot><tbody><tr><td>${document.getElementById('batch-matrice-render').innerHTML}</td></tr></tbody></table></div>`;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         let baseName = "FASCICOLO"; 
         let selCount = [wantMappe, wantMatrici, wantDispense, wantConcept, wantObiettivi].filter(Boolean).length;
@@ -1567,7 +1755,9 @@ function createPrintHeader(meta, docTitle) {
         const built = buildBatchHtmlContent();
         if(!built) return;
 
-        document.getElementById('print-area').innerHTML = `${built.html}${getActiveFooterHtml()}`;
+        const footerHtml = (typeof getActiveFooterHtml === "function") ? getActiveFooterHtml() : printFooterHtmlBlock;
+        document.getElementById('print-area').innerHTML = `${built.html}${footerHtml}`;
+        
         const originalTitle = document.title; 
         document.title = getAutomatedPrintName(built.baseName, built.meta);
         setTimeout(() => { 
