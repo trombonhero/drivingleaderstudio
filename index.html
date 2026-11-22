@@ -259,6 +259,7 @@
             <div class="flex gap-2 md:gap-4">
                 <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> <span class="hidden md:inline">Generatore</span></button>
                 <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> <span class="hidden md:inline">Archivio Didattico</span></button>
+                <button onclick="navTo('editorial')" id="nav-btn-editorial" class="btn-nav text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10"><i class="fa-solid fa-book-open mr-2"></i> <span class="hidden md:inline">Kit Editoriale</span></button>
                 <button onclick="openQuizExplorer()" id="nav-btn-quiz" class="btn-nav text-amber-400 border-amber-500/30 hover:bg-amber-500/10"><i class="fa-solid fa-bolt mr-2"></i> Esplora Quiz</button>
             </div>
         </div>
@@ -512,6 +513,98 @@
                     </div>
                     <textarea id="read-edit-textarea" class="w-full flex-grow bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-xl focus:outline-none focus:border-yellow-500 font-mono text-sm resize-none"></textarea>
                 </div>
+            </div>
+        </div>
+
+        <!-- VISTA KIT EDITORIALE (COPERTINE, INDICI, NOTE) -->
+        <div id="view-editorial" class="view-section p-4 md:p-8">
+            <div class="max-w-[1400px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 pb-12">
+                
+                <!-- Pannello Controlli a Sinistra -->
+                <div class="lg:col-span-5 glass-panel border-t-4 border-t-emerald-500 flex flex-col gap-4 h-fit">
+                    <div>
+                        <h2 class="text-2xl font-black text-white mb-1"><i class="fa-solid fa-book-open text-emerald-400 mr-2"></i>Kit Editoriale A4</h2>
+                        <p class="text-xs text-slate-400">Genera e salva in PDF le singole parti del manuale da unire ai capitoli.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">1. Scegli cosa generare</label>
+                        <select id="ed-page-type" onchange="switchEditorialTemplate()" class="w-full bg-slate-900 border border-slate-600 text-white p-3 rounded-lg font-bold focus:outline-none focus:border-emerald-500">
+                            <option value="cover">Copertina Principale A4</option>
+                            <option value="frontmatter">Pagina 2: Proprietà, Legenda Icone & Nota Quiz</option>
+                            <option value="index">Indice Generale del Volume (Auto da Archivio)</option>
+                            <option value="notes">Pagine Note Personali (Da mettere in fondo)</option>
+                        </select>
+                    </div>
+
+                    <!-- Campi Copertina / Frontespizio -->
+                    <div id="ed-fields-common" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Collana / Marchio in alto</label>
+                            <input type="text" id="ed-brand" value="DALLA NORMA ALLA STRADA • COLLANA DIDATTICA" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Categoria / Titolo Corso</label>
+                            <input type="text" id="ed-course" value="PATENTE D1 • D • DE (TRASPORTO PERSONE)" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm font-bold">
+                        </div>
+                        <div id="ed-cover-only-fields" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Titolo Principale del Manuale</label>
+                                <input type="text" id="ed-title" value="COMPRENDERE LA NORMA, SUPERARE I QUIZ" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Sottotitolo descrittivo</label>
+                                <textarea id="ed-subtitle" rows="2" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm">Normativa essenziale, traduzione operativa alla guida dell'autobus, matrici dei quiz ministeriali e analisi dei dettagli d'esame.</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Autore</label>
+                                <input type="text" id="ed-author" value="A cura di Michele Fortunato" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campi Specifici Indice -->
+                    <div id="ed-fields-index" class="hidden space-y-3">
+                        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700">
+                            <label class="block text-xs font-bold text-emerald-400 mb-1.5">Importa Capitoli dall'Archivio:</label>
+                            <div class="flex gap-2">
+                                <select id="ed-aula-select" class="flex-grow bg-slate-800 border border-slate-600 text-white p-2 rounded text-xs"></select>
+                                <button onclick="populateIndexFromAula()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded font-bold text-xs shrink-0">Carica Capitoli</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Righe Indice (Formato: Titolo Capitolo | Pagina)</label>
+                            <textarea id="ed-index-rows" rows="10" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2.5 rounded-lg font-mono text-xs" placeholder="Capitolo 01 - Masse e dimensioni | 5&#10;Capitolo 02 - Tempi di guida | 32"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Campi Specifici Note -->
+                    <div id="ed-fields-notes" class="hidden space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Numero di pagine note da generare</label>
+                            <select id="ed-notes-count" onchange="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-600 text-white p-2.5 rounded-lg text-sm">
+                                <option value="1">1 Pagina</option>
+                                <option value="2" selected>2 Pagine</option>
+                                <option value="4">4 Pagine</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button onclick="printEditorialPage()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black py-3.5 px-6 rounded-xl shadow-lg transition text-base flex items-center justify-center mt-2">
+                        <i class="fa-solid fa-file-pdf mr-2"></i> Salva / Stampa questa Parte in PDF
+                    </button>
+                </div>
+
+                <!-- Anteprima A4 Modificabile a Destra -->
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="flex justify-between items-center mb-2 px-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-eye mr-1 text-emerald-400"></i> Anteprima Foglio A4 (Puoi anche cliccare sul testo per ritoccarlo)</span>
+                    </div>
+                    <div class="bg-slate-300 p-4 md:p-8 rounded-2xl overflow-y-auto max-h-[82vh] shadow-inner">
+                        <div id="ed-preview-paper" contenteditable="true" spellcheck="false" class="bg-white text-black mx-auto shadow-2xl" style="width: 100%; max-width: 210mm; min-height: 297mm; padding: 16mm; font-family: 'Segoe UI', Arial, sans-serif; outline: none;"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -2199,6 +2292,199 @@ function executeGlobalQuizSearch(query) {
 
         if (results.length > 100) html += `<div class="text-center text-slate-500 text-sm mt-4 italic">Mostrati i primi 100 risultati su ${results.length}. Affina la ricerca per vederne altri.</div>`;
         container.innerHTML = html;
+    }
+
+    // ==========================================================================
+    // KIT EDITORIALE (COPERTINE, FRONTESPIZIO, INDICE AUTOMATICO, NOTE)
+    // ==========================================================================
+    const origNavTo = navTo;
+    navTo = function(viewId) {
+        origNavTo(viewId);
+        document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+        const activeBtn = document.getElementById(`nav-btn-${viewId}`);
+        if(activeBtn) activeBtn.classList.add('active');
+        if(viewId === 'editorial') {
+            refreshEditorialAulas();
+            updateEditorialPreview();
+        }
+    };
+
+    function refreshEditorialAulas() {
+        const sel = document.getElementById('ed-aula-select');
+        if(!sel) return;
+        const aulas = [...new Set(archiveDB.map(d => d.aula || "Varie"))].sort();
+        sel.innerHTML = aulas.map(a => `<option value="${a}">${a}</option>`).join('');
+    }
+
+    function populateIndexFromAula() {
+        const aula = document.getElementById('ed-aula-select').value;
+        if(!aula) return;
+        const docs = archiveDB.filter(d => (d.aula || "Varie") === aula);
+        const capitoli = [...new Set(docs.map(d => d.obiettivo || "Capitolo"))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+        let pageCounter = 5;
+        const lines = capitoli.map(cap => {
+            const count = docs.filter(d => (d.obiettivo || "Capitolo") === cap).length;
+            const row = `${cap} | ${pageCounter}`;
+            pageCounter += Math.max(4, count * 3);
+            return row;
+        });
+        document.getElementById('ed-index-rows').value = lines.join('\n');
+        updateEditorialPreview();
+    }
+
+    function switchEditorialTemplate() {
+        const type = document.getElementById('ed-page-type').value;
+        document.getElementById('ed-fields-common').classList.toggle('hidden', type === 'index' || type === 'notes');
+        document.getElementById('ed-cover-only-fields').classList.toggle('hidden', type !== 'cover');
+        document.getElementById('ed-fields-index').classList.toggle('hidden', type !== 'index');
+        document.getElementById('ed-fields-notes').classList.toggle('hidden', type !== 'notes');
+        updateEditorialPreview();
+    }
+
+    function updateEditorialPreview() {
+        const type = document.getElementById('ed-page-type').value;
+        const brand = document.getElementById('ed-brand').value;
+        const course = document.getElementById('ed-course').value;
+        const title = document.getElementById('ed-title').value;
+        const subtitle = document.getElementById('ed-subtitle').value;
+        const author = document.getElementById('ed-author').value;
+        const paper = document.getElementById('ed-preview-paper');
+
+        if (type === 'cover') {
+            paper.innerHTML = `
+                <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 262mm; border: 2px solid #0f172a; padding: 14mm;">
+                    <div>
+                        <div style="font-size: 9.5pt; font-weight: 800; letter-spacing: 2px; color: #b45309; text-transform: uppercase; border-bottom: 2px solid #0f172a; padding-bottom: 8px;">
+                            ${brand}
+                        </div>
+                        <div style="margin-top: 18mm; display: inline-block; background: #0f172a; color: #ffffff; font-size: 11pt; font-weight: 800; padding: 6px 14px; letter-spacing: 1px; text-transform: uppercase;">
+                            ${course}
+                        </div>
+                        <h1 style="font-size: 28pt; font-weight: 900; color: #0f172a; line-height: 1.12; margin: 16px 0 14px 0; text-transform: uppercase;">
+                            ${title}
+                        </h1>
+                        <p style="font-size: 12.5pt; color: #334155; line-height: 1.5; font-weight: 400; margin: 0;">
+                            ${subtitle}
+                        </p>
+                    </div>
+
+                    <div style="background: #f8fafc; border-left: 5px solid #1e3a8a; padding: 14px 18px; margin: 12mm 0;">
+                        <div style="font-size: 9.5pt; font-weight: 900; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">
+                            Struttura didattica di ogni argomento:
+                        </div>
+                        <div style="font-size: 10pt; color: #0f172a; line-height: 1.7;">
+                            <div><strong>🎯 Roadmap Obiettivi:</strong> traguardi pratici in apertura di capitolo</div>
+                            <div><strong>📜 La Norma in Sintesi:</strong> riferimenti legislativi e dati essenziali</div>
+                            <div><strong>🛣️ La Traduzione in Strada:</strong> applicazione reale alla guida</div>
+                            <div><strong>💣 Il Campo Minato:</strong> analisi ragionata dei trabocchetti d'esame</div>
+                            <div><strong>🧩 Le Matrici Quiz:</strong> quesiti ministeriali raggruppati per radice</div>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 2px solid #0f172a; padding-top: 10px; display: flex; justify-content: space-between; align-items: baseline;">
+                        <span style="font-size: 12pt; font-weight: 800; color: #0f172a;">${author}</span>
+                        <span style="font-size: 9pt; color: #475569; font-weight: 600;">Edizione ${new Date().getFullYear()}</span>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'frontmatter') {
+            paper.innerHTML = `
+                <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 262mm;">
+                    <div>
+                        <div style="border: 1.5px solid #0f172a; padding: 12px 16px; border-radius: 6px; margin-bottom: 14mm;">
+                            <div style="font-size: 8.5pt; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 1px; margin-bottom: 8px;">Scheda Personale del Candidato</div>
+                            <div style="font-size: 10.5pt; color: #0f172a; line-height: 2;">
+                                <div>Questo manuale appartiene a: ________________________________________________</div>
+                                <div>Categoria conseguimento: <strong>${course}</strong> &nbsp;&bull;&nbsp; Data inizio studio: ____/____/202__</div>
+                            </div>
+                        </div>
+
+                        <h2 style="font-size: 13pt; font-weight: 900; color: #0f172a; text-transform: uppercase; border-bottom: 2px solid #0f172a; padding-bottom: 4px; margin-bottom: 10px;">
+                            Come utilizzare questo manuale
+                        </h2>
+                        <p style="font-size: 10pt; color: #1e293b; line-height: 1.5; margin-bottom: 12px;">
+                            Ogni capitolo è organizzato per accompagnarti dalla comprensione della regola fino alla verifica sui quesiti d'esame, seguendo l'ordine ufficiale dei programmi ministeriali:
+                        </p>
+                        <div style="font-size: 9.8pt; color: #0f172a; line-height: 1.55; margin-bottom: 14mm;">
+                            <p style="margin: 0 0 8px 0;"><strong>1. 🎯 Roadmap Obiettivi (Inizio Capitolo):</strong> leggi i traguardi pratici prima di iniziare e spunta le caselle man mano che assimili gli argomenti.</p>
+                            <p style="margin: 0 0 8px 0;"><strong>2. 📜 La Norma &amp; 🛣️ La Traduzione in Strada:</strong> studia prima il dato normativo essenziale e subito dopo come si traduce nella realtà operativa su strada.</p>
+                            <p style="margin: 0 0 8px 0;"><strong>3. 💣 Il Campo Minato:</strong> soffermati sulle parole chiave evidenziate tra parentesi quadre: segnalano i punti in cui i quiz cambiano significato.</p>
+                            <p style="margin: 0;"><strong>4. 🧩 Le Matrici Quiz:</strong> confronta le diverse continuazioni della stessa frase per allenare l'occhio a distinguere il Vero dal Falso.</p>
+                        </div>
+
+                        <div style="background: #f8fafc; border: 1.5px solid #94a3b8; border-radius: 6px; padding: 12px 16px;">
+                            <div style="font-size: 10pt; font-weight: 900; color: #0f172a; text-transform: uppercase; margin-bottom: 6px;">
+                                Nota sulle esercitazioni quiz ministeriali
+                            </div>
+                            <p style="font-size: 9.5pt; color: #334155; line-height: 1.45; margin: 0;">
+                                Questo volume nasce come strumento di supporto allo studio teorico e alla comprensione logica dei quesiti. Poiché il database ministeriale può essere soggetto a periodici oscuramenti o aggiornamenti tecnici, <strong>per le simulazioni d'esame complete si raccomanda di affiancare sempre a questo manuale l'utilizzo di un'app quiz aggiornata</strong> o dei portali ufficiali messi a disposizione dalla propria autoscuola.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 8.5pt; color: #475569; border-top: 1px solid #cbd5e1; padding-top: 8px; line-height: 1.4;">
+                        <strong>${brand}</strong><br>
+                        Opera didattica a cura di Michele Fortunato &bull; Tutti i diritti riservati &copy; ${new Date().getFullYear()}.<br>
+                        È vietata la riproduzione, la diffusione non autorizzata o la condivisione digitale a terzi.
+                    </div>
+                </div>
+            `;
+        } else if (type === 'index') {
+            const rawRows = document.getElementById('ed-index-rows').value.split('\n').filter(r => r.trim());
+            let rowsHtml = rawRows.map(r => {
+                const parts = r.split('|');
+                const capTitle = parts[0] ? parts[0].trim() : '';
+                const pageNum = parts[1] ? parts[1].trim() : '';
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px dotted #94a3b8; padding: 7px 0; font-size: 10.5pt;">
+                        <span style="font-weight: 700; color: #0f172a; padding-right: 12px;">${capTitle}</span>
+                        <span style="font-weight: 800; font-family: monospace; color: #0f172a; white-space: nowrap;">Pag. ${pageNum}</span>
+                    </div>
+                `;
+            }).join('');
+            if(!rowsHtml) rowsHtml = `<p style="color:#64748b; font-style:italic;">Seleziona un'aula a sinistra e clicca "Carica Capitoli" oppure scrivi le righe nel formato: Titolo | Numero Pagina.</p>`;
+
+            paper.innerHTML = `
+                <div>
+                    <div style="border-bottom: 2.5px solid #0f172a; padding-bottom: 8px; margin-bottom: 16px;">
+                        <div style="font-size: 8.5pt; font-weight: 800; color: #b45309; text-transform: uppercase; letter-spacing: 1px;">${brand}</div>
+                        <h1 style="font-size: 18pt; font-weight: 900; color: #0f172a; margin: 4px 0 0 0; text-transform: uppercase;">Indice Generale del Volume</h1>
+                    </div>
+                    <div>${rowsHtml}</div>
+                </div>
+            `;
+        } else if (type === 'notes') {
+            const count = parseInt(document.getElementById('ed-notes-count').value || '1', 10);
+            let pagesHtml = '';
+            for(let p = 0; p < count; p++) {
+                let lines = '';
+                for(let i = 0; i < 28; i++) lines += `<div style="border-bottom: 1px solid #cbd5e1; height: 24px;"></div>`;
+                pagesHtml += `
+                    <div class="${p < count - 1 ? 'batch-page' : ''}" style="margin-bottom: ${p < count - 1 ? '20px' : '0'};">
+                        <div style="border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: baseline;">
+                            <span style="font-size: 12pt; font-weight: 900; text-transform: uppercase; color: #0f172a;">Note Personali &amp; Promemoria Esame</span>
+                            <span style="font-size: 8.5pt; color: #475569; font-weight: 700;">Dalla Norma alla Strada</span>
+                        </div>
+                        ${lines}
+                    </div>
+                `;
+            }
+            paper.innerHTML = pagesHtml;
+        }
+    }
+
+    function printEditorialPage() {
+        const paperContent = document.getElementById('ed-preview-paper').innerHTML;
+        const type = document.getElementById('ed-page-type').value.toUpperCase();
+        const printArea = document.getElementById('print-area');
+        printArea.classList.remove('live-edit-mode');
+        printArea.innerHTML = `<div style="padding: 6mm; font-family: 'Segoe UI', Arial, sans-serif; color: #000;">${paperContent}</div>`;
+        const origTitle = document.title;
+        document.title = `EDITORIALE_${type}_${getFormattedDateString()}`;
+        setTimeout(() => {
+            window.print();
+            setTimeout(() => { document.title = origTitle; printArea.innerHTML = ''; }, 1000);
+        }, 300);
     }
 
     // --- INIT APP AL CARICAMENTO ---
