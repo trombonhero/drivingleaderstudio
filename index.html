@@ -516,50 +516,64 @@
             </div>
         </div>
 
-        <!-- VISTA KIT EDITORIALE (COPERTINE, INDICI, NOTE) -->
+<!-- VISTA KIT EDITORIALE (COPERTINE, AUTORE, INDICI, NOTE) -->
         <div id="view-editorial" class="view-section p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 pb-12">
                 
                 <!-- Pannello Controlli a Sinistra -->
-                <div class="lg:col-span-5 glass-panel border-t-4 border-t-emerald-500 flex flex-col gap-4 h-fit">
+                <div class="lg:col-span-5 glass-panel border-t-4 border-t-emerald-500 flex flex-col gap-3.5 h-fit">
                     <div>
                         <h2 class="text-2xl font-black text-white mb-1"><i class="fa-solid fa-book-open text-emerald-400 mr-2"></i>Kit Editoriale A4</h2>
-                        <p class="text-xs text-slate-400">Genera e salva in PDF le singole parti del manuale da unire ai capitoli.</p>
+                        <p class="text-xs text-slate-400">Layout coordinato con le dispense. Genera e salva in PDF le parti introduttive e finali del manuale.</p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">1. Scegli cosa generare</label>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">1. Scegli la pagina da generare</label>
                         <select id="ed-page-type" onchange="switchEditorialTemplate()" class="w-full bg-slate-900 border border-slate-600 text-white p-3 rounded-lg font-bold focus:outline-none focus:border-emerald-500">
-                            <option value="cover">Copertina Principale A4</option>
-                            <option value="frontmatter">Pagina 2: Proprietà, Legenda Icone & Nota Quiz</option>
-                            <option value="index">Indice Generale del Volume (Auto da Archivio)</option>
-                            <option value="notes">Pagine Note Personali (Da mettere in fondo)</option>
+                            <option value="cover">Pagina 1: Copertina Principale A4</option>
+                            <option value="author">Pagina 2: Chi sono, il Metodo & Nota Quiz</option>
+                            <option value="index">Pagina 3: Scheda Candidato & Indice Generale</option>
+                            <option value="notes">Fondo Volume: Pagine Note Personali</option>
                         </select>
                     </div>
 
-                    <!-- Campi Copertina / Frontespizio -->
+                    <!-- Campi Comuni -->
                     <div id="ed-fields-common" class="space-y-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-1">Collana / Marchio in alto</label>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Collana / Intestazione in alto</label>
                             <input type="text" id="ed-brand" value="DALLA NORMA ALLA STRADA • COLLANA DIDATTICA" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-400 mb-1">Categoria / Titolo Corso</label>
                             <input type="text" id="ed-course" value="PATENTE D1 • D • DE (TRASPORTO PERSONE)" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm font-bold">
                         </div>
-                        <div id="ed-cover-only-fields" class="space-y-3">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-1">Titolo Principale del Manuale</label>
-                                <input type="text" id="ed-title" value="COMPRENDERE LA NORMA, SUPERARE I QUIZ" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-1">Sottotitolo descrittivo</label>
-                                <textarea id="ed-subtitle" rows="2" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm">Normativa essenziale, traduzione operativa alla guida dell'autobus, matrici dei quiz ministeriali e analisi dei dettagli d'esame.</textarea>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-1">Autore</label>
-                                <input type="text" id="ed-author" value="A cura di Michele Fortunato" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm">
-                            </div>
+                    </div>
+
+                    <!-- Campi Solo Copertina -->
+                    <div id="ed-cover-only-fields" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Titolo Principale del Manuale</label>
+                            <input type="text" id="ed-title" value="COMPRENDERE LA NORMA, SUPERARE I QUIZ" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Sottotitolo descrittivo</label>
+                            <textarea id="ed-subtitle" rows="2" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm">Normativa essenziale, traduzione operativa alla guida dell'autobus, matrici dei quiz ministeriali e analisi dei dettagli d'esame.</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Autore</label>
+                            <input type="text" id="ed-author" value="A cura di Michele Fortunato" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-lg text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Campi Solo Pagina Autore -->
+                    <div id="ed-author-only-fields" class="hidden space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 mb-1">Presentazione Autore & Perché nasce il metodo (Modificabile)</label>
+                            <textarea id="ed-bio" rows="8" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2.5 rounded-lg text-xs leading-relaxed">Mi chiamo Michele Fortunato e lavoro ogni giorno in aula e su strada come insegnante di teoria e istruttore di guida presso Conti Autoscuole e il Consorzio Driving Leader di Colleferro (RM), oltre a ricoprire la qualifica di gestore dell'autotrasporto viaggiatori.
+
+Accompagnando centinaia di candidati verso il conseguimento delle patenti superiori e delle abilitazioni professionali, ho osservato un ostacolo ricorrente: spesso l'allievo comprende la regola generale, ma durante lo studio individuale fatica a collegare l'articolo di legge alla realtà operativa del mezzo pesante e cade sulle sfumature linguistiche dei quesiti d'esame.
+
+Da questa esperienza quotidiana nasce il progetto "Dalla Norma alla Strada": uno strumento pensato per affiancare le lezioni tradizionali e offrire un percorso ordinato, dove ogni argomento viene prima tradotto nella pratica della guida e poi analizzato attraverso le matrici dei quiz ministeriali.</textarea>
                         </div>
                     </div>
 
@@ -574,7 +588,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-400 mb-1">Righe Indice (Formato: Titolo Capitolo | Pagina)</label>
-                            <textarea id="ed-index-rows" rows="10" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2.5 rounded-lg font-mono text-xs" placeholder="Capitolo 01 - Masse e dimensioni | 5&#10;Capitolo 02 - Tempi di guida | 32"></textarea>
+                            <textarea id="ed-index-rows" rows="9" oninput="updateEditorialPreview()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 p-2.5 rounded-lg font-mono text-xs" placeholder="Capitolo 01 - Masse e dimensioni | 5&#10;Capitolo 02 - Tempi di guida | 32"></textarea>
                         </div>
                     </div>
 
@@ -590,7 +604,7 @@
                         </div>
                     </div>
 
-                    <button onclick="printEditorialPage()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black py-3.5 px-6 rounded-xl shadow-lg transition text-base flex items-center justify-center mt-2">
+                    <button onclick="printEditorialPage()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black py-3.5 px-6 rounded-xl shadow-lg transition text-base flex items-center justify-center mt-1">
                         <i class="fa-solid fa-file-pdf mr-2"></i> Salva / Stampa questa Parte in PDF
                     </button>
                 </div>
@@ -598,16 +612,15 @@
                 <!-- Anteprima A4 Modificabile a Destra -->
                 <div class="lg:col-span-7 flex flex-col">
                     <div class="flex justify-between items-center mb-2 px-1">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-eye mr-1 text-emerald-400"></i> Anteprima Foglio A4 (Puoi anche cliccare sul testo per ritoccarlo)</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-eye mr-1 text-emerald-400"></i> Anteprima Foglio A4 (Clicca sul testo per eventuali ritocchi diretti)</span>
                     </div>
                     <div class="bg-slate-300 p-4 md:p-8 rounded-2xl overflow-y-auto max-h-[82vh] shadow-inner">
-                        <div id="ed-preview-paper" contenteditable="true" spellcheck="false" class="bg-white text-black mx-auto shadow-2xl" style="width: 100%; max-width: 210mm; min-height: 297mm; padding: 16mm; font-family: 'Segoe UI', Arial, sans-serif; outline: none;"></div>
+                        <div id="ed-preview-paper" contenteditable="true" spellcheck="false" class="bg-white text-black mx-auto shadow-2xl" style="width: 100%; max-width: 210mm; min-height: 297mm; padding: 14mm; font-family: 'Segoe UI', Arial, sans-serif; outline: none;"></div>
                     </div>
                 </div>
 
             </div>
         </div>
-    </div>
 
     <div id="print-area"></div>
 
@@ -2294,8 +2307,8 @@ function executeGlobalQuizSearch(query) {
         container.innerHTML = html;
     }
 
-    // ==========================================================================
-    // KIT EDITORIALE (COPERTINE, FRONTESPIZIO, INDICE AUTOMATICO, NOTE)
+// ==========================================================================
+    // KIT EDITORIALE COORDINATO (COPERTINE, AUTORE, INDICE, NOTE)
     // ==========================================================================
     const origNavTo = navTo;
     navTo = function(viewId) {
@@ -2321,7 +2334,7 @@ function executeGlobalQuizSearch(query) {
         if(!aula) return;
         const docs = archiveDB.filter(d => (d.aula || "Varie") === aula);
         const capitoli = [...new Set(docs.map(d => d.obiettivo || "Capitolo"))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-        let pageCounter = 5;
+        let pageCounter = 4;
         const lines = capitoli.map(cap => {
             const count = docs.filter(d => (d.obiettivo || "Capitolo") === cap).length;
             const row = `${cap} | ${pageCounter}`;
@@ -2334,8 +2347,9 @@ function executeGlobalQuizSearch(query) {
 
     function switchEditorialTemplate() {
         const type = document.getElementById('ed-page-type').value;
-        document.getElementById('ed-fields-common').classList.toggle('hidden', type === 'index' || type === 'notes');
+        document.getElementById('ed-fields-common').classList.toggle('hidden', type === 'notes');
         document.getElementById('ed-cover-only-fields').classList.toggle('hidden', type !== 'cover');
+        document.getElementById('ed-author-only-fields').classList.toggle('hidden', type !== 'author');
         document.getElementById('ed-fields-index').classList.toggle('hidden', type !== 'index');
         document.getElementById('ed-fields-notes').classList.toggle('hidden', type !== 'notes');
         updateEditorialPreview();
@@ -2348,84 +2362,99 @@ function executeGlobalQuizSearch(query) {
         const title = document.getElementById('ed-title').value;
         const subtitle = document.getElementById('ed-subtitle').value;
         const author = document.getElementById('ed-author').value;
+        const bioRaw = document.getElementById('ed-bio') ? document.getElementById('ed-bio').value : '';
         const paper = document.getElementById('ed-preview-paper');
 
         if (type === 'cover') {
             paper.innerHTML = `
-                <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 262mm; border: 2px solid #0f172a; padding: 14mm;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 266mm; border: 2px solid #000000; padding: 14mm;">
                     <div>
-                        <div style="font-size: 9.5pt; font-weight: 800; letter-spacing: 2px; color: #b45309; text-transform: uppercase; border-bottom: 2px solid #0f172a; padding-bottom: 8px;">
-                            ${brand}
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #000000; padding-bottom: 6px;">
+                            <span style="font-size: 9pt; font-weight: 800; letter-spacing: 1.5px; color: #d97706; text-transform: uppercase;">${brand}</span>
+                            <span style="font-size: 8.5pt; font-weight: 700; color: #475569;">EDIZIONE ${new Date().getFullYear()}</span>
                         </div>
-                        <div style="margin-top: 18mm; display: inline-block; background: #0f172a; color: #ffffff; font-size: 11pt; font-weight: 800; padding: 6px 14px; letter-spacing: 1px; text-transform: uppercase;">
-                            ${course}
+
+                        <div style="margin-top: 16mm; border-left: 5px solid #d97706; padding-left: 12px;">
+                            <div style="font-size: 11.5pt; font-weight: 900; color: #1e3a8a; letter-spacing: 0.5px; text-transform: uppercase;">
+                                ${course}
+                            </div>
                         </div>
-                        <h1 style="font-size: 28pt; font-weight: 900; color: #0f172a; line-height: 1.12; margin: 16px 0 14px 0; text-transform: uppercase;">
+
+                        <h1 style="font-size: 27pt; font-weight: 900; color: #000000; line-height: 1.12; margin: 14px 0 14px 0; text-transform: uppercase;">
                             ${title}
                         </h1>
-                        <p style="font-size: 12.5pt; color: #334155; line-height: 1.5; font-weight: 400; margin: 0;">
+                        <p style="font-size: 12pt; color: #334155; line-height: 1.5; font-style: italic; margin: 0;">
                             ${subtitle}
                         </p>
                     </div>
 
-                    <div style="background: #f8fafc; border-left: 5px solid #1e3a8a; padding: 14px 18px; margin: 12mm 0;">
-                        <div style="font-size: 9.5pt; font-weight: 900; color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">
-                            Struttura didattica di ogni argomento:
+                    <div style="space-y: 8px; margin: 10mm 0;">
+                        <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #1e3a8a; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px;">
+                            <div style="font-size: 9.5pt; font-weight: 900; color: #1e3a8a; text-transform: uppercase; margin-bottom: 3px;">📜 La Norma in Sintesi &amp; 🎯 Roadmap Obiettivi</div>
+                            <div style="font-size: 9.5pt; color: #000000;">Programma ministeriale strutturato per traguardi pratici e riferimenti legislativi essenziali.</div>
                         </div>
-                        <div style="font-size: 10pt; color: #0f172a; line-height: 1.7;">
-                            <div><strong>🎯 Roadmap Obiettivi:</strong> traguardi pratici in apertura di capitolo</div>
-                            <div><strong>📜 La Norma in Sintesi:</strong> riferimenti legislativi e dati essenziali</div>
-                            <div><strong>🛣️ La Traduzione in Strada:</strong> applicazione reale alla guida</div>
-                            <div><strong>💣 Il Campo Minato:</strong> analisi ragionata dei trabocchetti d'esame</div>
-                            <div><strong>🧩 Le Matrici Quiz:</strong> quesiti ministeriali raggruppati per radice</div>
+                        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px;">
+                            <div style="font-size: 9.5pt; font-weight: 900; color: #064e3b; text-transform: uppercase; margin-bottom: 3px;">🛣️ La Traduzione in Strada</div>
+                            <div style="font-size: 9.5pt; color: #064e3b;">Come si applica ogni singola norma nella realtà operativa della guida quotidiana.</div>
+                        </div>
+                        <div style="background-color: #fff1f2; border: 1px solid #fecaca; border-left: 4px solid #dc2626; border-radius: 6px; padding: 10px 14px;">
+                            <div style="font-size: 9.5pt; font-weight: 900; color: #991b1b; text-transform: uppercase; margin-bottom: 3px;">💣 Il Campo Minato &amp; 🧩 Matrici Quiz</div>
+                            <div style="font-size: 9.5pt; color: #000000;">Quesiti raggruppati per radice comune e spiegazione logica delle parole chiave d'esame.</div>
                         </div>
                     </div>
 
-                    <div style="border-top: 2px solid #0f172a; padding-top: 10px; display: flex; justify-content: space-between; align-items: baseline;">
-                        <span style="font-size: 12pt; font-weight: 800; color: #0f172a;">${author}</span>
-                        <span style="font-size: 9pt; color: #475569; font-weight: 600;">Edizione ${new Date().getFullYear()}</span>
+                    <div style="border-top: 2px solid #000000; padding-top: 8px; display: flex; justify-content: space-between; align-items: baseline;">
+                        <span style="font-size: 12pt; font-weight: 900; color: #000000;">${author}</span>
+                        <span style="font-size: 8.5pt; color: #475569; font-style: italic;">Quaderno Operativo di Teoria</span>
                     </div>
                 </div>
             `;
-        } else if (type === 'frontmatter') {
+        } else if (type === 'author') {
+            const bioParagraphs = bioRaw.split('\n').filter(p => p.trim()).map(p => `<p style="margin: 0 0 8px 0; font-size: 9.8pt; line-height: 1.45; color: #000000;">${p.trim()}</p>`).join('');
             paper.innerHTML = `
-                <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 262mm;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 266mm;">
                     <div>
-                        <div style="border: 1.5px solid #0f172a; padding: 12px 16px; border-radius: 6px; margin-bottom: 14mm;">
-                            <div style="font-size: 8.5pt; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 1px; margin-bottom: 8px;">Scheda Personale del Candidato</div>
-                            <div style="font-size: 10.5pt; color: #0f172a; line-height: 2;">
-                                <div>Questo manuale appartiene a: ________________________________________________</div>
-                                <div>Categoria conseguimento: <strong>${course}</strong> &nbsp;&bull;&nbsp; Data inizio studio: ____/____/202__</div>
+                        <div style="border-bottom: 2px solid #000000; padding-bottom: 6px; margin-bottom: 12px;">
+                            <div style="font-size: 8.5pt; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 1px;">${brand} | ${course}</div>
+                            <h1 style="font-size: 15pt; font-weight: 900; color: #000000; margin: 2px 0 0 0; text-transform: uppercase;">L'Autore e la Logica del Metodo</h1>
+                        </div>
+
+                        <!-- Box Autore (Stile Dispensa Norma) -->
+                        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px;">
+                            <div style="font-size: 10pt; font-weight: 900; color: #1e3a8a; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase;">
+                                Chi ha costruito questo manuale
+                            </div>
+                            ${bioParagraphs}
+                        </div>
+
+                        <!-- Box Struttura (Stile Dispensa Pratica) -->
+                        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; color: #064e3b;">
+                            <div style="font-size: 10pt; font-weight: 900; color: #064e3b; border-bottom: 1px solid #86efac; padding-bottom: 4px; margin-bottom: 8px; text-transform: uppercase;">
+                                Come usare le 5 sezioni di ogni argomento
+                            </div>
+                            <div style="font-size: 9.5pt; line-height: 1.45;">
+                                <div style="margin-bottom: 4px;"><strong>🎯 Roadmap Obiettivi:</strong> checklist iniziale per verificare i traguardi raggiunti capitolo per capitolo.</div>
+                                <div style="margin-bottom: 4px;"><strong>📜 La Norma (Sintesi):</strong> i riferimenti legislativi e i dati tecnici essenziali senza giri di parole.</div>
+                                <div style="margin-bottom: 4px;"><strong>🛣️ Applicazione Pratica:</strong> la traduzione della regola nella guida reale su strada.</div>
+                                <div style="margin-bottom: 4px;"><strong>💣 Il Campo Minato:</strong> le parole-esca tra parentesi quadre che cambiano il senso delle domande d'esame.</div>
+                                <div><strong>🧩 Le Matrici Quiz:</strong> le varianti ministeriali raggruppate per radice comune (Vero / Falso).</div>
                             </div>
                         </div>
 
-                        <h2 style="font-size: 13pt; font-weight: 900; color: #0f172a; text-transform: uppercase; border-bottom: 2px solid #0f172a; padding-bottom: 4px; margin-bottom: 10px;">
-                            Come utilizzare questo manuale
-                        </h2>
-                        <p style="font-size: 10pt; color: #1e293b; line-height: 1.5; margin-bottom: 12px;">
-                            Ogni capitolo è organizzato per accompagnarti dalla comprensione della regola fino alla verifica sui quesiti d'esame, seguendo l'ordine ufficiale dei programmi ministeriali:
-                        </p>
-                        <div style="font-size: 9.8pt; color: #0f172a; line-height: 1.55; margin-bottom: 14mm;">
-                            <p style="margin: 0 0 8px 0;"><strong>1. 🎯 Roadmap Obiettivi (Inizio Capitolo):</strong> leggi i traguardi pratici prima di iniziare e spunta le caselle man mano che assimili gli argomenti.</p>
-                            <p style="margin: 0 0 8px 0;"><strong>2. 📜 La Norma &amp; 🛣️ La Traduzione in Strada:</strong> studia prima il dato normativo essenziale e subito dopo come si traduce nella realtà operativa su strada.</p>
-                            <p style="margin: 0 0 8px 0;"><strong>3. 💣 Il Campo Minato:</strong> soffermati sulle parole chiave evidenziate tra parentesi quadre: segnalano i punti in cui i quiz cambiano significato.</p>
-                            <p style="margin: 0;"><strong>4. 🧩 Le Matrici Quiz:</strong> confronta le diverse continuazioni della stessa frase per allenare l'occhio a distinguere il Vero dal Falso.</p>
-                        </div>
-
-                        <div style="background: #f8fafc; border: 1.5px solid #94a3b8; border-radius: 6px; padding: 12px 16px;">
-                            <div style="font-size: 10pt; font-weight: 900; color: #0f172a; text-transform: uppercase; margin-bottom: 6px;">
-                                Nota sulle esercitazioni quiz ministeriali
+                        <!-- Box Avvertenza Quiz (Stile Campo Minato) -->
+                        <div style="background-color: #fff1f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px 16px;">
+                            <div style="font-size: 10pt; font-weight: 900; color: #991b1b; border-bottom: 1px solid #fca5a5; padding-bottom: 4px; margin-bottom: 6px; text-transform: uppercase;">
+                                Nota sulle simulazioni d'esame e sulle app quiz
                             </div>
-                            <p style="font-size: 9.5pt; color: #334155; line-height: 1.45; margin: 0;">
-                                Questo volume nasce come strumento di supporto allo studio teorico e alla comprensione logica dei quesiti. Poiché il database ministeriale può essere soggetto a periodici oscuramenti o aggiornamenti tecnici, <strong>per le simulazioni d'esame complete si raccomanda di affiancare sempre a questo manuale l'utilizzo di un'app quiz aggiornata</strong> o dei portali ufficiali messi a disposizione dalla propria autoscuola.
+                            <p style="font-size: 9.3pt; color: #000000; line-height: 1.4; margin: 0;">
+                                Questo volume nasce come guida di supporto allo studio teorico e alla comprensione logica dei quesiti. Poiché il listato ministeriale può essere soggetto a periodici oscuramenti o aggiornamenti tecnici, <strong>per le esercitazioni a scheda e le simulazioni d'esame complete si raccomanda di affiancare sempre a questo manuale l'utilizzo di un'app quiz aggiornata</strong> o dei portali ufficiali messi a disposizione dalla propria autoscuola.
                             </p>
                         </div>
                     </div>
 
-                    <div style="font-size: 8.5pt; color: #475569; border-top: 1px solid #cbd5e1; padding-top: 8px; line-height: 1.4;">
-                        <strong>${brand}</strong><br>
-                        Opera didattica a cura di Michele Fortunato &bull; Tutti i diritti riservati &copy; ${new Date().getFullYear()}.<br>
-                        È vietata la riproduzione, la diffusione non autorizzata o la condivisione digitale a terzi.
+                    <div style="border-top: 1.5px solid #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; font-size: 7.5pt; color: #475569;">
+                        <span style="font-weight: 800;">DALLA NORMA ALLA STRADA &bull; COLLANA DIDATTICA</span>
+                        <span style="font-style: italic; text-align: right;">A cura di Michele Fortunato &bull; Tutti i diritti riservati &copy; ${new Date().getFullYear()}</span>
                     </div>
                 </div>
             `;
@@ -2436,21 +2465,33 @@ function executeGlobalQuizSearch(query) {
                 const capTitle = parts[0] ? parts[0].trim() : '';
                 const pageNum = parts[1] ? parts[1].trim() : '';
                 return `
-                    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px dotted #94a3b8; padding: 7px 0; font-size: 10.5pt;">
-                        <span style="font-weight: 700; color: #0f172a; padding-right: 12px;">${capTitle}</span>
-                        <span style="font-weight: 800; font-family: monospace; color: #0f172a; white-space: nowrap;">Pag. ${pageNum}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px dotted #94a3b8; padding: 6px 0; font-size: 10pt;">
+                        <span style="font-weight: 700; color: #000000; padding-right: 12px;">${capTitle}</span>
+                        <span style="font-weight: 800; font-family: monospace; color: #1e3a8a; white-space: nowrap;">Pag. ${pageNum}</span>
                     </div>
                 `;
             }).join('');
-            if(!rowsHtml) rowsHtml = `<p style="color:#64748b; font-style:italic;">Seleziona un'aula a sinistra e clicca "Carica Capitoli" oppure scrivi le righe nel formato: Titolo | Numero Pagina.</p>`;
+            if(!rowsHtml) rowsHtml = `<p style="color:#64748b; font-style:italic; font-size: 9.5pt;">Seleziona il corso a sinistra e clicca "Carica Capitoli", poi inserisci i numeri di pagina.</p>`;
 
             paper.innerHTML = `
-                <div>
-                    <div style="border-bottom: 2.5px solid #0f172a; padding-bottom: 8px; margin-bottom: 16px;">
-                        <div style="font-size: 8.5pt; font-weight: 800; color: #b45309; text-transform: uppercase; letter-spacing: 1px;">${brand}</div>
-                        <h1 style="font-size: 18pt; font-weight: 900; color: #0f172a; margin: 4px 0 0 0; text-transform: uppercase;">Indice Generale del Volume</h1>
+                <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 266mm;">
+                    <div>
+                        <div style="border-bottom: 2px solid #000000; padding-bottom: 6px; margin-bottom: 12px;">
+                            <div style="font-size: 8.5pt; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 1px;">${brand} | ${course}</div>
+                            <h1 style="font-size: 15pt; font-weight: 900; color: #000000; margin: 2px 0 0 0; text-transform: uppercase;">Indice Generale del Volume</h1>
+                        </div>
+
+                        <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 9.5pt;">
+                            <strong>Candidato:</strong> _____________________________________________ &nbsp;&nbsp; <strong>Inizio studio:</strong> ____/____/202__
+                        </div>
+
+                        <div>${rowsHtml}</div>
                     </div>
-                    <div>${rowsHtml}</div>
+
+                    <div style="border-top: 1.5px solid #cbd5e1; padding-top: 6px; display: flex; justify-content: space-between; font-size: 7.5pt; color: #475569;">
+                        <span style="font-weight: 800;">DALLA NORMA ALLA STRADA &bull; COLLANA DIDATTICA</span>
+                        <span style="font-style: italic; text-align: right;">A cura di Michele Fortunato &bull; Tutti i diritti riservati &copy; ${new Date().getFullYear()}</span>
+                    </div>
                 </div>
             `;
         } else if (type === 'notes') {
@@ -2458,12 +2499,15 @@ function executeGlobalQuizSearch(query) {
             let pagesHtml = '';
             for(let p = 0; p < count; p++) {
                 let lines = '';
-                for(let i = 0; i < 28; i++) lines += `<div style="border-bottom: 1px solid #cbd5e1; height: 24px;"></div>`;
+                for(let i = 0; i < 27; i++) lines += `<div style="border-bottom: 1px solid #cbd5e1; height: 24px;"></div>`;
                 pagesHtml += `
                     <div class="${p < count - 1 ? 'batch-page' : ''}" style="margin-bottom: ${p < count - 1 ? '20px' : '0'};">
-                        <div style="border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: baseline;">
-                            <span style="font-size: 12pt; font-weight: 900; text-transform: uppercase; color: #0f172a;">Note Personali &amp; Promemoria Esame</span>
-                            <span style="font-size: 8.5pt; color: #475569; font-weight: 700;">Dalla Norma alla Strada</span>
+                        <div style="border-bottom: 2px solid #000000; padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: baseline;">
+                            <div>
+                                <div style="font-size: 8pt; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 1px;">DALLA NORMA ALLA STRADA</div>
+                                <span style="font-size: 13pt; font-weight: 900; text-transform: uppercase; color: #000000;">Note Personali &amp; Promemoria Esame</span>
+                            </div>
+                            <span style="font-size: 8.5pt; color: #475569; font-weight: 700;">Scheda Appunti</span>
                         </div>
                         ${lines}
                     </div>
@@ -2478,7 +2522,7 @@ function executeGlobalQuizSearch(query) {
         const type = document.getElementById('ed-page-type').value.toUpperCase();
         const printArea = document.getElementById('print-area');
         printArea.classList.remove('live-edit-mode');
-        printArea.innerHTML = `<div style="padding: 6mm; font-family: 'Segoe UI', Arial, sans-serif; color: #000;">${paperContent}</div>`;
+        printArea.innerHTML = `<div style="padding: 4mm; font-family: 'Segoe UI', Arial, sans-serif; color: #000;">${paperContent}</div>`;
         const origTitle = document.title;
         document.title = `EDITORIALE_${type}_${getFormattedDateString()}`;
         setTimeout(() => {
