@@ -1439,7 +1439,7 @@ function createPrintHeader(meta, docTitle) {
         return `
             <div class="print-header-container">
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <p class="print-header-aula">${brandLabel} <span style="color:#555;">| ${meta.aula || docTitle}</span></p>
+                    <p class="print-header-aula">${brandLabel} <span style="color:#555;">| <span class="live-aula-target">${meta.aula || docTitle}</span></span></p>
                     ${meta.tempo ? `<span style="font-size: 9pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
                 </div>
                 <h1 class="print-header-ob">${meta.argomento || 'Documento senza titolo'}</h1>
@@ -1632,7 +1632,7 @@ function createPrintHeader(meta, docTitle) {
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px;">
                     <div>
-                        <h1 style="font-size: 15pt; font-weight: 900; margin: 0; color: #000; text-transform: uppercase; line-height: 1.1;">
+                        <h1 class="live-aula-target" style="font-size: 15pt; font-weight: 900; margin: 0; color: #000; text-transform: uppercase; line-height: 1.1;">
                             ${aula}
                         </h1>
                         <p style="font-size: 8.5pt; color: #333; margin: 3px 0 0 0;">
@@ -1783,8 +1783,9 @@ function printBatch() {
             printArea.innerHTML = `
                 <div id="live-edit-toolbar">
                     <div class="flex items-center gap-3">
-                        <span class="bg-amber-500 text-slate-900 text-xs font-black px-2.5 py-1 rounded uppercase">Modalità Modifica al Volo</span>
-                        <span class="text-sm text-slate-300 hidden md:inline">Clicca su qualsiasi testo nel foglio per modificarlo prima di stampare (l'archivio resta invariato).</span>
+                        <span class="bg-amber-500 text-slate-900 text-xs font-black px-2.5 py-1 rounded uppercase">Modifica al Volo</span>
+                        <input type="text" id="live-global-aula-input" placeholder="Nuovo titolo corso per tutte le pagine..." class="bg-slate-800 border border-slate-600 text-white text-xs px-3 py-1.5 rounded-lg w-64 focus:outline-none focus:border-amber-400">
+                        <button onclick="applyGlobalAulaTitle()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg font-bold text-xs transition">Applica a tutto</button>
                     </div>
                     <div class="flex gap-3">
                         <button onclick="closeLiveEditPrint()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-1.5 rounded-lg font-bold text-sm transition">Chiudi</button>
@@ -1818,6 +1819,12 @@ function printBatch() {
         const printArea = document.getElementById('print-area');
         printArea.classList.remove('live-edit-mode');
         printArea.innerHTML = '';
+    }
+
+    function applyGlobalAulaTitle() {
+        const newVal = document.getElementById('live-global-aula-input').value.trim();
+        if(!newVal) return;
+        document.querySelectorAll('.live-aula-target').forEach(el => { el.innerText = newVal; });
     }
 
     // --- ESPORTAZIONE EDITABILE PER GOOGLE DOCUMENTI & WORD (.DOC) ---
