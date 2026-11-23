@@ -143,7 +143,7 @@
            STILI DI STAMPA GLOBALI E IMPOSTAZIONI FASCICOLO
            ======================================================= */
         @media print {
-            html, body { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10pt !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            html, body { display: block !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; font-size: 10pt !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #app-ui, #maximize-backdrop, #batch-action-bar, .ui-header-box { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; overflow: visible !important; }
             
@@ -621,6 +621,7 @@ Da questa esperienza quotidiana nasce il progetto "Dalla Norma alla Strada": uno
 
             </div>
         </div>
+    </div>
 
     <div id="print-area"></div>
 
@@ -702,6 +703,8 @@ Da questa esperienza quotidiana nasce il progetto "Dalla Norma alla Strada": uno
     }
 
     async function initApp() {
+        const pa = document.getElementById('print-area');
+        if (pa) document.body.appendChild(pa);
         try {
             let backupDati = [];
             try { backupDati = JSON.parse(localStorage.getItem('driving_leader_studio_db_backup')) || []; } catch(e) {}
@@ -1930,10 +1933,12 @@ function printBatch() {
             printArea.classList.remove('live-edit-mode');
             printArea.innerHTML = `${built.html}${footerHtml}`;
             document.title = targetTitle;
-            setTimeout(() => { 
-                window.print(); 
-                setTimeout(() => { document.title = originalTitle; printArea.innerHTML = ''; }, 1000); 
-            }, 300);
+            window.onafterprint = () => {
+                document.title = originalTitle;
+                printArea.innerHTML = '';
+                window.onafterprint = null;
+            };
+            setTimeout(() => { window.print(); }, 400);
         }
     }
 
@@ -2525,10 +2530,12 @@ function executeGlobalQuizSearch(query) {
         printArea.innerHTML = `<div style="padding: 4mm; font-family: 'Segoe UI', Arial, sans-serif; color: #000;">${paperContent}</div>`;
         const origTitle = document.title;
         document.title = `EDITORIALE_${type}_${getFormattedDateString()}`;
-        setTimeout(() => {
-            window.print();
-            setTimeout(() => { document.title = origTitle; printArea.innerHTML = ''; }, 1000);
-        }, 300);
+        window.onafterprint = () => {
+            document.title = origTitle;
+            printArea.innerHTML = '';
+            window.onafterprint = null;
+        };
+        setTimeout(() => { window.print(); }, 400);
     }
 
     // --- INIT APP AL CARICAMENTO ---
